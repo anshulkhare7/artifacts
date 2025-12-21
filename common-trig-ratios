@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trigonometric Values Table - Common Angles</title>
+    <meta name="description" content="Comprehensive table of exact trigonometric values for common angles in both degrees and radians">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+
+        th, td {
+            padding: 16px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            font-size: 16px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        tr:hover {
+            background-color: #e3f2fd;
+            transition: background-color 0.3s ease;
+        }
+
+        .angle-col {
+            font-weight: 600;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        .fraction {
+            display: inline-block;
+            vertical-align: middle;
+            text-align: center;
+        }
+
+        .numerator {
+            display: block;
+            border-bottom: 1px solid #333;
+            padding-bottom: 2px;
+        }
+
+        .denominator {
+            display: block;
+            padding-top: 2px;
+        }
+
+        .sqrt {
+            position: relative;
+            padding-left: 8px;
+        }
+
+        .sqrt::before {
+            content: '√';
+            position: absolute;
+            left: 0;
+        }
+
+        .undefined {
+            color: #d32f2f;
+            font-style: italic;
+        }
+
+        .note {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff3e0;
+            border-left: 4px solid #ff9800;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .footer {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .key-formulas {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e8f5e9;
+            border-left: 4px solid #4caf50;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #555;
+        }
+
+        .key-formulas h3 {
+            margin-bottom: 10px;
+            color: #2e7d32;
+            font-size: 16px;
+        }
+
+        .key-formulas ul {
+            list-style-position: inside;
+            line-height: 1.8;
+        }
+
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                box-shadow: none;
+                padding: 20px;
+            }
+            tr:hover {
+                background-color: transparent;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            .subtitle {
+                font-size: 0.9em;
+            }
+
+            th, td {
+                padding: 10px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trigonometric Values Table</h1>
+        <p class="subtitle">Exact values for common angles in degrees and radians</p>
+        
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Angle</th>
+                        <th>sin θ</th>
+                        <th>cos θ</th>
+                        <th>tan θ</th>
+                        <th>cot θ</th>
+                        <th>sec θ</th>
+                        <th>cosec θ</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="angle-col">0° (0)</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td class="undefined">Undefined</td>
+                        <td>1</td>
+                        <td class="undefined">Undefined</td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">30° (π/6)</td>
+                        <td><div class="fraction"><span class="numerator">1</span><span class="denominator">2</span></div></td>
+                        <td><div class="fraction"><span class="numerator"><span class="sqrt">3</span></span><span class="denominator">2</span></div></td>
+                        <td><div class="fraction"><span class="numerator">1</span><span class="denominator"><span class="sqrt">3</span></span></div></td>
+                        <td><span class="sqrt">3</span></td>
+                        <td><div class="fraction"><span class="numerator">2</span><span class="denominator"><span class="sqrt">3</span></span></div></td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">45° (π/4)</td>
+                        <td><div class="fraction"><span class="numerator">1</span><span class="denominator"><span class="sqrt">2</span></span></div></td>
+                        <td><div class="fraction"><span class="numerator">1</span><span class="denominator"><span class="sqrt">2</span></span></div></td>
+                        <td>1</td>
+                        <td>1</td>
+                        <td><span class="sqrt">2</span></td>
+                        <td><span class="sqrt">2</span></td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">60° (π/3)</td>
+                        <td><div class="fraction"><span class="numerator"><span class="sqrt">3</span></span><span class="denominator">2</span></div></td>
+                        <td><div class="fraction"><span class="numerator">1</span><span class="denominator">2</span></div></td>
+                        <td><span class="sqrt">3</span></td>
+                        <td><div class="fraction"><span class="numerator">1</span><span class="denominator"><span class="sqrt">3</span></span></div></td>
+                        <td>2</td>
+                        <td><div class="fraction"><span class="numerator">2</span><span class="denominator"><span class="sqrt">3</span></span></div></td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">90° (π/2)</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td class="undefined">Undefined</td>
+                        <td>0</td>
+                        <td class="undefined">Undefined</td>
+                        <td>1</td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">120° (2π/3)</td>
+                        <td><div class="fraction"><span class="numerator"><span class="sqrt">3</span></span><span class="denominator">2</span></div></td>
+                        <td><div class="fraction"><span class="numerator">-1</span><span class="denominator">2</span></div></td>
+                        <td>-<span class="sqrt">3</span></td>
+                        <td><div class="fraction"><span class="numerator">-1</span><span class="denominator"><span class="sqrt">3</span></span></div></td>
+                        <td>-2</td>
+                        <td><div class="fraction"><span class="numerator">2</span><span class="denominator"><span class="sqrt">3</span></span></div></td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">135° (3π/4)</td>
+                        <td><div class="fraction"><span class="numerator">1</span><span class="denominator"><span class="sqrt">2</span></span></div></td>
+                        <td><div class="fraction"><span class="numerator">-1</span><span class="denominator"><span class="sqrt">2</span></span></div></td>
+                        <td>-1</td>
+                        <td>-1</td>
+                        <td>-<span class="sqrt">2</span></td>
+                        <td><span class="sqrt">2</span></td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">150° (5π/6)</td>
+                        <td><div class="fraction"><span class="numerator">1</span><span class="denominator">2</span></div></td>
+                        <td><div class="fraction"><span class="numerator">-<span class="sqrt">3</span></span><span class="denominator">2</span></div></td>
+                        <td><div class="fraction"><span class="numerator">-1</span><span class="denominator"><span class="sqrt">3</span></span></div></td>
+                        <td>-<span class="sqrt">3</span></td>
+                        <td><div class="fraction"><span class="numerator">-2</span><span class="denominator"><span class="sqrt">3</span></span></div></td>
+                        <td>2</td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">180° (π)</td>
+                        <td>0</td>
+                        <td>-1</td>
+                        <td>0</td>
+                        <td class="undefined">Undefined</td>
+                        <td>-1</td>
+                        <td class="undefined">Undefined</td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">270° (3π/2)</td>
+                        <td>-1</td>
+                        <td>0</td>
+                        <td class="undefined">Undefined</td>
+                        <td>0</td>
+                        <td class="undefined">Undefined</td>
+                        <td>-1</td>
+                    </tr>
+                    <tr>
+                        <td class="angle-col">360° (2π)</td>
+                        <td>0</td>
+                        <td>1</td>
+                        <td>0</td>
+                        <td class="undefined">Undefined</td>
+                        <td>1</td>
+                        <td class="undefined">Undefined</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="note">
+            <strong>Note:</strong> All values are shown in exact form using fractions and square roots rather than decimal approximations. "Undefined" indicates division by zero. Angles are shown in both degrees and radians (in terms of π).
+        </div>
+
+        <div class="key-formulas">
+            <h3>Key Relationships</h3>
+            <ul>
+                <li>sec θ = 1/cos θ</li>
+                <li>cosec θ = 1/sin θ</li>
+                <li>cot θ = 1/tan θ = cos θ/sin θ</li>
+                <li>tan θ = sin θ/cos θ</li>
+                <li>sin²θ + cos²θ = 1</li>
+                <li>1 + tan²θ = sec²θ</li>
+                <li>1 + cot²θ = cosec²θ</li>
+            </ul>
+        </div>
+
+        <div class="footer">
+            Free educational resource • Print-friendly • Share freely
+        </div>
+    </div>
+</body>
+</html>
