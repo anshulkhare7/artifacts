@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Unit Circle - Trigonometric Values</title>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 1100px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+            font-size: 2em;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #555;
+            margin-bottom: 30px;
+            font-size: 1em;
+        }
+
+        #unit-circle {
+            display: block;
+            margin: 0 auto;
+            background: #fafafa;
+            border-radius: 10px;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-weight: 500;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(30, 60, 114, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button.active {
+            background: linear-gradient(135deg, #2e7d32 0%, #43a047 100%);
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, #e3f2fd 0%, #e8f4f8 100%);
+            border-left: 5px solid #42a5f5;
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 15px;
+            color: #555;
+        }
+
+        .info-box h3 {
+            color: #1565c0;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .current-values {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .value-item {
+            background: rgba(255, 255, 255, 0.7);
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 16px;
+        }
+
+        .value-item strong {
+            color: #1565c0;
+        }
+
+        .circle-axis {
+            stroke: #666;
+            stroke-width: 2;
+        }
+
+        .circle-grid {
+            stroke: #ddd;
+            stroke-width: 1;
+            fill: none;
+        }
+
+        .unit-circle-path {
+            stroke: #2a5298;
+            stroke-width: 3;
+            fill: none;
+        }
+
+        .angle-point {
+            fill: #2a5298;
+        }
+
+        .angle-point.highlighted {
+            fill: #e53935;
+        }
+
+        .radius-line {
+            stroke: #ccc;
+            stroke-width: 1.5;
+            opacity: 0.4;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .radius-line:hover {
+            stroke: #999;
+            opacity: 0.7;
+            stroke-width: 2;
+        }
+
+        .radius-line.highlighted {
+            stroke: #e53935;
+            stroke-width: 2.5;
+            opacity: 1;
+        }
+
+        .projection-line {
+            stroke: #e53935;
+            stroke-width: 2;
+            stroke-dasharray: 5, 5;
+        }
+
+        .angle-label {
+            font-size: 13px;
+            fill: #555;
+            font-weight: 500;
+            pointer-events: none;
+        }
+
+        .coordinate-label {
+            font-size: 12px;
+            fill: #1565c0;
+            font-weight: 600;
+            pointer-events: none;
+        }
+
+        .axis-label {
+            font-size: 18px;
+            fill: #333;
+            font-weight: 700;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.5em;
+            }
+
+            button {
+                padding: 10px 18px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Interactive Unit Circle</h1>
+        <p class="subtitle">Click any radius line to highlight that angle</p>
+
+        <svg id="unit-circle"></svg>
+
+        <div class="controls">
+            <button id="play-btn">▶ Play Animation</button>
+            <button id="reset-btn">↺ Reset</button>
+        </div>
+
+        <div class="info-box">
+            <h3>Current Angle: <span id="current-angle">0°</span></h3>
+            <div class="current-values">
+                <div class="value-item"><strong>cos θ =</strong> <span id="cos-value">1</span></div>
+                <div class="value-item"><strong>sin θ =</strong> <span id="sin-value">0</span></div>
+                <div class="value-item"><strong>tan θ =</strong> <span id="tan-value">0</span></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const width = 900;
+        const height = 900;
+        const centerX = width / 2;
+        const centerY = height / 2;
+        const radius = 300;
+
+        // Common angles in degrees
+        const commonAngles = [0, 30, 45, 60, 90, 120, 135, 150, 180, 210, 225, 240, 270, 300, 315, 330];
+
+        // Exact values for display
+        const exactValues = {
+            0: { cos: '1', sin: '0', tan: '0', coords: '(1, 0)' },
+            30: { cos: '√3/2', sin: '1/2', tan: '1/√3', coords: '(√3/2, 1/2)' },
+            45: { cos: '1/√2', sin: '1/√2', tan: '1', coords: '(1/√2, 1/√2)' },
+            60: { cos: '1/2', sin: '√3/2', tan: '√3', coords: '(1/2, √3/2)' },
+            90: { cos: '0', sin: '1', tan: 'undef', coords: '(0, 1)' },
+            120: { cos: '-1/2', sin: '√3/2', tan: '-√3', coords: '(-1/2, √3/2)' },
+            135: { cos: '-1/√2', sin: '1/√2', tan: '-1', coords: '(-1/√2, 1/√2)' },
+            150: { cos: '-√3/2', sin: '1/2', tan: '-1/√3', coords: '(-√3/2, 1/2)' },
+            180: { cos: '-1', sin: '0', tan: '0', coords: '(-1, 0)' },
+            210: { cos: '-√3/2', sin: '-1/2', tan: '1/√3', coords: '(-√3/2, -1/2)' },
+            225: { cos: '-1/√2', sin: '-1/√2', tan: '1', coords: '(-1/√2, -1/√2)' },
+            240: { cos: '-1/2', sin: '-√3/2', tan: '√3', coords: '(-1/2, -√3/2)' },
+            270: { cos: '0', sin: '-1', tan: 'undef', coords: '(0, -1)' },
+            300: { cos: '1/2', sin: '-√3/2', tan: '-√3', coords: '(1/2, -√3/2)' },
+            315: { cos: '1/√2', sin: '-1/√2', tan: '-1', coords: '(1/√2, -1/√2)' },
+            330: { cos: '√3/2', sin: '-1/2', tan: '-1/√3', coords: '(√3/2, -1/2)' }
+        };
+
+        // Setup SVG
+        const svg = d3.select('#unit-circle')
+            .attr('width', width)
+            .attr('height', height)
+            .attr('viewBox', `0 0 ${width} ${height}`);
+
+        // Create main group
+        const g = svg.append('g');
+
+        // Draw grid circles (subtle)
+        [0.5, 1].forEach(scale => {
+            g.append('circle')
+                .attr('cx', centerX)
+                .attr('cy', centerY)
+                .attr('r', radius * scale)
+                .attr('class', 'circle-grid');
+        });
+
+        // Draw axes
+        g.append('line')
+            .attr('x1', 50)
+            .attr('y1', centerY)
+            .attr('x2', width - 50)
+            .attr('y2', centerY)
+            .attr('class', 'circle-axis');
+
+        g.append('line')
+            .attr('x1', centerX)
+            .attr('y1', 50)
+            .attr('x2', centerX)
+            .attr('y2', height - 50)
+            .attr('class', 'circle-axis');
+
+        // Add axis labels
+        g.append('text')
+            .attr('x', width - 60)
+            .attr('y', centerY - 15)
+            .attr('class', 'axis-label')
+            .text('x');
+
+        g.append('text')
+            .attr('x', centerX + 15)
+            .attr('y', 70)
+            .attr('class', 'axis-label')
+            .text('y');
+
+        // Draw unit circle
+        g.append('circle')
+            .attr('cx', centerX)
+            .attr('cy', centerY)
+            .attr('r', radius)
+            .attr('class', 'unit-circle-path');
+
+        // Store radius lines for later reference
+        const radiusLines = {};
+        const anglePoints = {};
+
+        // Draw all radius lines, points, angle labels (near center), and coordinate labels (on circumference)
+        commonAngles.forEach(angle => {
+            // Standard math: 0° at right (positive x-axis), counter-clockwise
+            // In SVG, y increases downward, so we negate sin to make it counter-clockwise
+            const radians = angle * Math.PI / 180;
+            const x = centerX + radius * Math.cos(radians);
+            const y = centerY - radius * Math.sin(radians); // Negate to flip y-axis for counter-clockwise
+
+            // Radius line (from center to circumference)
+            const line = g.append('line')
+                .attr('x1', centerX)
+                .attr('y1', centerY)
+                .attr('x2', x)
+                .attr('y2', y)
+                .attr('class', 'radius-line')
+                .attr('data-angle', angle)
+                .on('click', () => highlightAngle(angle));
+
+            radiusLines[angle] = line;
+
+            // Point on circumference
+            const point = g.append('circle')
+                .attr('cx', x)
+                .attr('cy', y)
+                .attr('r', 4)
+                .attr('class', 'angle-point')
+                .attr('data-angle', angle);
+
+            anglePoints[angle] = point;
+
+            // Angle label NEAR CENTER (about 30% of radius)
+            const labelRadiusInner = radius * 0.25;
+            const labelXInner = centerX + labelRadiusInner * Math.cos(radians);
+            const labelYInner = centerY - labelRadiusInner * Math.sin(radians); // Negate for counter-clockwise
+
+            g.append('text')
+                .attr('x', labelXInner)
+                .attr('y', labelYInner)
+                .attr('class', 'angle-label')
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'middle')
+                .text(`${angle}°`);
+
+            // Coordinate label ON CIRCUMFERENCE (slightly outside)
+            const labelRadiusOuter = radius + 35;
+            const labelXOuter = centerX + labelRadiusOuter * Math.cos(radians);
+            const labelYOuter = centerY - labelRadiusOuter * Math.sin(radians); // Negate for counter-clockwise
+
+            g.append('text')
+                .attr('x', labelXOuter)
+                .attr('y', labelYOuter)
+                .attr('class', 'coordinate-label')
+                .attr('text-anchor', 'middle')
+                .attr('dominant-baseline', 'middle')
+                .text(exactValues[angle].coords);
+        });
+
+        // Create projection lines (hidden initially)
+        const projectionX = g.append('line')
+            .attr('class', 'projection-line')
+            .attr('opacity', 0);
+
+        const projectionY = g.append('line')
+            .attr('class', 'projection-line')
+            .attr('opacity', 0);
+
+        // Animation state
+        let currentAngle = 0;
+        let isPlaying = false;
+
+        function highlightAngle(angle) {
+            // Remove all highlights
+            Object.values(radiusLines).forEach(line => line.classed('highlighted', false));
+            Object.values(anglePoints).forEach(point => point.classed('highlighted', false));
+
+            // Highlight selected
+            radiusLines[angle].classed('highlighted', true);
+            anglePoints[angle].classed('highlighted', true);
+
+            // Update current angle
+            currentAngle = angle;
+
+            // Calculate position (standard math coordinates)
+            const radians = angle * Math.PI / 180;
+            const x = centerX + radius * Math.cos(radians);
+            const y = centerY - radius * Math.sin(radians); // Negative because SVG y-axis points down
+
+            // Show projections
+            projectionX
+                .attr('opacity', 1)
+                .transition()
+                .duration(300)
+                .attr('x1', x)
+                .attr('y1', y)
+                .attr('x2', x)
+                .attr('y2', centerY);
+
+            projectionY
+                .attr('opacity', 1)
+                .transition()
+                .duration(300)
+                .attr('x1', x)
+                .attr('y1', y)
+                .attr('x2', centerX)
+                .attr('y2', y);
+
+            // Update info box
+            document.getElementById('current-angle').textContent = `${angle}°`;
+            document.getElementById('cos-value').textContent = exactValues[angle].cos;
+            document.getElementById('sin-value').textContent = exactValues[angle].sin;
+            document.getElementById('tan-value').textContent = exactValues[angle].tan;
+        }
+
+        function playAnimation() {
+            if (isPlaying) {
+                isPlaying = false;
+                document.getElementById('play-btn').textContent = '▶ Play Animation';
+                document.getElementById('play-btn').classList.remove('active');
+                return;
+            }
+
+            isPlaying = true;
+            document.getElementById('play-btn').textContent = '⏸ Pause';
+            document.getElementById('play-btn').classList.add('active');
+
+            let index = 0;
+
+            function step() {
+                if (!isPlaying) return;
+
+                highlightAngle(commonAngles[index]);
+                index = (index + 1) % commonAngles.length;
+
+                setTimeout(() => {
+                    if (isPlaying) step();
+                }, 1200);
+            }
+
+            step();
+        }
+
+        function reset() {
+            isPlaying = false;
+            document.getElementById('play-btn').textContent = '▶ Play Animation';
+            document.getElementById('play-btn').classList.remove('active');
+            highlightAngle(0);
+        }
+
+        // Event listeners
+        document.getElementById('play-btn').addEventListener('click', playAnimation);
+        document.getElementById('reset-btn').addEventListener('click', reset);
+
+        // Initialize
+        highlightAngle(0);
+    </script>
+</body>
+</html>
