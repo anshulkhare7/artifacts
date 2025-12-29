@@ -30,16 +30,56 @@
         }
 
         .controls {
-            padding: 30px;
+            padding: 20px 30px;
             background: #f8f9fa;
             border-bottom: 2px solid #e9ecef;
+            position: relative;
         }
 
         .controls h2 {
             color: #2c3e50;
-            margin-bottom: 20px;
-            font-size: 24px;
+            margin-bottom: 15px;
+            font-size: 20px;
             font-weight: 600;
+        }
+
+        .top-right-controls {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            padding: 0;
+        }
+
+        .icon-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .download-icon {
+            background: #4a90e2;
+            color: white;
+            border-color: #4a90e2;
+        }
+
+        .download-icon:hover {
+            background: #357abd;
         }
 
         .control-grid {
@@ -78,32 +118,35 @@
 
         .theme-buttons {
             display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
+            gap: 6px;
         }
 
         .theme-btn {
-            padding: 10px 20px;
+            width: 32px;
+            height: 32px;
             border: 2px solid #dee2e6;
-            border-radius: 8px;
-            background: white;
+            border-radius: 6px;
             cursor: pointer;
             transition: all 0.3s;
-            font-weight: 600;
-            font-size: 14px;
-            font-family: inherit;
+            position: relative;
         }
 
         .theme-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
         }
 
         .theme-btn.active {
-            background: #4a90e2;
-            color: white;
-            border-color: #4a90e2;
+            border-color: #2c3e50;
+            border-width: 3px;
+            box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.3);
         }
+
+        .theme-btn.warm { background: linear-gradient(135deg, #D84315 0%, #FF6F42 100%); }
+        .theme-btn.blue { background: linear-gradient(135deg, #1976D2 0%, #42A5F5 100%); }
+        .theme-btn.monochrome { background: linear-gradient(135deg, #424242 0%, #757575 100%); }
+        .theme-btn.green { background: linear-gradient(135deg, #2E7D32 0%, #66BB6A 100%); }
+        .theme-btn.purple { background: linear-gradient(135deg, #6A1B9A 0%, #AB47BC 100%); }
 
         .canvas-container {
             padding: 40px;
@@ -118,26 +161,30 @@
             margin: 0 auto;
         }
 
-        .download-btn {
-            margin: 0 40px 40px;
-            padding: 12px 30px;
-            background: #4a90e2;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            display: block;
-            width: calc(100% - 80px);
-            font-family: inherit;
+        .recall-section {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #e9ecef;
         }
 
-        .download-btn:hover {
-            background: #357abd;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.4);
+        .recall-section label {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .recall-section p {
+            font-size: 11px;
+            color: #6c757d;
+            margin-bottom: 10px;
+        }
+
+        .recall-section .control-grid {
+            gap: 12px;
+        }
+
+        .recall-section input {
+            padding: 8px 10px;
+            font-size: 13px;
         }
 
         @media (max-width: 768px) {
@@ -150,6 +197,17 @@
 <body>
     <div class="container">
         <div class="controls">
+            <div class="top-right-controls">
+                <div class="theme-buttons">
+                    <button class="theme-btn warm active" data-theme="warm" title="Warm theme"></button>
+                    <button class="theme-btn blue" data-theme="blue" title="Blue theme"></button>
+                    <button class="theme-btn monochrome" data-theme="monochrome" title="Monochrome theme"></button>
+                    <button class="theme-btn green" data-theme="green" title="Green theme"></button>
+                    <button class="theme-btn purple" data-theme="purple" title="Purple theme"></button>
+                </div>
+                <button class="icon-btn download-icon" id="downloadBtn" title="Download as PNG">⬇</button>
+            </div>
+
             <h2>Ebbinghaus Forgetting Curve Generator</h2>
 
             <div class="control-grid">
@@ -174,22 +232,9 @@
                 </div>
             </div>
 
-            <div class="control-group">
-                <label>Color Theme</label>
-                <div class="theme-buttons">
-                    <button class="theme-btn active" data-theme="warm">Warm</button>
-                    <button class="theme-btn" data-theme="blue">Blue</button>
-                    <button class="theme-btn" data-theme="monochrome">Monochrome</button>
-                    <button class="theme-btn" data-theme="green">Green</button>
-                    <button class="theme-btn" data-theme="purple">Purple</button>
-                </div>
-            </div>
-
-            <div class="control-group" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e9ecef;">
+            <div class="control-group recall-section">
                 <label>Spaced Repetition (Recall Days)</label>
-                <p style="font-size: 12px; color: #6c757d; margin-bottom: 12px;">
-                    Enter days when you review the material (leave empty for no review). Reviews strengthen memory retention.
-                </p>
+                <p>Enter days when you review the material (leave empty for no review). Reviews strengthen memory retention.</p>
                 <div class="control-grid">
                     <div class="control-group">
                         <label for="recall1">First Review (day)</label>
@@ -210,8 +255,6 @@
         <div class="canvas-container">
             <canvas id="chart"></canvas>
         </div>
-
-        <button class="download-btn" id="downloadBtn">Download as PNG</button>
     </div>
 
     <script>
