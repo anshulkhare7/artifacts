@@ -160,6 +160,39 @@
             background: white;
         }
 
+        .canvas-download-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            padding: 0;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .canvas-download-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+            background: #4a90e2;
+            color: white;
+            border-color: #4a90e2;
+        }
+
+        .canvas-download-btn svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+
         canvas {
             max-width: 100%;
             height: auto;
@@ -222,30 +255,25 @@
                     <button class="theme-btn green" data-theme="green" title="Green theme"></button>
                     <button class="theme-btn purple" data-theme="purple" title="Purple theme"></button>
                 </div>
-                <button class="icon-btn download-icon" id="downloadBtn" title="Download as PNG">⬇</button>
             </div>
 
             <h2>Ebbinghaus Forgetting Curve Generator</h2>
 
             <div class="control-grid">
                 <div class="control-group">
-                    <label for="title">Chart Title</label>
-                    <input type="text" id="title" value="Ebbinghaus Forgetting Curve">
+                    <input type="text" id="title" value="Ebbinghaus Forgetting Curve" placeholder="Chart Title">
                 </div>
 
                 <div class="control-group">
-                    <label for="subtitle">Subtitle</label>
-                    <input type="text" id="subtitle" value="Retention decreases over time">
+                    <input type="text" id="subtitle" value="Retention decreases over time" placeholder="Subtitle">
                 </div>
 
                 <div class="control-group">
-                    <label for="xLabel">X-Axis Label</label>
-                    <input type="text" id="xLabel" value="Time (days)">
+                    <input type="text" id="xLabel" value="Time (days)" placeholder="X-Axis Label">
                 </div>
 
                 <div class="control-group">
-                    <label for="yLabel">Y-Axis Label</label>
-                    <input type="text" id="yLabel" value="Memory Retention (%)">
+                    <input type="text" id="yLabel" value="Memory Retention (%)" placeholder="Y-Axis Label">
                 </div>
             </div>
 
@@ -254,22 +282,24 @@
                 <p>Enter review days sequentially. Each review must be later than the previous one.</p>
                 <div class="recall-grid">
                     <div class="control-group">
-                        <label for="recall1">1st Review</label>
-                        <input type="number" id="recall1" min="0" max="30" placeholder="Day">
+                        <input type="number" id="recall1" min="0" max="30" placeholder="1st Review (Day)">
                     </div>
                     <div class="control-group">
-                        <label for="recall2">2nd Review</label>
-                        <input type="number" id="recall2" min="0" max="30" placeholder="Day" disabled>
+                        <input type="number" id="recall2" min="0" max="30" placeholder="2nd Review (Day)" disabled>
                     </div>
                     <div class="control-group">
-                        <label for="recall3">3rd Review</label>
-                        <input type="number" id="recall3" min="0" max="30" placeholder="Day" disabled>
+                        <input type="number" id="recall3" min="0" max="30" placeholder="3rd Review (Day)" disabled>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="canvas-container">
+            <button class="canvas-download-btn" id="downloadBtn" title="Download as PNG">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/>
+                </svg>
+            </button>
             <canvas id="chart"></canvas>
         </div>
     </div>
@@ -289,35 +319,76 @@
                 secondary: '#FF6F42',
                 fill: 'rgba(216, 67, 21, 0.15)',
                 stripe: '#D84315',
-                text: '#5D4037'
+                text: '#5D4037',
+                // Comparison colors - from light (no reviews) to dark (with reviews)
+                comparison: {
+                    base: 'rgba(255, 224, 178, 0.5)',      // Very light peach - no reviews
+                    level1: 'rgba(255, 171, 145, 0.65)',   // Light coral - 1 review
+                    level2: 'rgba(244, 81, 30, 0.75)',     // Medium orange-red - 2 reviews
+                    level3: 'rgba(191, 54, 12, 0.85)',     // Dark burnt orange - 3 reviews
+                    baseStroke: '#FF9800',                  // Bright orange for dots
+                    stroke: '#BF360C'                       // Dark red-orange for stripes
+                }
             },
             blue: {
                 primary: '#1976D2',
                 secondary: '#42A5F5',
                 fill: 'rgba(25, 118, 210, 0.15)',
                 stripe: '#1976D2',
-                text: '#0D47A1'
+                text: '#0D47A1',
+                comparison: {
+                    base: 'rgba(187, 222, 251, 0.5)',
+                    level1: 'rgba(144, 202, 249, 0.65)',
+                    level2: 'rgba(33, 150, 243, 0.75)',
+                    level3: 'rgba(13, 71, 161, 0.85)',
+                    baseStroke: '#42A5F5',
+                    stroke: '#0D47A1'
+                }
             },
             monochrome: {
                 primary: '#424242',
                 secondary: '#757575',
                 fill: 'rgba(66, 66, 66, 0.15)',
                 stripe: '#424242',
-                text: '#212121'
+                text: '#212121',
+                comparison: {
+                    base: 'rgba(224, 224, 224, 0.5)',
+                    level1: 'rgba(189, 189, 189, 0.65)',
+                    level2: 'rgba(117, 117, 117, 0.75)',
+                    level3: 'rgba(66, 66, 66, 0.85)',
+                    baseStroke: '#9E9E9E',
+                    stroke: '#424242'
+                }
             },
             green: {
                 primary: '#2E7D32',
                 secondary: '#66BB6A',
                 fill: 'rgba(46, 125, 50, 0.15)',
                 stripe: '#2E7D32',
-                text: '#1B5E20'
+                text: '#1B5E20',
+                comparison: {
+                    base: 'rgba(200, 230, 201, 0.5)',
+                    level1: 'rgba(165, 214, 167, 0.65)',
+                    level2: 'rgba(56, 142, 60, 0.75)',
+                    level3: 'rgba(27, 94, 32, 0.85)',
+                    baseStroke: '#66BB6A',
+                    stroke: '#1B5E20'
+                }
             },
             purple: {
                 primary: '#6A1B9A',
                 secondary: '#AB47BC',
                 fill: 'rgba(106, 27, 154, 0.15)',
                 stripe: '#6A1B9A',
-                text: '#4A148C'
+                text: '#4A148C',
+                comparison: {
+                    base: 'rgba(225, 190, 231, 0.5)',
+                    level1: 'rgba(206, 147, 216, 0.65)',
+                    level2: 'rgba(142, 36, 170, 0.75)',
+                    level3: 'rgba(74, 20, 140, 0.85)',
+                    baseStroke: '#AB47BC',
+                    stroke: '#4A148C'
+                }
             }
         };
 
@@ -332,13 +403,27 @@
         let recallDays = [];
 
         // Ebbinghaus forgetting curve formula: R = e^(-t/S)
+        // Calculate baseline retention (no reviews)
+        function calculateBaselineRetention(day) {
+            const S = 3.5; // Base strength parameter
+            return Math.exp(-day / S) * 100;
+        }
+
         // When there's a review, the curve is "reset" and decay starts again from a boosted level
-        function calculateRetention(day) {
+        function calculateRetention(day, specificRecalls = null) {
             const S = 3.5; // Base strength parameter
             const boostFactor = 1.5; // How much each review strengthens memory
 
+            // Use specific recalls if provided, otherwise use global recallDays
+            const recalls = specificRecalls !== null ? specificRecalls : recallDays;
+
+            // If no recalls, return baseline
+            if (recalls.length === 0) {
+                return calculateBaselineRetention(day);
+            }
+
             // Sort recall days
-            const sortedRecalls = [...recallDays].sort((a, b) => a - b);
+            const sortedRecalls = [...recalls].sort((a, b) => a - b);
 
             // Find the most recent recall before this day
             let lastRecall = 0;
@@ -470,30 +555,217 @@
                 ctx.fillText(day, x, margin.top + chartHeight + 30);
             });
 
-            // Draw filled area with solid fill first
-            ctx.fillStyle = theme.fill;
-            ctx.beginPath();
-            ctx.moveTo(margin.left, margin.top + chartHeight);
-            points.forEach(p => ctx.lineTo(p.x, p.y));
-            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
-            ctx.closePath();
-            ctx.fill();
+            // Draw comparison layers when reviews are present
+            if (recallDays.length > 0) {
+                // Draw baseline (no reviews) - light shade with dots pattern
+                const baselinePoints = [];
+                for (let day = 0; day <= maxDays; day += 0.2) {
+                    const retention = calculateBaselineRetention(day);
+                    const x = margin.left + (day / maxDays) * chartWidth;
+                    const y = margin.top + chartHeight - (retention / 100) * chartHeight;
+                    baselinePoints.push({ x, y });
+                }
 
-            // Draw hand-drawn diagonal stripes
-            ctx.save();
-            ctx.beginPath();
-            ctx.moveTo(margin.left, margin.top + chartHeight);
-            points.forEach(p => ctx.lineTo(p.x, p.y));
-            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
-            ctx.closePath();
-            ctx.clip();
+                // Fill baseline with very light color
+                ctx.fillStyle = theme.comparison.base;
+                ctx.beginPath();
+                ctx.moveTo(margin.left, margin.top + chartHeight);
+                baselinePoints.forEach(p => ctx.lineTo(p.x, p.y));
+                ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+                ctx.closePath();
+                ctx.fill();
 
-            const stripeSpacing = 8;
-            for (let offset = -canvas.height; offset < canvas.width + canvas.height; offset += stripeSpacing) {
-                drawWobblyLine(offset, 0, offset + canvas.height, canvas.height, theme.stripe, 1.5, 1.2);
+                // Add dots pattern for baseline
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(margin.left, margin.top + chartHeight);
+                baselinePoints.forEach(p => ctx.lineTo(p.x, p.y));
+                ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+                ctx.closePath();
+                ctx.clip();
+
+                ctx.fillStyle = theme.comparison.baseStroke;
+                const dotSpacing = 6;
+                for (let x = margin.left; x < margin.left + chartWidth; x += dotSpacing) {
+                    for (let y = margin.top; y < margin.top + chartHeight; y += dotSpacing) {
+                        ctx.beginPath();
+                        ctx.arc(x, y, 1, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+                }
+                ctx.restore();
+
+                // Draw baseline curve - dashed
+                ctx.strokeStyle = theme.comparison.baseStroke;
+                ctx.lineWidth = 3;
+                ctx.setLineDash([8, 4]);
+                ctx.beginPath();
+                baselinePoints.forEach((p, i) => {
+                    if (i === 0) ctx.moveTo(p.x, p.y);
+                    else ctx.lineTo(p.x, p.y);
+                });
+                ctx.stroke();
+                ctx.setLineDash([]);
+
+                // Draw INCREMENTAL layers - showing only the benefit between each level
+                for (let level = 1; level <= recallDays.length; level++) {
+                    const currentRecalls = recallDays.slice(0, level);
+                    const previousRecalls = recallDays.slice(0, level - 1);
+
+                    const currentPoints = [];
+                    const previousPoints = [];
+
+                    for (let day = 0; day <= maxDays; day += 0.2) {
+                        const currentRetention = calculateRetention(day, currentRecalls);
+                        const previousRetention = level === 1 ? calculateBaselineRetention(day) : calculateRetention(day, previousRecalls);
+
+                        const x = margin.left + (day / maxDays) * chartWidth;
+                        const yCurrent = margin.top + chartHeight - (currentRetention / 100) * chartHeight;
+                        const yPrevious = margin.top + chartHeight - (previousRetention / 100) * chartHeight;
+
+                        currentPoints.push({ x, y: yCurrent });
+                        previousPoints.push({ x, y: yPrevious });
+                    }
+
+                    // Determine color based on level
+                    let fillColor;
+                    if (level === 1) fillColor = theme.comparison.level1;
+                    else if (level === 2) fillColor = theme.comparison.level2;
+                    else fillColor = theme.comparison.level3;
+
+                    // Fill the area BETWEEN the current level and previous level
+                    ctx.fillStyle = fillColor;
+                    ctx.beginPath();
+                    // Start from previous curve
+                    ctx.moveTo(previousPoints[0].x, previousPoints[0].y);
+                    previousPoints.forEach(p => ctx.lineTo(p.x, p.y));
+                    // Connect to current curve (reverse direction)
+                    for (let i = currentPoints.length - 1; i >= 0; i--) {
+                        ctx.lineTo(currentPoints[i].x, currentPoints[i].y);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+
+                    // Draw distinct pattern for each level
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(previousPoints[0].x, previousPoints[0].y);
+                    previousPoints.forEach(p => ctx.lineTo(p.x, p.y));
+                    for (let i = currentPoints.length - 1; i >= 0; i--) {
+                        ctx.lineTo(currentPoints[i].x, currentPoints[i].y);
+                    }
+                    ctx.closePath();
+                    ctx.clip();
+
+                    const stripeColor = theme.comparison.stroke;
+
+                    if (level === 1) {
+                        // Level 1: Single diagonal stripes at -45°
+                        const stripeSpacing = 10;
+                        const angleRad = -45 * Math.PI / 180;
+                        const dx = Math.cos(angleRad);
+                        const dy = Math.sin(angleRad);
+
+                        for (let offset = -canvas.height * 2; offset < canvas.width + canvas.height * 2; offset += stripeSpacing) {
+                            const x1 = offset;
+                            const y1 = 0;
+                            const x2 = offset + canvas.height * 2 * dx;
+                            const y2 = canvas.height * 2 * dy;
+                            drawWobblyLine(x1, y1, x2, y2, stripeColor, 1.5, 1);
+                        }
+                    } else if (level === 2) {
+                        // Level 2: Cross-hatch pattern (two directions)
+                        const stripeSpacing = 12;
+
+                        // First direction: -45°
+                        const angle1Rad = -45 * Math.PI / 180;
+                        const dx1 = Math.cos(angle1Rad);
+                        const dy1 = Math.sin(angle1Rad);
+
+                        for (let offset = -canvas.height * 2; offset < canvas.width + canvas.height * 2; offset += stripeSpacing) {
+                            const x1 = offset;
+                            const y1 = 0;
+                            const x2 = offset + canvas.height * 2 * dx1;
+                            const y2 = canvas.height * 2 * dy1;
+                            drawWobblyLine(x1, y1, x2, y2, stripeColor, 1.5, 1);
+                        }
+
+                        // Second direction: +45°
+                        const angle2Rad = 45 * Math.PI / 180;
+                        const dx2 = Math.cos(angle2Rad);
+                        const dy2 = Math.sin(angle2Rad);
+
+                        for (let offset = -canvas.height * 2; offset < canvas.width + canvas.height * 2; offset += stripeSpacing) {
+                            const x1 = offset;
+                            const y1 = 0;
+                            const x2 = offset + canvas.height * 2 * dx2;
+                            const y2 = canvas.height * 2 * dy2;
+                            drawWobblyLine(x1, y1, x2, y2, stripeColor, 1.5, 1);
+                        }
+                    } else if (level === 3) {
+                        // Level 3: Dense cross-hatch with horizontal lines
+                        const stripeSpacing = 8;
+
+                        // Diagonal -45°
+                        const angle1Rad = -45 * Math.PI / 180;
+                        const dx1 = Math.cos(angle1Rad);
+                        const dy1 = Math.sin(angle1Rad);
+
+                        for (let offset = -canvas.height * 2; offset < canvas.width + canvas.height * 2; offset += stripeSpacing) {
+                            const x1 = offset;
+                            const y1 = 0;
+                            const x2 = offset + canvas.height * 2 * dx1;
+                            const y2 = canvas.height * 2 * dy1;
+                            drawWobblyLine(x1, y1, x2, y2, stripeColor, 2, 1);
+                        }
+
+                        // Diagonal +45°
+                        const angle2Rad = 45 * Math.PI / 180;
+                        const dx2 = Math.cos(angle2Rad);
+                        const dy2 = Math.sin(angle2Rad);
+
+                        for (let offset = -canvas.height * 2; offset < canvas.width + canvas.height * 2; offset += stripeSpacing) {
+                            const x1 = offset;
+                            const y1 = 0;
+                            const x2 = offset + canvas.height * 2 * dx2;
+                            const y2 = canvas.height * 2 * dy2;
+                            drawWobblyLine(x1, y1, x2, y2, stripeColor, 2, 1);
+                        }
+
+                        // Horizontal lines
+                        for (let y = margin.top; y < margin.top + chartHeight; y += stripeSpacing) {
+                            drawWobblyLine(margin.left, y, margin.left + chartWidth, y, stripeColor, 2, 1);
+                        }
+                    }
+
+                    ctx.restore();
+                }
+            } else {
+                // No reviews - draw original style
+                ctx.fillStyle = theme.fill;
+                ctx.beginPath();
+                ctx.moveTo(margin.left, margin.top + chartHeight);
+                points.forEach(p => ctx.lineTo(p.x, p.y));
+                ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+                ctx.closePath();
+                ctx.fill();
+
+                // Draw hand-drawn diagonal stripes
+                ctx.save();
+                ctx.beginPath();
+                ctx.moveTo(margin.left, margin.top + chartHeight);
+                points.forEach(p => ctx.lineTo(p.x, p.y));
+                ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+                ctx.closePath();
+                ctx.clip();
+
+                const stripeSpacing = 8;
+                for (let offset = -canvas.height; offset < canvas.width + canvas.height; offset += stripeSpacing) {
+                    drawWobblyLine(offset, 0, offset + canvas.height, canvas.height, theme.stripe, 1.5, 1.2);
+                }
+
+                ctx.restore();
             }
-
-            ctx.restore();
 
             // Draw main curve with multiple passes for hand-drawn effect
             for (let pass = 0; pass < 3; pass++) {
