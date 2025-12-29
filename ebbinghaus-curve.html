@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ebbinghaus Forgetting Curve Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;700&family=Kalam:wght@300;400;700&family=Indie+Flower&family=Patrick+Hand&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/roughjs@4.5.2/bundled/rough.js"></script>
     <style>
         * {
             margin: 0;
@@ -12,7 +14,7 @@
         }
 
         body {
-            font-family: 'Georgia', serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
             padding: 20px;
@@ -37,6 +39,7 @@
             color: #2c3e50;
             margin-bottom: 20px;
             font-size: 24px;
+            font-weight: 600;
         }
 
         .control-grid {
@@ -62,7 +65,9 @@
             padding: 10px 12px;
             border: 2px solid #dee2e6;
             border-radius: 8px;
+            background: white;
             font-size: 14px;
+            font-family: inherit;
             transition: border-color 0.3s;
         }
 
@@ -80,12 +85,13 @@
         .theme-btn {
             padding: 10px 20px;
             border: 2px solid #dee2e6;
-            background: white;
             border-radius: 8px;
+            background: white;
             cursor: pointer;
             transition: all 0.3s;
             font-weight: 600;
             font-size: 14px;
+            font-family: inherit;
         }
 
         .theme-btn:hover {
@@ -94,14 +100,15 @@
         }
 
         .theme-btn.active {
-            border-color: #4a90e2;
             background: #4a90e2;
             color: white;
+            border-color: #4a90e2;
         }
 
         .canvas-container {
             padding: 40px;
             position: relative;
+            background: white;
         }
 
         canvas {
@@ -124,6 +131,7 @@
             transition: all 0.3s;
             display: block;
             width: calc(100% - 80px);
+            font-family: inherit;
         }
 
         .download-btn:hover {
@@ -176,6 +184,27 @@
                     <button class="theme-btn" data-theme="purple">Purple</button>
                 </div>
             </div>
+
+            <div class="control-group" style="margin-top: 20px; padding-top: 20px; border-top: 2px solid #e9ecef;">
+                <label>Spaced Repetition (Recall Days)</label>
+                <p style="font-size: 12px; color: #6c757d; margin-bottom: 12px;">
+                    Enter days when you review the material (leave empty for no review). Reviews strengthen memory retention.
+                </p>
+                <div class="control-grid">
+                    <div class="control-group">
+                        <label for="recall1">First Review (day)</label>
+                        <input type="number" id="recall1" min="0" max="30" placeholder="No review">
+                    </div>
+                    <div class="control-group">
+                        <label for="recall2">Second Review (day)</label>
+                        <input type="number" id="recall2" min="0" max="30" placeholder="No review">
+                    </div>
+                    <div class="control-group">
+                        <label for="recall3">Third Review (day)</label>
+                        <input type="number" id="recall3" min="0" max="30" placeholder="No review">
+                    </div>
+                </div>
+            </div>
         </div>
 
         <div class="canvas-container">
@@ -198,42 +227,37 @@
             warm: {
                 primary: '#D84315',
                 secondary: '#FF6F42',
-                fill: 'rgba(216, 67, 21, 0.3)',
-                stripe: 'rgba(255, 255, 255, 0.4)',
-                text: '#5D4037',
-                grid: '#E0E0E0'
+                fill: 'rgba(216, 67, 21, 0.15)',
+                stripe: '#D84315',
+                text: '#5D4037'
             },
             blue: {
                 primary: '#1976D2',
                 secondary: '#42A5F5',
-                fill: 'rgba(25, 118, 210, 0.3)',
-                stripe: 'rgba(255, 255, 255, 0.4)',
-                text: '#0D47A1',
-                grid: '#E3F2FD'
+                fill: 'rgba(25, 118, 210, 0.15)',
+                stripe: '#1976D2',
+                text: '#0D47A1'
             },
             monochrome: {
                 primary: '#424242',
                 secondary: '#757575',
-                fill: 'rgba(66, 66, 66, 0.3)',
-                stripe: 'rgba(255, 255, 255, 0.5)',
-                text: '#212121',
-                grid: '#E0E0E0'
+                fill: 'rgba(66, 66, 66, 0.15)',
+                stripe: '#424242',
+                text: '#212121'
             },
             green: {
                 primary: '#2E7D32',
                 secondary: '#66BB6A',
-                fill: 'rgba(46, 125, 50, 0.3)',
-                stripe: 'rgba(255, 255, 255, 0.4)',
-                text: '#1B5E20',
-                grid: '#E8F5E9'
+                fill: 'rgba(46, 125, 50, 0.15)',
+                stripe: '#2E7D32',
+                text: '#1B5E20'
             },
             purple: {
                 primary: '#6A1B9A',
                 secondary: '#AB47BC',
-                fill: 'rgba(106, 27, 154, 0.3)',
-                stripe: 'rgba(255, 255, 255, 0.4)',
-                text: '#4A148C',
-                grid: '#F3E5F5'
+                fill: 'rgba(106, 27, 154, 0.15)',
+                stripe: '#6A1B9A',
+                text: '#4A148C'
             }
         };
 
@@ -245,154 +269,210 @@
             yLabel: 'Memory Retention (%)'
         };
 
+        let recallDays = [];
+
         // Ebbinghaus forgetting curve formula: R = e^(-t/S)
-        // Where R is retention, t is time, S is relative strength of memory
+        // When there's a review, the curve is "reset" and decay starts again from a boosted level
         function calculateRetention(day) {
-            const S = 3.5; // Strength parameter (adjustable)
-            return Math.exp(-day / S) * 100;
+            const S = 3.5; // Base strength parameter
+            const boostFactor = 1.5; // How much each review strengthens memory
+
+            // Sort recall days
+            const sortedRecalls = [...recallDays].sort((a, b) => a - b);
+
+            // Find the most recent recall before this day
+            let lastRecall = 0;
+            let numPreviousRecalls = 0;
+
+            for (let recall of sortedRecalls) {
+                if (recall <= day) {
+                    lastRecall = recall;
+                    numPreviousRecalls++;
+                }
+            }
+
+            // Calculate days since last recall (or initial learning)
+            const daysSinceRecall = day - lastRecall;
+
+            // Strengthen memory with each recall (slower decay)
+            const adjustedS = S * Math.pow(boostFactor, numPreviousRecalls);
+
+            // Calculate retention from the last recall point
+            let retention = Math.exp(-daysSinceRecall / adjustedS) * 100;
+
+            // Cap at 100%
+            return Math.min(retention, 100);
+        }
+
+        // Add randomness to make lines look hand-drawn
+        function jitter(value, amount = 0.5) {
+            return value + (Math.random() - 0.5) * amount;
+        }
+
+        // Draw a wobbly hand-drawn line
+        function drawWobblyLine(x1, y1, x2, y2, color, width, wobble = 0.8) {
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            const distance = Math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2);
+            const steps = Math.max(2, Math.floor(distance / 5));
+
+            ctx.beginPath();
+            ctx.moveTo(jitter(x1, wobble), jitter(y1, wobble));
+
+            for (let i = 1; i <= steps; i++) {
+                const t = i / steps;
+                const x = x1 + (x2 - x1) * t;
+                const y = y1 + (y2 - y1) * t;
+                ctx.lineTo(jitter(x, wobble), jitter(y, wobble));
+            }
+
+            ctx.stroke();
+        }
+
+        // Draw wobbly curve through points
+        function drawWobblyCurve(points, color, width) {
+            if (points.length < 2) return;
+
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+
+            ctx.beginPath();
+            ctx.moveTo(jitter(points[0].x, 1.5), jitter(points[0].y, 1.5));
+
+            for (let i = 1; i < points.length; i++) {
+                ctx.lineTo(jitter(points[i].x, 1.5), jitter(points[i].y, 1.5));
+            }
+
+            ctx.stroke();
         }
 
         function drawChart() {
             const theme = themes[currentTheme];
 
             // Clear canvas
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'white';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
 
             // Margins
             const margin = { top: 100, right: 80, bottom: 80, left: 100 };
             const chartWidth = canvas.width - margin.left - margin.right;
             const chartHeight = canvas.height - margin.top - margin.bottom;
 
-            // Draw title
-            ctx.font = 'bold 36px Georgia, serif';
+            // Draw title with handwriting font
+            ctx.font = 'bold 36px Caveat, cursive';
             ctx.fillStyle = theme.text;
             ctx.textAlign = 'center';
             ctx.fillText(chartData.title, canvas.width / 2, 50);
 
             // Draw subtitle
-            ctx.font = '20px Georgia, serif';
+            ctx.font = '20px Caveat, cursive';
             ctx.fillStyle = theme.text;
             ctx.fillText(chartData.subtitle, canvas.width / 2, 80);
 
             // Generate data points
             const maxDays = 30;
             const points = [];
-            for (let day = 0; day <= maxDays; day += 0.1) {
+            for (let day = 0; day <= maxDays; day += 0.2) {
                 const retention = calculateRetention(day);
                 const x = margin.left + (day / maxDays) * chartWidth;
                 const y = margin.top + chartHeight - (retention / 100) * chartHeight;
                 points.push({ x, y, day, retention });
             }
 
-            // Draw grid lines and labels
-            ctx.strokeStyle = theme.grid;
-            ctx.lineWidth = 1;
-            ctx.font = '16px Georgia, serif';
-            ctx.fillStyle = theme.text;
-
-            // Y-axis grid (percentage)
+            // Draw grid lines (light, wobbly)
             const ySteps = [0, 20, 40, 60, 80, 100];
             ySteps.forEach(percent => {
                 const y = margin.top + chartHeight - (percent / 100) * chartHeight;
-
-                // Grid line
-                ctx.beginPath();
-                ctx.moveTo(margin.left, y);
-                ctx.lineTo(margin.left + chartWidth, y);
-                ctx.stroke();
+                drawWobblyLine(margin.left, y, margin.left + chartWidth, y, '#E0E0E0', 1, 0.5);
 
                 // Label
+                ctx.font = '16px Caveat, cursive';
+                ctx.fillStyle = theme.text;
                 ctx.textAlign = 'right';
                 ctx.fillText(percent + '%', margin.left - 20, y + 5);
             });
 
-            // X-axis grid (days)
+            // X-axis grid
             const xSteps = [0, 1, 7, 15, 30];
             xSteps.forEach(day => {
                 const x = margin.left + (day / maxDays) * chartWidth;
-
-                // Grid line
-                ctx.beginPath();
-                ctx.moveTo(x, margin.top);
-                ctx.lineTo(x, margin.top + chartHeight);
-                ctx.stroke();
+                drawWobblyLine(x, margin.top, x, margin.top + chartHeight, '#E0E0E0', 1, 0.5);
 
                 // Label
+                ctx.font = '16px Caveat, cursive';
+                ctx.fillStyle = theme.text;
                 ctx.textAlign = 'center';
                 ctx.fillText(day, x, margin.top + chartHeight + 30);
             });
 
-            // Draw filled area with diagonal stripes
+            // Draw filled area with solid fill first
+            ctx.fillStyle = theme.fill;
+            ctx.beginPath();
+            ctx.moveTo(margin.left, margin.top + chartHeight);
+            points.forEach(p => ctx.lineTo(p.x, p.y));
+            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
+            ctx.closePath();
+            ctx.fill();
+
+            // Draw hand-drawn diagonal stripes
             ctx.save();
             ctx.beginPath();
             ctx.moveTo(margin.left, margin.top + chartHeight);
-            points.forEach((point, i) => {
-                if (i === 0) ctx.lineTo(point.x, point.y);
-                else ctx.lineTo(point.x, point.y);
-            });
+            points.forEach(p => ctx.lineTo(p.x, p.y));
             ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
             ctx.closePath();
-
-            // Fill with solid color
-            ctx.fillStyle = theme.fill;
-            ctx.fill();
-
-            // Create diagonal stripe pattern
             ctx.clip();
-            ctx.strokeStyle = theme.stripe;
-            ctx.lineWidth = 3;
 
-            const stripeSpacing = 6;
-            const stripeAngle = -45 * Math.PI / 180;
-
-            // Draw stripes from top-left to bottom-right
+            const stripeSpacing = 8;
             for (let offset = -canvas.height; offset < canvas.width + canvas.height; offset += stripeSpacing) {
-                ctx.beginPath();
-                ctx.moveTo(offset, 0);
-                ctx.lineTo(offset + canvas.height, canvas.height);
-                ctx.stroke();
+                drawWobblyLine(offset, 0, offset + canvas.height, canvas.height, theme.stripe, 1.5, 1.2);
             }
 
             ctx.restore();
 
-            // Draw main curve (darker outline)
-            ctx.beginPath();
-            points.forEach((point, i) => {
-                if (i === 0) ctx.moveTo(point.x, point.y);
-                else ctx.lineTo(point.x, point.y);
-            });
-            ctx.strokeStyle = theme.primary;
-            ctx.lineWidth = 4;
-            ctx.stroke();
+            // Draw main curve with multiple passes for hand-drawn effect
+            for (let pass = 0; pass < 3; pass++) {
+                const wobbleAmount = pass === 0 ? 2 : 1.5;
+                const color = pass === 0 ? theme.primary : theme.secondary;
+                const width = pass === 0 ? 4 : 3;
+                const offsetY = pass * -1;
 
-            // Draw secondary curve (lighter, slightly offset)
-            ctx.beginPath();
-            points.forEach((point, i) => {
-                if (i === 0) ctx.moveTo(point.x, point.y - 3);
-                else ctx.lineTo(point.x, point.y - 3);
-            });
-            ctx.strokeStyle = theme.secondary;
-            ctx.lineWidth = 3;
-            ctx.stroke();
+                ctx.globalAlpha = pass === 0 ? 1 : 0.7;
 
-            // Draw axes
-            ctx.strokeStyle = theme.text;
-            ctx.lineWidth = 2;
+                ctx.strokeStyle = color;
+                ctx.lineWidth = width;
+                ctx.lineCap = 'round';
+                ctx.lineJoin = 'round';
 
-            // Y-axis
-            ctx.beginPath();
-            ctx.moveTo(margin.left, margin.top);
-            ctx.lineTo(margin.left, margin.top + chartHeight);
-            ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(
+                    jitter(points[0].x, wobbleAmount),
+                    jitter(points[0].y + offsetY, wobbleAmount)
+                );
 
-            // X-axis
-            ctx.beginPath();
-            ctx.moveTo(margin.left, margin.top + chartHeight);
-            ctx.lineTo(margin.left + chartWidth, margin.top + chartHeight);
-            ctx.stroke();
+                for (let i = 1; i < points.length; i++) {
+                    ctx.lineTo(
+                        jitter(points[i].x, wobbleAmount),
+                        jitter(points[i].y + offsetY, wobbleAmount)
+                    );
+                }
+
+                ctx.stroke();
+            }
+
+            ctx.globalAlpha = 1;
+
+            // Draw axes (thick, wobbly)
+            drawWobblyLine(margin.left, margin.top, margin.left, margin.top + chartHeight, theme.text, 3, 1);
+            drawWobblyLine(margin.left, margin.top + chartHeight, margin.left + chartWidth, margin.top + chartHeight, theme.text, 3, 1);
 
             // Draw axis labels
-            ctx.font = 'italic 18px Georgia, serif';
+            ctx.font = 'italic 18px Indie Flower, cursive';
             ctx.fillStyle = theme.text;
 
             // Y-axis label
@@ -407,20 +487,66 @@
             ctx.textAlign = 'center';
             ctx.fillText(chartData.xLabel, margin.left + chartWidth / 2, canvas.height - 20);
 
-            // Draw "100% Initial Learning" indicator
-            ctx.strokeStyle = theme.text;
-            ctx.lineWidth = 2;
-            ctx.setLineDash([10, 5]);
+            // Draw "100% Initial Learning" indicator with dashed line
             const y100 = margin.top;
-            ctx.beginPath();
-            ctx.moveTo(margin.left, y100);
-            ctx.lineTo(margin.left + chartWidth, y100);
-            ctx.stroke();
-            ctx.setLineDash([]);
+            const dashLength = 12;
+            const gapLength = 8;
 
-            ctx.font = '16px Georgia, serif';
+            for (let x = margin.left; x < margin.left + chartWidth; x += dashLength + gapLength) {
+                const endX = Math.min(x + dashLength, margin.left + chartWidth);
+                drawWobblyLine(x, y100, endX, y100, theme.text, 2, 1.2);
+            }
+
+            ctx.font = '16px Caveat, cursive';
             ctx.textAlign = 'right';
+            ctx.fillStyle = theme.text;
             ctx.fillText('100% Initial Learning', margin.left + chartWidth - 10, y100 - 10);
+
+            // Draw recall markers
+            recallDays.forEach((day, index) => {
+                if (day >= 0 && day <= maxDays) {
+                    const x = margin.left + (day / maxDays) * chartWidth;
+
+                    // Draw vertical line at recall point
+                    ctx.strokeStyle = theme.primary;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(x, margin.top);
+                    ctx.lineTo(x, margin.top + chartHeight);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+
+                    // Draw star/marker at recall point on curve
+                    const retention = calculateRetention(day);
+                    const y = margin.top + chartHeight - (retention / 100) * chartHeight;
+
+                    // Draw star
+                    ctx.fillStyle = theme.primary;
+                    ctx.strokeStyle = theme.primary;
+                    ctx.lineWidth = 2;
+
+                    const starSize = 8;
+                    ctx.beginPath();
+                    for (let i = 0; i < 5; i++) {
+                        const angle = (i * 4 * Math.PI) / 5 - Math.PI / 2;
+                        const radius = i % 2 === 0 ? starSize : starSize / 2;
+                        const sx = x + Math.cos(angle) * radius;
+                        const sy = y + Math.sin(angle) * radius;
+                        if (i === 0) ctx.moveTo(sx, sy);
+                        else ctx.lineTo(sx, sy);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+
+                    // Label
+                    ctx.font = 'bold 14px Caveat, cursive';
+                    ctx.fillStyle = theme.primary;
+                    ctx.textAlign = 'center';
+                    ctx.fillText(`Review ${index + 1}`, x, margin.top - 10);
+                }
+            });
         }
 
         // Event listeners
@@ -461,6 +587,26 @@
             link.href = canvas.toDataURL('image/png');
             link.click();
         });
+
+        // Update recall days from inputs
+        function updateRecallDays() {
+            recallDays = [];
+
+            const recall1 = parseFloat(document.getElementById('recall1').value);
+            const recall2 = parseFloat(document.getElementById('recall2').value);
+            const recall3 = parseFloat(document.getElementById('recall3').value);
+
+            if (!isNaN(recall1) && recall1 >= 0) recallDays.push(recall1);
+            if (!isNaN(recall2) && recall2 >= 0) recallDays.push(recall2);
+            if (!isNaN(recall3) && recall3 >= 0) recallDays.push(recall3);
+
+            drawChart();
+        }
+
+        // Recall day inputs
+        document.getElementById('recall1').addEventListener('input', updateRecallDays);
+        document.getElementById('recall2').addEventListener('input', updateRecallDays);
+        document.getElementById('recall3').addEventListener('input', updateRecallDays);
 
         // Initial draw
         drawChart();
