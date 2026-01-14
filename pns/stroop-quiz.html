@@ -142,8 +142,28 @@
 
     .result-status {
       font-size: 1.25rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1rem;
       color: #666;
+    }
+
+    .result-stats {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: #666;
+    }
+
+    .result-stats span {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .stat-value {
+      font-weight: 600;
+      color: #333;
     }
 
     .breakdown {
@@ -156,7 +176,7 @@
 
     .breakdown-header {
       display: grid;
-      grid-template-columns: 0.5fr 1.5fr 1fr 1fr;
+      grid-template-columns: 0.4fr 1.3fr 1fr 1fr 0.6fr;
       padding: 12px 16px;
       background: #f5f5f5;
       font-weight: 600;
@@ -168,11 +188,16 @@
 
     .breakdown-row {
       display: grid;
-      grid-template-columns: 0.5fr 1.5fr 1fr 1fr;
+      grid-template-columns: 0.4fr 1.3fr 1fr 1fr 0.6fr;
       padding: 12px 16px;
       border-top: 1px solid #e0e0e0;
       font-size: 0.875rem;
       align-items: center;
+    }
+
+    .breakdown-time {
+      text-align: right;
+      color: #666;
     }
 
     .breakdown-row.correct {
@@ -327,6 +352,10 @@
     <div id="results-screen" class="screen">
       <div class="result-score" id="result-score">7/10</div>
       <div class="result-status" id="result-status">70% - PASS</div>
+      <div class="result-stats">
+        <span>Accuracy: <span class="stat-value" id="stat-accuracy">70%</span></span>
+        <span>Avg Time: <span class="stat-value" id="stat-avg-time">2.5s</span></span>
+      </div>
       <div class="breakdown" id="breakdown"></div>
       <button class="btn" id="retry-btn" onclick="startQuiz()">Try Again</button>
       <details class="info-section">
@@ -369,6 +398,7 @@
     let answers = [];
     let timerInterval = null;
     let timeLeft = 0;
+    let questionStartTime = 0;
 
     function generateQuestions() {
       questions = [];
@@ -435,6 +465,7 @@
         optionsContainer.appendChild(btn);
       });
 
+      questionStartTime = Date.now();
       startTimer();
     }
 
@@ -463,10 +494,15 @@
     function selectAnswer(color) {
       if (timerInterval) clearInterval(timerInterval);
 
+      const timeTaken = color === null
+        ? TIME_PER_QUESTION
+        : Date.now() - questionStartTime;
+
       answers.push({
         question: questions[currentQuestion],
         answer: color,
-        correct: color === questions[currentQuestion].ink
+        correct: color === questions[currentQuestion].ink,
+        time: timeTaken
       });
 
       currentQuestion++;
@@ -485,12 +521,18 @@
       const percentage = (correctCount / TOTAL_QUESTIONS) * 100;
       const passed = percentage >= PASS_THRESHOLD * 100;
 
+      const totalTime = answers.reduce((sum, a) => sum + a.time, 0);
+      const avgTime = (totalTime / TOTAL_QUESTIONS / 1000).toFixed(2);
+
       const scoreEl = document.getElementById('result-score');
       scoreEl.textContent = `${correctCount}/${TOTAL_QUESTIONS}`;
       scoreEl.className = `result-score ${passed ? 'pass' : 'fail'}`;
 
       document.getElementById('result-status').textContent =
         `${percentage}% - ${passed ? 'PASS' : 'FAIL'}`;
+
+      document.getElementById('stat-accuracy').textContent = `${percentage}%`;
+      document.getElementById('stat-avg-time').textContent = `${avgTime}s`;
 
       document.getElementById('retry-btn').textContent =
         passed ? 'Play Again' : 'Try Again';
@@ -502,6 +544,7 @@
           <span>Question</span>
           <span>Your Answer</span>
           <span>Correct</span>
+          <span>Time</span>
         </div>
       `;
 
@@ -513,6 +556,7 @@
           <span class="breakdown-question">"<span class="color-${a.question.ink}">${a.question.word.toUpperCase()}</span>"</span>
           <span class="breakdown-answer ${a.answer ? 'color-' + a.answer : ''}">${a.answer || 'Timeout'}</span>
           <span class="breakdown-answer color-${a.question.ink}">${a.question.ink}</span>
+          <span class="breakdown-time">${(a.time / 1000).toFixed(2)}s</span>
         `;
         breakdown.appendChild(row);
       });
