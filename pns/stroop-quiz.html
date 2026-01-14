@@ -191,6 +191,77 @@
       text-transform: capitalize;
     }
 
+    /* Info Section */
+    .info-section {
+      margin-top: 2.5rem;
+      text-align: left;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+      background: #fff;
+    }
+
+    .info-section summary {
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: #555;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info-section summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .info-section summary::after {
+      content: '+';
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #999;
+    }
+
+    .info-section[open] summary::after {
+      content: '-';
+    }
+
+    .info-section[open] summary {
+      border-bottom: 1px solid #e0e0e0;
+    }
+
+    .info-content {
+      padding: 18px;
+      font-size: 0.875rem;
+      color: #555;
+      line-height: 1.7;
+    }
+
+    .info-content h3 {
+      font-size: 0.9rem;
+      color: #333;
+      margin-bottom: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .info-content h3:first-child {
+      margin-top: 0;
+    }
+
+    .info-content p {
+      margin-bottom: 0.75rem;
+    }
+
+    .info-content ul {
+      margin-left: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .info-content li {
+      margin-bottom: 0.35rem;
+    }
+
     /* Color classes */
     .color-yellow { color: #f9a825; }
     .color-red { color: #c62828; }
@@ -215,6 +286,32 @@
         10 questions &bull; 5 seconds each &bull; 70% to pass
       </p>
       <button class="btn" onclick="startQuiz()">Start Quiz</button>
+      <details class="info-section">
+        <summary>What is the Stroop Effect?</summary>
+        <div class="info-content">
+          <h3>The Stroop Effect</h3>
+          <p>The Stroop Effect is a phenomenon in cognitive psychology where your brain experiences interference when processing conflicting information. When you see a color word printed in a different ink color (like "RED" written in blue), your brain struggles because reading is automatic, but identifying colors requires conscious effort.</p>
+
+          <h3>Why It's Useful</h3>
+          <p>This cognitive conflict is valuable for several reasons:</p>
+          <ul>
+            <li><strong>Measures cognitive flexibility</strong> - Your ability to suppress automatic responses and switch between tasks</li>
+            <li><strong>Assesses attention control</strong> - How well you can focus on relevant information while ignoring distractions</li>
+            <li><strong>Indicates processing speed</strong> - The time it takes to resolve conflicting information</li>
+            <li><strong>Used clinically</strong> - Helps detect attention disorders, brain injuries, and cognitive decline</li>
+          </ul>
+
+          <h3>How This Quiz Helps</h3>
+          <p>Regular practice with Stroop-type exercises can:</p>
+          <ul>
+            <li>Strengthen your prefrontal cortex (the brain's control center)</li>
+            <li>Improve focus and concentration</li>
+            <li>Enhance mental agility and response inhibition</li>
+            <li>Serve as a quick cognitive warm-up before demanding tasks</li>
+          </ul>
+          <p>Try to beat your score and watch your cognitive control improve over time!</p>
+        </div>
+      </details>
     </div>
 
     <!-- Quiz Screen -->
@@ -234,6 +331,32 @@
       <div class="result-status" id="result-status">70% - PASS</div>
       <div class="breakdown" id="breakdown"></div>
       <button class="btn" id="retry-btn" onclick="startQuiz()">Try Again</button>
+      <details class="info-section">
+        <summary>What is the Stroop Effect?</summary>
+        <div class="info-content">
+          <h3>The Stroop Effect</h3>
+          <p>The Stroop Effect is a phenomenon in cognitive psychology where your brain experiences interference when processing conflicting information. When you see a color word printed in a different ink color (like "RED" written in blue), your brain struggles because reading is automatic, but identifying colors requires conscious effort.</p>
+
+          <h3>Why It's Useful</h3>
+          <p>This cognitive conflict is valuable for several reasons:</p>
+          <ul>
+            <li><strong>Measures cognitive flexibility</strong> - Your ability to suppress automatic responses and switch between tasks</li>
+            <li><strong>Assesses attention control</strong> - How well you can focus on relevant information while ignoring distractions</li>
+            <li><strong>Indicates processing speed</strong> - The time it takes to resolve conflicting information</li>
+            <li><strong>Used clinically</strong> - Helps detect attention disorders, brain injuries, and cognitive decline</li>
+          </ul>
+
+          <h3>How This Quiz Helps</h3>
+          <p>Regular practice with Stroop-type exercises can:</p>
+          <ul>
+            <li>Strengthen your prefrontal cortex (the brain's control center)</li>
+            <li>Improve focus and concentration</li>
+            <li>Enhance mental agility and response inhibition</li>
+            <li>Serve as a quick cognitive warm-up before demanding tasks</li>
+          </ul>
+          <p>Try to beat your score and watch your cognitive control improve over time!</p>
+        </div>
+      </details>
     </div>
   </div>
 
