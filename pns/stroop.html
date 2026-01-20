@@ -4,6 +4,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Stroop Effect Quiz</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * {
       margin: 0;
@@ -12,7 +15,7 @@
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #fafafa;
       min-height: 100vh;
       display: flex;
@@ -287,6 +290,41 @@
       margin-bottom: 0.35rem;
     }
 
+    /* Language Toggle */
+    .language-toggle {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      display: flex;
+      gap: 8px;
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      padding: 4px;
+      font-size: 0.875rem;
+    }
+
+    .language-toggle button {
+      padding: 6px 12px;
+      border: none;
+      background: transparent;
+      color: #666;
+      cursor: pointer;
+      border-radius: 4px;
+      transition: all 0.2s;
+      font-weight: 500;
+      font-family: 'Noto Sans Devanagari', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    .language-toggle button:hover {
+      background: #f5f5f5;
+    }
+
+    .language-toggle button.active {
+      background: #333;
+      color: #fff;
+    }
+
     /* Color classes */
     .color-black { color: #212121; }
     .color-red { color: #c62828; }
@@ -300,39 +338,45 @@
 </head>
 <body>
   <div class="container">
+    <!-- Language Toggle -->
+    <div class="language-toggle">
+      <button onclick="setLanguage('en')" class="active" id="lang-en">English</button>
+      <button onclick="setLanguage('hi')" id="lang-hi">हिन्दी</button>
+    </div>
+
     <!-- Start Screen -->
     <div id="start-screen" class="screen active">
-      <h1 class="title">Stroop Effect Quiz</h1>
-      <p class="subtitle">
+      <h1 class="title" data-i18n="title">Stroop Effect Quiz</h1>
+      <p class="subtitle" data-i18n="subtitle">
         You'll see color names displayed in different ink colors.<br>
         Your task: identify the <strong>INK COLOR</strong>, not the word.<br><br>
         10 questions &bull; 5 seconds each &bull; 70% to pass
       </p>
-      <button class="btn" onclick="startQuiz()">Start Quiz</button>
+      <button class="btn" onclick="startQuiz()" data-i18n="startBtn">Start Quiz</button>
       <details class="info-section">
-        <summary>What is the Stroop Effect?</summary>
-        <div class="info-content">
-          <h3>The Stroop Effect</h3>
-          <p>The Stroop Effect is a phenomenon in cognitive psychology where your brain experiences interference when processing conflicting information. When you see a color word printed in a different ink color (like "RED" written in blue), your brain struggles because reading is automatic, but identifying colors requires conscious effort.</p>
+        <summary data-i18n="infoSummary">What is the Stroop Effect?</summary>
+        <div class="info-content" id="info-content-start">
+          <h3 data-i18n="infoTitle1">The Stroop Effect</h3>
+          <p data-i18n="infoPara1">The Stroop Effect is a phenomenon in cognitive psychology where your brain experiences interference when processing conflicting information. When you see a color word printed in a different ink color (like "RED" written in blue), your brain struggles because reading is automatic, but identifying colors requires conscious effort.</p>
 
-          <h3>Why It's Useful</h3>
-          <p>This cognitive conflict is valuable for several reasons:</p>
+          <h3 data-i18n="infoTitle2">Why It's Useful</h3>
+          <p data-i18n="infoPara2">This cognitive conflict is valuable for several reasons:</p>
           <ul>
-            <li><strong>Measures cognitive flexibility</strong> - Your ability to suppress automatic responses and switch between tasks</li>
-            <li><strong>Assesses attention control</strong> - How well you can focus on relevant information while ignoring distractions</li>
-            <li><strong>Indicates processing speed</strong> - The time it takes to resolve conflicting information</li>
-            <li><strong>Used clinically</strong> - Helps detect attention disorders, brain injuries, and cognitive decline</li>
+            <li data-i18n="infoBullet1"><strong>Measures cognitive flexibility</strong> - Your ability to suppress automatic responses and switch between tasks</li>
+            <li data-i18n="infoBullet2"><strong>Assesses attention control</strong> - How well you can focus on relevant information while ignoring distractions</li>
+            <li data-i18n="infoBullet3"><strong>Indicates processing speed</strong> - The time it takes to resolve conflicting information</li>
+            <li data-i18n="infoBullet4"><strong>Used clinically</strong> - Helps detect attention disorders, brain injuries, and cognitive decline</li>
           </ul>
 
-          <h3>How This Quiz Helps</h3>
-          <p>Regular practice with Stroop-type exercises can:</p>
+          <h3 data-i18n="infoTitle3">How This Quiz Helps</h3>
+          <p data-i18n="infoPara3">Regular practice with Stroop-type exercises can:</p>
           <ul>
-            <li>Strengthen your prefrontal cortex (the brain's control center)</li>
-            <li>Improve focus and concentration</li>
-            <li>Enhance mental agility and response inhibition</li>
-            <li>Serve as a quick cognitive warm-up before demanding tasks</li>
+            <li data-i18n="infoBullet5">Strengthen your prefrontal cortex (the brain's control center)</li>
+            <li data-i18n="infoBullet6">Improve focus and concentration</li>
+            <li data-i18n="infoBullet7">Enhance mental agility and response inhibition</li>
+            <li data-i18n="infoBullet8">Serve as a quick cognitive warm-up before demanding tasks</li>
           </ul>
-          <p>Try to beat your score and watch your cognitive control improve over time!</p>
+          <p data-i18n="infoPara4">Try to beat your score and watch your cognitive control improve over time!</p>
         </div>
       </details>
     </div>
@@ -343,7 +387,7 @@
         <div class="progress-bar" id="progress-bar"></div>
       </div>
       <div class="question-counter" id="question-counter">Question 1 of 10</div>
-      <p class="prompt">What color is the INK?</p>
+      <p class="prompt" data-i18n="prompt">What color is the INK?</p>
       <div class="color-word" id="color-word">RED</div>
       <div class="options" id="options"></div>
     </div>
@@ -353,41 +397,129 @@
       <div class="result-score" id="result-score">7/10</div>
       <div class="result-status" id="result-status">70% - PASS</div>
       <div class="result-stats">
-        <span>Accuracy: <span class="stat-value" id="stat-accuracy">70%</span></span>
-        <span>Avg Time: <span class="stat-value" id="stat-avg-time">2.5s</span></span>
+        <span><span data-i18n="accuracy">Accuracy</span>: <span class="stat-value" id="stat-accuracy">70%</span></span>
+        <span><span data-i18n="avgTime">Avg Time</span>: <span class="stat-value" id="stat-avg-time">2.5s</span></span>
       </div>
       <div class="breakdown" id="breakdown"></div>
       <button class="btn" id="retry-btn" onclick="startQuiz()">Try Again</button>
       <details class="info-section">
-        <summary>What is the Stroop Effect?</summary>
-        <div class="info-content">
-          <h3>The Stroop Effect</h3>
-          <p>The Stroop Effect is a phenomenon in cognitive psychology where your brain experiences interference when processing conflicting information. When you see a color word printed in a different ink color (like "RED" written in blue), your brain struggles because reading is automatic, but identifying colors requires conscious effort.</p>
+        <summary data-i18n="infoSummary">What is the Stroop Effect?</summary>
+        <div class="info-content" id="info-content-results">
+          <h3 data-i18n="infoTitle1">The Stroop Effect</h3>
+          <p data-i18n="infoPara1">The Stroop Effect is a phenomenon in cognitive psychology where your brain experiences interference when processing conflicting information. When you see a color word printed in a different ink color (like "RED" written in blue), your brain struggles because reading is automatic, but identifying colors requires conscious effort.</p>
 
-          <h3>Why It's Useful</h3>
-          <p>This cognitive conflict is valuable for several reasons:</p>
+          <h3 data-i18n="infoTitle2">Why It's Useful</h3>
+          <p data-i18n="infoPara2">This cognitive conflict is valuable for several reasons:</p>
           <ul>
-            <li><strong>Measures cognitive flexibility</strong> - Your ability to suppress automatic responses and switch between tasks</li>
-            <li><strong>Assesses attention control</strong> - How well you can focus on relevant information while ignoring distractions</li>
-            <li><strong>Indicates processing speed</strong> - The time it takes to resolve conflicting information</li>
-            <li><strong>Used clinically</strong> - Helps detect attention disorders, brain injuries, and cognitive decline</li>
+            <li data-i18n="infoBullet1"><strong>Measures cognitive flexibility</strong> - Your ability to suppress automatic responses and switch between tasks</li>
+            <li data-i18n="infoBullet2"><strong>Assesses attention control</strong> - How well you can focus on relevant information while ignoring distractions</li>
+            <li data-i18n="infoBullet3"><strong>Indicates processing speed</strong> - The time it takes to resolve conflicting information</li>
+            <li data-i18n="infoBullet4"><strong>Used clinically</strong> - Helps detect attention disorders, brain injuries, and cognitive decline</li>
           </ul>
 
-          <h3>How This Quiz Helps</h3>
-          <p>Regular practice with Stroop-type exercises can:</p>
+          <h3 data-i18n="infoTitle3">How This Quiz Helps</h3>
+          <p data-i18n="infoPara3">Regular practice with Stroop-type exercises can:</p>
           <ul>
-            <li>Strengthen your prefrontal cortex (the brain's control center)</li>
-            <li>Improve focus and concentration</li>
-            <li>Enhance mental agility and response inhibition</li>
-            <li>Serve as a quick cognitive warm-up before demanding tasks</li>
+            <li data-i18n="infoBullet5">Strengthen your prefrontal cortex (the brain's control center)</li>
+            <li data-i18n="infoBullet6">Improve focus and concentration</li>
+            <li data-i18n="infoBullet7">Enhance mental agility and response inhibition</li>
+            <li data-i18n="infoBullet8">Serve as a quick cognitive warm-up before demanding tasks</li>
           </ul>
-          <p>Try to beat your score and watch your cognitive control improve over time!</p>
+          <p data-i18n="infoPara4">Try to beat your score and watch your cognitive control improve over time!</p>
         </div>
       </details>
     </div>
   </div>
 
   <script>
+    // Language support
+    let currentLanguage = 'en';
+
+    const translations = {
+      en: {
+        colors: {
+          black: 'black',
+          red: 'red',
+          yellow: 'yellow',
+          blue: 'blue',
+          green: 'green',
+          purple: 'purple',
+          grey: 'grey',
+          pink: 'pink'
+        },
+        title: 'Stroop Effect Quiz',
+        subtitle: 'You\'ll see color names displayed in different ink colors.<br>Your task: identify the <strong>INK COLOR</strong>, not the word.<br><br>10 questions &bull; 5 seconds each &bull; 70% to pass',
+        startBtn: 'Start Quiz',
+        prompt: 'What color is the INK?',
+        questionCounter: 'Question {n} of 10',
+        pass: 'PASS',
+        fail: 'FAIL',
+        accuracy: 'Accuracy',
+        avgTime: 'Avg Time',
+        tryAgain: 'Try Again',
+        playAgain: 'Play Again',
+        timeout: 'Timeout',
+        breakdownHeaders: ['#', 'Question', 'Your Answer', 'Correct', 'Time'],
+        infoSummary: 'What is the Stroop Effect?',
+        infoTitle1: 'The Stroop Effect',
+        infoPara1: 'The Stroop Effect is a phenomenon in cognitive psychology where your brain experiences interference when processing conflicting information. When you see a color word printed in a different ink color (like "RED" written in blue), your brain struggles because reading is automatic, but identifying colors requires conscious effort.',
+        infoTitle2: 'Why It\'s Useful',
+        infoPara2: 'This cognitive conflict is valuable for several reasons:',
+        infoBullet1: '<strong>Measures cognitive flexibility</strong> - Your ability to suppress automatic responses and switch between tasks',
+        infoBullet2: '<strong>Assesses attention control</strong> - How well you can focus on relevant information while ignoring distractions',
+        infoBullet3: '<strong>Indicates processing speed</strong> - The time it takes to resolve conflicting information',
+        infoBullet4: '<strong>Used clinically</strong> - Helps detect attention disorders, brain injuries, and cognitive decline',
+        infoTitle3: 'How This Quiz Helps',
+        infoPara3: 'Regular practice with Stroop-type exercises can:',
+        infoBullet5: 'Strengthen your prefrontal cortex (the brain\'s control center)',
+        infoBullet6: 'Improve focus and concentration',
+        infoBullet7: 'Enhance mental agility and response inhibition',
+        infoBullet8: 'Serve as a quick cognitive warm-up before demanding tasks',
+        infoPara4: 'Try to beat your score and watch your cognitive control improve over time!'
+      },
+      hi: {
+        colors: {
+          black: 'काला',
+          red: 'लाल',
+          yellow: 'पीला',
+          blue: 'नीला',
+          green: 'हरा',
+          purple: 'बैंगनी',
+          grey: 'स्लेटी',
+          pink: 'गुलाबी'
+        },
+        title: 'स्ट्रूप प्रभाव प्रश्नोत्तरी',
+        subtitle: 'आपको अलग-अलग रंगों में लिखे रंगों के नाम दिखाई देंगे।<br>आपका काम: शब्द नहीं, बल्कि <strong>स्याही का रंग</strong> पहचानें।<br><br>10 प्रश्न &bull; प्रत्येक के लिए 5 सेकंड &bull; उत्तीर्ण होने के लिए 70%',
+        startBtn: 'शुरू करें',
+        prompt: 'स्याही का रंग क्या है?',
+        questionCounter: 'प्रश्न {n} में से 10',
+        pass: 'उत्तीर्ण',
+        fail: 'अनुत्तीर्ण',
+        accuracy: 'सटीकता',
+        avgTime: 'औसत समय',
+        tryAgain: 'पुनः प्रयास करें',
+        playAgain: 'फिर से खेलें',
+        timeout: 'समय समाप्त',
+        breakdownHeaders: ['#', 'प्रश्न', 'आपका उत्तर', 'सही उत्तर', 'समय'],
+        infoSummary: 'स्ट्रूप प्रभाव क्या है?',
+        infoTitle1: 'स्ट्रूप प्रभाव',
+        infoPara1: 'स्ट्रूप प्रभाव संज्ञानात्मक मनोविज्ञान की एक घटना है जिसमें आपका मस्तिष्क परस्पर विरोधी जानकारी को संसाधित करते समय हस्तक्षेप का अनुभव करता है। जब आप किसी रंग के नाम को अलग रंग की स्याही में लिखा देखते हैं (जैसे "लाल" शब्द नीले रंग में लिखा हो), तो आपका मस्तिष्क संघर्ष करता है क्योंकि पढ़ना स्वचालित है, लेकिन रंगों की पहचान करने में सचेत प्रयास की आवश्यकता होती है।',
+        infoTitle2: 'यह उपयोगी क्यों है',
+        infoPara2: 'यह संज्ञानात्मक संघर्ष कई कारणों से मूल्यवान है:',
+        infoBullet1: '<strong>संज्ञानात्मक लचीलापन मापता है</strong> - स्वचालित प्रतिक्रियाओं को दबाने और कार्यों के बीच स्विच करने की आपकी क्षमता',
+        infoBullet2: '<strong>ध्यान नियंत्रण का आकलन करता है</strong> - ध्यान भटकाने वाली चीजों को नजरअंदाज करते हुए आप प्रासंगिक जानकारी पर कितनी अच्छी तरह ध्यान केंद्रित कर सकते हैं',
+        infoBullet3: '<strong>प्रसंस्करण गति को इंगित करता है</strong> - परस्पर विरोधी जानकारी को हल करने में लगने वाला समय',
+        infoBullet4: '<strong>नैदानिक ​​रूप से उपयोग किया जाता है</strong> - ध्यान विकार, मस्तिष्क की चोटों और संज्ञानात्मक गिरावट का पता लगाने में मदद करता है',
+        infoTitle3: 'यह प्रश्नोत्तरी कैसे मदद करती है',
+        infoPara3: 'स्ट्रूप-प्रकार के अभ्यासों के नियमित अभ्यास से:',
+        infoBullet5: 'आपके प्रीफ्रंटल कॉर्टेक्स (मस्तिष्क का नियंत्रण केंद्र) को मजबूत करता है',
+        infoBullet6: 'ध्यान और एकाग्रता में सुधार करता है',
+        infoBullet7: 'मानसिक चपलता और प्रतिक्रिया अवरोध को बढ़ाता है',
+        infoBullet8: 'मांग वाले कार्यों से पहले एक त्वरित संज्ञानात्मक वार्म-अप के रूप में कार्य करता है',
+        infoPara4: 'अपने स्कोर को बेहतर बनाने की कोशिश करें और समय के साथ अपने संज्ञानात्मक नियंत्रण में सुधार देखें!'
+      }
+    };
+
     const COLORS = ['black', 'red', 'yellow', 'blue', 'green', 'purple', 'grey', 'pink'];
     const TOTAL_QUESTIONS = 10;
     const TIME_PER_QUESTION = 5000;
@@ -399,6 +531,109 @@
     let timerInterval = null;
     let timeLeft = 0;
     let questionStartTime = 0;
+
+    function setLanguage(lang) {
+      currentLanguage = lang;
+
+      // Update button states
+      document.getElementById('lang-en').classList.toggle('active', lang === 'en');
+      document.getElementById('lang-hi').classList.toggle('active', lang === 'hi');
+
+      // Update all translatable elements
+      updateLanguage();
+    }
+
+    function updateLanguage() {
+      const t = translations[currentLanguage];
+
+      // Update all elements with data-i18n attribute
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (t[key]) {
+          el.innerHTML = t[key];
+        }
+      });
+
+      // If we're on the results screen, update the dynamic content
+      const resultsScreen = document.getElementById('results-screen');
+      if (resultsScreen.classList.contains('active')) {
+        updateResultsContent();
+      }
+
+      // If we're on the quiz screen, update the question
+      const quizScreen = document.getElementById('quiz-screen');
+      if (quizScreen.classList.contains('active')) {
+        updateQuizContent();
+      }
+    }
+
+    function getColorName(color) {
+      return translations[currentLanguage].colors[color];
+    }
+
+    function updateQuizContent() {
+      if (questions.length === 0) return;
+
+      const q = questions[currentQuestion];
+      const t = translations[currentLanguage];
+
+      // Update question counter
+      document.getElementById('question-counter').textContent =
+        t.questionCounter.replace('{n}', currentQuestion + 1);
+
+      // Update color word
+      const colorWord = document.getElementById('color-word');
+      colorWord.textContent = getColorName(q.word).toUpperCase();
+
+      // Update option buttons
+      const optionsContainer = document.getElementById('options');
+      const buttons = optionsContainer.querySelectorAll('.option-btn');
+      buttons.forEach((btn, index) => {
+        btn.textContent = getColorName(q.options[index]);
+      });
+    }
+
+    function updateResultsContent() {
+      if (answers.length === 0) return;
+
+      const t = translations[currentLanguage];
+      const correctCount = answers.filter(a => a.correct).length;
+      const percentage = (correctCount / TOTAL_QUESTIONS) * 100;
+      const passed = percentage >= PASS_THRESHOLD * 100;
+
+      // Update status text
+      document.getElementById('result-status').textContent =
+        `${percentage}% - ${passed ? t.pass : t.fail}`;
+
+      // Update retry button
+      document.getElementById('retry-btn').textContent =
+        passed ? t.playAgain : t.tryAgain;
+
+      // Update breakdown table
+      const breakdown = document.getElementById('breakdown');
+      breakdown.innerHTML = `
+        <div class="breakdown-header">
+          <span>${t.breakdownHeaders[0]}</span>
+          <span>${t.breakdownHeaders[1]}</span>
+          <span>${t.breakdownHeaders[2]}</span>
+          <span>${t.breakdownHeaders[3]}</span>
+          <span>${t.breakdownHeaders[4]}</span>
+        </div>
+      `;
+
+      answers.forEach((a, i) => {
+        const row = document.createElement('div');
+        row.className = `breakdown-row ${a.correct ? 'correct' : 'incorrect'}`;
+        row.innerHTML = `
+          <span>${i + 1}</span>
+          <span class="breakdown-question">"<span class="color-${a.question.ink}">${getColorName(a.question.word).toUpperCase()}</span>"</span>
+          <span class="breakdown-answer ${a.answer ? 'color-' + a.answer : ''}">${a.answer ? getColorName(a.answer) : t.timeout}</span>
+          <span class="breakdown-answer color-${a.question.ink}">${getColorName(a.question.ink)}</span>
+          <span class="breakdown-time">${(a.time / 1000).toFixed(2)}s</span>
+        `;
+        breakdown.appendChild(row);
+      });
+    }
 
     function generateQuestions() {
       questions = [];
@@ -446,12 +681,13 @@
 
     function showQuestion() {
       const q = questions[currentQuestion];
+      const t = translations[currentLanguage];
 
       document.getElementById('question-counter').textContent =
-        `Question ${currentQuestion + 1} of ${TOTAL_QUESTIONS}`;
+        t.questionCounter.replace('{n}', currentQuestion + 1);
 
       const colorWord = document.getElementById('color-word');
-      colorWord.textContent = q.word;
+      colorWord.textContent = getColorName(q.word).toUpperCase();
       colorWord.className = `color-word color-${q.ink}`;
 
       const optionsContainer = document.getElementById('options');
@@ -460,7 +696,7 @@
       q.options.forEach(color => {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
-        btn.textContent = color;
+        btn.textContent = getColorName(color);
         btn.onclick = () => selectAnswer(color);
         optionsContainer.appendChild(btn);
       });
@@ -517,6 +753,7 @@
     function showResults() {
       showScreen('results-screen');
 
+      const t = translations[currentLanguage];
       const correctCount = answers.filter(a => a.correct).length;
       const percentage = (correctCount / TOTAL_QUESTIONS) * 100;
       const passed = percentage >= PASS_THRESHOLD * 100;
@@ -529,22 +766,22 @@
       scoreEl.className = `result-score ${passed ? 'pass' : 'fail'}`;
 
       document.getElementById('result-status').textContent =
-        `${percentage}% - ${passed ? 'PASS' : 'FAIL'}`;
+        `${percentage}% - ${passed ? t.pass : t.fail}`;
 
       document.getElementById('stat-accuracy').textContent = `${percentage}%`;
       document.getElementById('stat-avg-time').textContent = `${avgTime}s`;
 
       document.getElementById('retry-btn').textContent =
-        passed ? 'Play Again' : 'Try Again';
+        passed ? t.playAgain : t.tryAgain;
 
       const breakdown = document.getElementById('breakdown');
       breakdown.innerHTML = `
         <div class="breakdown-header">
-          <span>#</span>
-          <span>Question</span>
-          <span>Your Answer</span>
-          <span>Correct</span>
-          <span>Time</span>
+          <span>${t.breakdownHeaders[0]}</span>
+          <span>${t.breakdownHeaders[1]}</span>
+          <span>${t.breakdownHeaders[2]}</span>
+          <span>${t.breakdownHeaders[3]}</span>
+          <span>${t.breakdownHeaders[4]}</span>
         </div>
       `;
 
@@ -553,9 +790,9 @@
         row.className = `breakdown-row ${a.correct ? 'correct' : 'incorrect'}`;
         row.innerHTML = `
           <span>${i + 1}</span>
-          <span class="breakdown-question">"<span class="color-${a.question.ink}">${a.question.word.toUpperCase()}</span>"</span>
-          <span class="breakdown-answer ${a.answer ? 'color-' + a.answer : ''}">${a.answer || 'Timeout'}</span>
-          <span class="breakdown-answer color-${a.question.ink}">${a.question.ink}</span>
+          <span class="breakdown-question">"<span class="color-${a.question.ink}">${getColorName(a.question.word).toUpperCase()}</span>"</span>
+          <span class="breakdown-answer ${a.answer ? 'color-' + a.answer : ''}">${a.answer ? getColorName(a.answer) : t.timeout}</span>
+          <span class="breakdown-answer color-${a.question.ink}">${getColorName(a.question.ink)}</span>
           <span class="breakdown-time">${(a.time / 1000).toFixed(2)}s</span>
         `;
         breakdown.appendChild(row);
