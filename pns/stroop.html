@@ -553,10 +553,86 @@
           el.innerHTML = t[key];
         }
       });
+
+      // If we're on the results screen, update the dynamic content
+      const resultsScreen = document.getElementById('results-screen');
+      if (resultsScreen.classList.contains('active')) {
+        updateResultsContent();
+      }
+
+      // If we're on the quiz screen, update the question
+      const quizScreen = document.getElementById('quiz-screen');
+      if (quizScreen.classList.contains('active')) {
+        updateQuizContent();
+      }
     }
 
     function getColorName(color) {
       return translations[currentLanguage].colors[color];
+    }
+
+    function updateQuizContent() {
+      if (questions.length === 0) return;
+
+      const q = questions[currentQuestion];
+      const t = translations[currentLanguage];
+
+      // Update question counter
+      document.getElementById('question-counter').textContent =
+        t.questionCounter.replace('{n}', currentQuestion + 1);
+
+      // Update color word
+      const colorWord = document.getElementById('color-word');
+      colorWord.textContent = getColorName(q.word).toUpperCase();
+
+      // Update option buttons
+      const optionsContainer = document.getElementById('options');
+      const buttons = optionsContainer.querySelectorAll('.option-btn');
+      buttons.forEach((btn, index) => {
+        btn.textContent = getColorName(q.options[index]);
+      });
+    }
+
+    function updateResultsContent() {
+      if (answers.length === 0) return;
+
+      const t = translations[currentLanguage];
+      const correctCount = answers.filter(a => a.correct).length;
+      const percentage = (correctCount / TOTAL_QUESTIONS) * 100;
+      const passed = percentage >= PASS_THRESHOLD * 100;
+
+      // Update status text
+      document.getElementById('result-status').textContent =
+        `${percentage}% - ${passed ? t.pass : t.fail}`;
+
+      // Update retry button
+      document.getElementById('retry-btn').textContent =
+        passed ? t.playAgain : t.tryAgain;
+
+      // Update breakdown table
+      const breakdown = document.getElementById('breakdown');
+      breakdown.innerHTML = `
+        <div class="breakdown-header">
+          <span>${t.breakdownHeaders[0]}</span>
+          <span>${t.breakdownHeaders[1]}</span>
+          <span>${t.breakdownHeaders[2]}</span>
+          <span>${t.breakdownHeaders[3]}</span>
+          <span>${t.breakdownHeaders[4]}</span>
+        </div>
+      `;
+
+      answers.forEach((a, i) => {
+        const row = document.createElement('div');
+        row.className = `breakdown-row ${a.correct ? 'correct' : 'incorrect'}`;
+        row.innerHTML = `
+          <span>${i + 1}</span>
+          <span class="breakdown-question">"<span class="color-${a.question.ink}">${getColorName(a.question.word).toUpperCase()}</span>"</span>
+          <span class="breakdown-answer ${a.answer ? 'color-' + a.answer : ''}">${a.answer ? getColorName(a.answer) : t.timeout}</span>
+          <span class="breakdown-answer color-${a.question.ink}">${getColorName(a.question.ink)}</span>
+          <span class="breakdown-time">${(a.time / 1000).toFixed(2)}s</span>
+        `;
+        breakdown.appendChild(row);
+      });
     }
 
     function generateQuestions() {
