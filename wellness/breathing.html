@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Breathing Exercise Guide</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: background 0.5s ease;
+            padding: 20px;
+        }
+
+        body.light {
+            background: linear-gradient(135deg, #e0f0ea 0%, #c7dfe0 30%, #d5e5f0 60%, #e8edf5 100%);
+            color: #2c3e50;
+        }
+
+        body.dark {
+            background: linear-gradient(135deg, #0f1923 0%, #1a2a3a 30%, #152030 60%, #0d1820 100%);
+            color: #c8dce8;
+        }
+
+        .container {
+            max-width: 560px;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 24px;
+        }
+
+        header {
+            text-align: center;
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        body.light h1 { color: #3a6b7e; }
+        body.dark h1 { color: #7ec8d8; }
+
+        .theme-toggle {
+            background: none;
+            border: 2px solid;
+            border-radius: 20px;
+            padding: 6px 14px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        body.light .theme-toggle {
+            border-color: #7eaab8;
+            color: #3a6b7e;
+        }
+
+        body.light .theme-toggle:hover {
+            background: #3a6b7e;
+            color: #fff;
+        }
+
+        body.dark .theme-toggle {
+            border-color: #5a9aaa;
+            color: #7ec8d8;
+        }
+
+        body.dark .theme-toggle:hover {
+            background: #5a9aaa;
+            color: #0f1923;
+        }
+
+        /* Technique Selector */
+        .technique-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .technique-btn {
+            padding: 12px 10px;
+            border: 2px solid;
+            border-radius: 14px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        body.light .technique-btn {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: #b8d8e0;
+            color: #3a6b7e;
+        }
+
+        body.light .technique-btn:hover {
+            background: rgba(255, 255, 255, 0.9);
+            border-color: #7eaab8;
+        }
+
+        body.light .technique-btn.active {
+            background: #3a6b7e;
+            border-color: #3a6b7e;
+            color: #fff;
+        }
+
+        body.dark .technique-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(126, 200, 216, 0.25);
+            color: #8ab8c8;
+        }
+
+        body.dark .technique-btn:hover {
+            background: rgba(126, 200, 216, 0.1);
+            border-color: rgba(126, 200, 216, 0.5);
+        }
+
+        body.dark .technique-btn.active {
+            background: rgba(126, 200, 216, 0.2);
+            border-color: #7ec8d8;
+            color: #7ec8d8;
+        }
+
+        .technique-btn .timing {
+            font-size: 0.72rem;
+            font-weight: 400;
+            margin-top: 3px;
+            opacity: 0.7;
+        }
+
+        /* Breathing Circle */
+        .circle-area {
+            position: relative;
+            width: 280px;
+            height: 280px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .breathing-circle {
+            position: absolute;
+            border-radius: 50%;
+            transition: none;
+        }
+
+        .circle-outer {
+            width: 280px;
+            height: 280px;
+            opacity: 0.12;
+        }
+
+        body.light .circle-outer { background: #5a9aaa; }
+        body.dark .circle-outer { background: #7ec8d8; }
+
+        .circle-main {
+            width: 120px;
+            height: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 6px;
+            z-index: 2;
+        }
+
+        body.light .circle-main {
+            background: linear-gradient(135deg, #5a9aaa, #7ec0c8);
+            box-shadow: 0 0 40px rgba(90, 154, 170, 0.3), 0 0 80px rgba(90, 154, 170, 0.1);
+        }
+
+        body.dark .circle-main {
+            background: linear-gradient(135deg, #3a7a8a, #5aa0b0);
+            box-shadow: 0 0 40px rgba(90, 180, 200, 0.25), 0 0 80px rgba(90, 180, 200, 0.08);
+        }
+
+        .circle-ring {
+            width: 120px;
+            height: 120px;
+            border: 2px solid;
+            opacity: 0.3;
+        }
+
+        body.light .circle-ring { border-color: #5a9aaa; }
+        body.dark .circle-ring { border-color: #7ec8d8; }
+
+        .phase-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #fff;
+            text-align: center;
+            line-height: 1.2;
+        }
+
+        .countdown-text {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .cycle-count {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.7;
+        }
+
+        /* Controls */
+        .controls {
+            display: flex;
+            gap: 12px;
+        }
+
+        .control-btn {
+            padding: 12px 28px;
+            border: none;
+            border-radius: 30px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-start {
+            color: #fff;
+        }
+
+        body.light .btn-start {
+            background: linear-gradient(135deg, #5a9aaa, #6ab0b8);
+            box-shadow: 0 4px 15px rgba(90, 154, 170, 0.3);
+        }
+
+        body.light .btn-start:hover {
+            box-shadow: 0 6px 20px rgba(90, 154, 170, 0.45);
+            transform: translateY(-1px);
+        }
+
+        body.dark .btn-start {
+            background: linear-gradient(135deg, #3a7a8a, #5aa0b0);
+            box-shadow: 0 4px 15px rgba(58, 122, 138, 0.4);
+        }
+
+        body.dark .btn-start:hover {
+            box-shadow: 0 6px 20px rgba(58, 122, 138, 0.6);
+            transform: translateY(-1px);
+        }
+
+        .btn-reset {
+            border: 2px solid;
+        }
+
+        body.light .btn-reset {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: #b8d8e0;
+            color: #3a6b7e;
+        }
+
+        body.light .btn-reset:hover {
+            background: rgba(255, 255, 255, 0.9);
+        }
+
+        body.dark .btn-reset {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(126, 200, 216, 0.3);
+            color: #7ec8d8;
+        }
+
+        body.dark .btn-reset:hover {
+            background: rgba(126, 200, 216, 0.1);
+        }
+
+        /* Description */
+        .description {
+            text-align: center;
+            padding: 18px 24px;
+            border-radius: 14px;
+            font-size: 0.85rem;
+            line-height: 1.6;
+            width: 100%;
+        }
+
+        body.light .description {
+            background: rgba(255, 255, 255, 0.5);
+            color: #4a7a8a;
+        }
+
+        body.dark .description {
+            background: rgba(255, 255, 255, 0.04);
+            color: #8ab8c8;
+        }
+
+        .description strong {
+            display: block;
+            margin-bottom: 4px;
+            font-size: 0.9rem;
+        }
+
+        body.light .description strong { color: #3a6b7e; }
+        body.dark .description strong { color: #7ec8d8; }
+
+        /* Phase progress dots */
+        .phase-indicators {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .phase-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        body.light .phase-dot {
+            background: #c8dce0;
+        }
+
+        body.light .phase-dot.active {
+            background: #5a9aaa;
+            box-shadow: 0 0 8px rgba(90, 154, 170, 0.5);
+        }
+
+        body.dark .phase-dot {
+            background: rgba(126, 200, 216, 0.15);
+        }
+
+        body.dark .phase-dot.active {
+            background: #7ec8d8;
+            box-shadow: 0 0 8px rgba(126, 200, 216, 0.5);
+        }
+
+        .phase-label {
+            font-size: 0.75rem;
+            font-weight: 500;
+            opacity: 0.5;
+            margin: 0 4px;
+        }
+
+        .phase-label.active {
+            opacity: 1;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container { gap: 18px; }
+            h1 { font-size: 1.25rem; }
+            .circle-area { width: 240px; height: 240px; }
+            .circle-outer { width: 240px; height: 240px; }
+            .technique-btn { font-size: 0.78rem; padding: 10px 8px; }
+        }
+    </style>
+</head>
+<body class="light">
+    <div class="container">
+        <header>
+            <h1>Breathing Guide</h1>
+            <button class="theme-toggle" onclick="toggleTheme()">Dark Mode</button>
+        </header>
+
+        <div class="technique-selector">
+            <button class="technique-btn active" onclick="selectTechnique('box')" data-tech="box">
+                Box Breathing
+                <div class="timing">4-4-4-4</div>
+            </button>
+            <button class="technique-btn" onclick="selectTechnique('relaxation')" data-tech="relaxation">
+                4-7-8 Relaxation
+                <div class="timing">4-7-8</div>
+            </button>
+            <button class="technique-btn" onclick="selectTechnique('calm')" data-tech="calm">
+                Calm Breathing
+                <div class="timing">4-6</div>
+            </button>
+            <button class="technique-btn" onclick="selectTechnique('energizing')" data-tech="energizing">
+                Energizing Breath
+                <div class="timing">2-2</div>
+            </button>
+        </div>
+
+        <div class="phase-indicators" id="phaseIndicators"></div>
+
+        <div class="circle-area">
+            <div class="breathing-circle circle-outer"></div>
+            <div class="breathing-circle circle-ring" id="circleRing"></div>
+            <div class="breathing-circle circle-main" id="circleMain">
+                <div class="phase-text" id="phaseText">Ready</div>
+                <div class="countdown-text" id="countdownText"></div>
+            </div>
+        </div>
+
+        <div class="cycle-count" id="cycleCount">Cycles: 0</div>
+
+        <div class="controls">
+            <button class="control-btn btn-start" id="startBtn" onclick="toggleStart()">Start</button>
+            <button class="control-btn btn-reset" onclick="resetExercise()">Reset</button>
+        </div>
+
+        <div class="description" id="description"></div>
+    </div>
+
+    <script>
+        const techniques = {
+            box: {
+                name: 'Box Breathing',
+                phases: [
+                    { name: 'Breathe In', duration: 4 },
+                    { name: 'Hold', duration: 4 },
+                    { name: 'Breathe Out', duration: 4 },
+                    { name: 'Hold', duration: 4 }
+                ],
+                description: 'Used by Navy SEALs and first responders to stay calm under pressure. Equal-length phases create a balanced rhythm that activates the parasympathetic nervous system, reducing stress and improving focus.'
+            },
+            relaxation: {
+                name: '4-7-8 Relaxation',
+                phases: [
+                    { name: 'Breathe In', duration: 4 },
+                    { name: 'Hold', duration: 7 },
+                    { name: 'Breathe Out', duration: 8 }
+                ],
+                description: 'Developed by Dr. Andrew Weil, this technique acts as a natural tranquilizer for the nervous system. The extended exhale promotes deep relaxation and can help with falling asleep.'
+            },
+            calm: {
+                name: 'Calm Breathing',
+                phases: [
+                    { name: 'Breathe In', duration: 4 },
+                    { name: 'Breathe Out', duration: 6 }
+                ],
+                description: 'A gentle technique where the exhale is longer than the inhale. This ratio stimulates the vagus nerve and promotes a calm, grounded state. Ideal for everyday stress relief.'
+            },
+            energizing: {
+                name: 'Energizing Breath',
+                phases: [
+                    { name: 'Breathe In', duration: 2 },
+                    { name: 'Breathe Out', duration: 2 }
+                ],
+                description: 'A quick, rhythmic breathing pattern that increases alertness and energy. The fast-paced cycle boosts oxygen intake and can help you feel more awake and focused.'
+            }
+        };
+
+        let currentTechnique = 'box';
+        let isRunning = false;
+        let currentPhaseIndex = 0;
+        let phaseTimeRemaining = 0;
+        let cycleCount = 0;
+        let animationId = null;
+        let lastTimestamp = null;
+
+        // Circle size range
+        const MIN_SCALE = 0.43;
+        const MAX_SCALE = 1.0;
+
+        function selectTechnique(tech) {
+            if (isRunning) return;
+            currentTechnique = tech;
+            document.querySelectorAll('.technique-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.tech === tech);
+            });
+            updateDescription();
+            buildPhaseIndicators();
+            resetVisuals();
+        }
+
+        function updateDescription() {
+            const t = techniques[currentTechnique];
+            document.getElementById('description').innerHTML =
+                `<strong>${t.name}</strong>${t.description}`;
+        }
+
+        function buildPhaseIndicators() {
+            const container = document.getElementById('phaseIndicators');
+            const phases = techniques[currentTechnique].phases;
+            container.innerHTML = '';
+            phases.forEach((p, i) => {
+                if (i > 0) {
+                    const sep = document.createElement('span');
+                    sep.className = 'phase-label';
+                    sep.textContent = '·';
+                    container.appendChild(sep);
+                }
+                const label = document.createElement('span');
+                label.className = 'phase-label';
+                label.textContent = p.name;
+                label.id = `phaseLabel${i}`;
+                container.appendChild(label);
+                const dot = document.createElement('span');
+                dot.className = 'phase-dot';
+                dot.id = `phaseDot${i}`;
+                container.appendChild(dot);
+            });
+        }
+
+        function updatePhaseIndicators() {
+            const phases = techniques[currentTechnique].phases;
+            phases.forEach((_, i) => {
+                const dot = document.getElementById(`phaseDot${i}`);
+                const label = document.getElementById(`phaseLabel${i}`);
+                if (dot) dot.classList.toggle('active', i === currentPhaseIndex);
+                if (label) label.classList.toggle('active', i === currentPhaseIndex);
+            });
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.querySelector('.theme-toggle');
+            if (body.classList.contains('light')) {
+                body.classList.replace('light', 'dark');
+                btn.textContent = 'Light Mode';
+            } else {
+                body.classList.replace('dark', 'light');
+                btn.textContent = 'Dark Mode';
+            }
+        }
+
+        function getCircleScale() {
+            const phases = techniques[currentTechnique].phases;
+            const phase = phases[currentPhaseIndex];
+            const elapsed = phase.duration - phaseTimeRemaining;
+            const progress = elapsed / phase.duration;
+
+            // Determine target scales based on phase type
+            if (phase.name === 'Breathe In') {
+                return MIN_SCALE + (MAX_SCALE - MIN_SCALE) * progress;
+            } else if (phase.name === 'Breathe Out') {
+                return MAX_SCALE - (MAX_SCALE - MIN_SCALE) * progress;
+            } else {
+                // Hold — keep at current size
+                // Determine if we were inhaling or exhaling before this hold
+                const prevIndex = (currentPhaseIndex - 1 + phases.length) % phases.length;
+                if (phases[prevIndex].name === 'Breathe In') {
+                    return MAX_SCALE;
+                } else {
+                    return MIN_SCALE;
+                }
+            }
+        }
+
+        function applyCircleSize(scale) {
+            const mainCircle = document.getElementById('circleMain');
+            const ringCircle = document.getElementById('circleRing');
+            const size = 120 + (160 * ((scale - MIN_SCALE) / (MAX_SCALE - MIN_SCALE)));
+            const ringSize = size + 30;
+
+            mainCircle.style.width = size + 'px';
+            mainCircle.style.height = size + 'px';
+            ringCircle.style.width = ringSize + 'px';
+            ringCircle.style.height = ringSize + 'px';
+        }
+
+        function resetVisuals() {
+            document.getElementById('phaseText').textContent = 'Ready';
+            document.getElementById('countdownText').textContent = '';
+            applyCircleSize(MIN_SCALE);
+        }
+
+        function toggleStart() {
+            if (isRunning) {
+                pause();
+            } else {
+                start();
+            }
+        }
+
+        function start() {
+            isRunning = true;
+            document.getElementById('startBtn').textContent = 'Pause';
+            if (phaseTimeRemaining <= 0) {
+                currentPhaseIndex = 0;
+                const phases = techniques[currentTechnique].phases;
+                phaseTimeRemaining = phases[0].duration;
+            }
+            lastTimestamp = null;
+            animationId = requestAnimationFrame(tick);
+        }
+
+        function pause() {
+            isRunning = false;
+            document.getElementById('startBtn').textContent = 'Resume';
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+        }
+
+        function resetExercise() {
+            isRunning = false;
+            currentPhaseIndex = 0;
+            phaseTimeRemaining = 0;
+            cycleCount = 0;
+            if (animationId) {
+                cancelAnimationFrame(animationId);
+                animationId = null;
+            }
+            lastTimestamp = null;
+            document.getElementById('startBtn').textContent = 'Start';
+            document.getElementById('cycleCount').textContent = 'Cycles: 0';
+            resetVisuals();
+            buildPhaseIndicators();
+        }
+
+        function tick(timestamp) {
+            if (!isRunning) return;
+
+            if (lastTimestamp === null) {
+                lastTimestamp = timestamp;
+            }
+
+            const delta = (timestamp - lastTimestamp) / 1000;
+            lastTimestamp = timestamp;
+
+            phaseTimeRemaining -= delta;
+
+            const phases = techniques[currentTechnique].phases;
+            const currentPhase = phases[currentPhaseIndex];
+
+            if (phaseTimeRemaining <= 0) {
+                // Move to next phase
+                currentPhaseIndex++;
+                if (currentPhaseIndex >= phases.length) {
+                    currentPhaseIndex = 0;
+                    cycleCount++;
+                    document.getElementById('cycleCount').textContent = `Cycles: ${cycleCount}`;
+                }
+                phaseTimeRemaining = phases[currentPhaseIndex].duration;
+            }
+
+            // Update UI
+            const phase = phases[currentPhaseIndex];
+            document.getElementById('phaseText').textContent = phase.name;
+            document.getElementById('countdownText').textContent = `${Math.ceil(phaseTimeRemaining)}s`;
+
+            const scale = getCircleScale();
+            applyCircleSize(scale);
+            updatePhaseIndicators();
+
+            animationId = requestAnimationFrame(tick);
+        }
+
+        // Initialize
+        updateDescription();
+        buildPhaseIndicators();
+        resetVisuals();
+    </script>
+</body>
+</html>
