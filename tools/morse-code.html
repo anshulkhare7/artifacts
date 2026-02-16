@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Morse Code Translator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #1a1a2e;
+      color: #e0d6c1;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 720px;
+      width: 100%;
+      padding-top: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #f5c542;
+      margin-bottom: 4px;
+      letter-spacing: 1px;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #a89a7d;
+      margin-bottom: 24px;
+    }
+
+    /* Mode Tabs */
+    .tabs {
+      display: flex;
+      gap: 0;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #3a3a5c;
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px;
+      text-align: center;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      background: #16213e;
+      color: #a89a7d;
+      border: none;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .tab:first-child {
+      border-right: 1px solid #3a3a5c;
+    }
+
+    .tab.active {
+      background: #f5c542;
+      color: #1a1a2e;
+      font-weight: 600;
+    }
+
+    .tab:hover:not(.active) {
+      background: #1f2b4d;
+    }
+
+    /* Input / Output Areas */
+    .io-section {
+      margin-bottom: 16px;
+    }
+
+    .io-label {
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #a89a7d;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 100px;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #3a3a5c;
+      background: #16213e;
+      color: #f5c542;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      resize: vertical;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    textarea:focus {
+      border-color: #f5c542;
+    }
+
+    textarea::placeholder {
+      color: #5a5a7a;
+    }
+
+    .output-box {
+      width: 100%;
+      min-height: 100px;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #3a3a5c;
+      background: #0f1529;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1rem;
+      color: #f5c542;
+      word-wrap: break-word;
+      white-space: pre-wrap;
+      position: relative;
+    }
+
+    .output-box .char-group {
+      display: inline;
+    }
+
+    .output-box .char-group.active {
+      background: rgba(245, 197, 66, 0.25);
+      border-radius: 3px;
+    }
+
+    .output-box .symbol {
+      display: inline;
+      transition: color 0.05s;
+    }
+
+    .output-box .symbol.highlight {
+      color: #fff;
+      text-shadow: 0 0 8px #f5c542;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border-radius: 6px;
+      border: 1px solid #3a3a5c;
+      background: #16213e;
+      color: #e0d6c1;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s, border-color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn:hover {
+      background: #1f2b4d;
+      border-color: #f5c542;
+    }
+
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .btn:disabled:hover {
+      background: #16213e;
+      border-color: #3a3a5c;
+    }
+
+    .btn-primary {
+      background: #f5c542;
+      color: #1a1a2e;
+      border-color: #f5c542;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: #e0b53a;
+    }
+
+    .btn-primary:disabled {
+      background: #f5c542;
+      border-color: #f5c542;
+    }
+
+    .btn-primary:disabled:hover {
+      background: #f5c542;
+    }
+
+    /* Reference Chart */
+    .reference-toggle {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #3a3a5c;
+      background: #16213e;
+      color: #e0d6c1;
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-align: left;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 0;
+      transition: background 0.2s;
+    }
+
+    .reference-toggle:hover {
+      background: #1f2b4d;
+    }
+
+    .reference-toggle .arrow {
+      transition: transform 0.2s;
+      font-size: 0.75rem;
+      color: #a89a7d;
+    }
+
+    .reference-toggle.open .arrow {
+      transform: rotate(180deg);
+    }
+
+    .reference-chart {
+      display: none;
+      border: 1px solid #3a3a5c;
+      border-top: none;
+      border-radius: 0 0 8px 8px;
+      background: #0f1529;
+      padding: 16px;
+    }
+
+    .reference-chart.open {
+      display: block;
+    }
+
+    .chart-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      gap: 6px;
+    }
+
+    .chart-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 8px;
+      border-radius: 4px;
+      background: #16213e;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.82rem;
+    }
+
+    .chart-item .char {
+      color: #f5c542;
+      font-weight: 600;
+      min-width: 14px;
+      text-align: center;
+    }
+
+    .chart-item .code {
+      color: #a89a7d;
+    }
+
+    .chart-section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #5a5a7a;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 8px;
+      margin-top: 12px;
+    }
+
+    .chart-section-label:first-child {
+      margin-top: 0;
+    }
+
+    /* Copy notification */
+    .toast {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%) translateY(20px);
+      background: #f5c542;
+      color: #1a1a2e;
+      padding: 10px 20px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s, transform 0.3s;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* Responsive */
+    @media (max-width: 500px) {
+      h1 { font-size: 1.4rem; }
+      .chart-grid {
+        grid-template-columns: repeat(auto-fill, minmax(85px, 1fr));
+      }
+      textarea, .output-box {
+        font-size: 0.9rem;
+        min-height: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Morse Code Translator</h1>
+    <p class="subtitle">Encode, decode, and listen to Morse code</p>
+
+    <div class="tabs">
+      <button class="tab active" data-mode="text-to-morse">Text &rarr; Morse</button>
+      <button class="tab" data-mode="morse-to-text">Morse &rarr; Text</button>
+    </div>
+
+    <!-- Text to Morse -->
+    <div id="text-to-morse" class="mode-panel">
+      <div class="io-section">
+        <div class="io-label">Input Text</div>
+        <textarea id="text-input" placeholder="Type your message here..."></textarea>
+      </div>
+      <div class="io-section">
+        <div class="io-label">Morse Code Output</div>
+        <div class="output-box" id="morse-output"></div>
+      </div>
+    </div>
+
+    <!-- Morse to Text -->
+    <div id="morse-to-text" class="mode-panel" style="display:none;">
+      <div class="io-section">
+        <div class="io-label">Morse Code Input</div>
+        <textarea id="morse-input" placeholder="Use . and - separated by spaces (letters) and / (words)&#10;Example: .... . .-.. .-.. --- / .-- --- .-. .-.. -.."></textarea>
+      </div>
+      <div class="io-section">
+        <div class="io-label">Decoded Text</div>
+        <div class="output-box" id="text-output"></div>
+      </div>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="play-btn">&#9654; Play Audio</button>
+      <button class="btn" id="stop-btn" style="display:none;">&#9632; Stop</button>
+      <button class="btn" id="copy-btn">Copy Output</button>
+    </div>
+
+    <button class="reference-toggle" id="ref-toggle">
+      Morse Code Reference (A-Z, 0-9)
+      <span class="arrow">&#9660;</span>
+    </button>
+    <div class="reference-chart" id="ref-chart"></div>
+  </div>
+
+  <div class="toast" id="toast"></div>
+
+  <script>
+    // Morse code mapping
+    const CHAR_TO_MORSE = {
+      'A': '.-',    'B': '-...',  'C': '-.-.',  'D': '-..',
+      'E': '.',     'F': '..-.',  'G': '--.',   'H': '....',
+      'I': '..',    'J': '.---',  'K': '-.-',   'L': '.-..',
+      'M': '--',    'N': '-.',    'O': '---',   'P': '.--.',
+      'Q': '--.-',  'R': '.-.',   'S': '...',   'T': '-',
+      'U': '..-',   'V': '...-',  'W': '.--',   'X': '-..-',
+      'Y': '-.--',  'Z': '--..',
+      '0': '-----', '1': '.----', '2': '..---', '3': '...--',
+      '4': '....-', '5': '.....', '6': '-....', '7': '--...',
+      '8': '---..', '9': '----.'
+    };
+
+    const MORSE_TO_CHAR = {};
+    for (const [ch, code] of Object.entries(CHAR_TO_MORSE)) {
+      MORSE_TO_CHAR[code] = ch;
+    }
+
+    // State
+    let currentMode = 'text-to-morse';
+    let isPlaying = false;
+    let stopRequested = false;
+    let audioCtx = null;
+
+    // DOM references
+    const textInput = document.getElementById('text-input');
+    const morseOutput = document.getElementById('morse-output');
+    const morseInput = document.getElementById('morse-input');
+    const textOutput = document.getElementById('text-output');
+    const playBtn = document.getElementById('play-btn');
+    const stopBtn = document.getElementById('stop-btn');
+    const copyBtn = document.getElementById('copy-btn');
+    const refToggle = document.getElementById('ref-toggle');
+    const refChart = document.getElementById('ref-chart');
+    const toast = document.getElementById('toast');
+
+    // --- Translation ---
+    function textToMorse(text) {
+      return text.toUpperCase().split('').map(ch => {
+        if (ch === ' ') return '/';
+        return CHAR_TO_MORSE[ch] || '';
+      }).filter(s => s !== '').join(' ');
+    }
+
+    function morseToText(morse) {
+      return morse.trim().split(/\s*\/\s*/).map(word =>
+        word.trim().split(/\s+/).map(code => MORSE_TO_CHAR[code] || '').join('')
+      ).join(' ');
+    }
+
+    // --- Rendering output with spans for visual playback ---
+    function renderMorseOutput(morseStr) {
+      morseOutput.innerHTML = '';
+      if (!morseStr) return;
+
+      // Split into letter groups separated by spaces, preserving / as word separators
+      const tokens = morseStr.split(' ');
+      tokens.forEach((token, i) => {
+        if (token === '/') {
+          const span = document.createElement('span');
+          span.className = 'char-group';
+          span.dataset.index = i;
+          span.textContent = ' / ';
+          morseOutput.appendChild(span);
+        } else {
+          const group = document.createElement('span');
+          group.className = 'char-group';
+          group.dataset.index = i;
+          for (const sym of token) {
+            const s = document.createElement('span');
+            s.className = 'symbol';
+            s.textContent = sym;
+            group.appendChild(s);
+          }
+          morseOutput.appendChild(group);
+          // Add space after each letter group
+          if (i < tokens.length - 1 && tokens[i + 1] !== '/') {
+            morseOutput.appendChild(document.createTextNode(' '));
+          } else if (i < tokens.length - 1 && tokens[i + 1] === '/') {
+            // space before / is handled by the / rendering
+          }
+        }
+      });
+    }
+
+    // --- Mode Switching ---
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        if (isPlaying) return;
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        currentMode = tab.dataset.mode;
+        document.querySelectorAll('.mode-panel').forEach(p => p.style.display = 'none');
+        document.getElementById(currentMode).style.display = 'block';
+      });
+    });
+
+    // --- Real-time translation ---
+    textInput.addEventListener('input', () => {
+      const morse = textToMorse(textInput.value);
+      renderMorseOutput(morse);
+    });
+
+    morseInput.addEventListener('input', () => {
+      textOutput.textContent = morseToText(morseInput.value);
+    });
+
+    // --- Audio Playback ---
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function playTone(ctx, frequency, startTime, duration) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = frequency;
+      gain.gain.setValueAtTime(0.5, startTime);
+      // Smooth ramp to avoid clicks
+      gain.gain.setValueAtTime(0, startTime);
+      gain.gain.linearRampToValueAtTime(0.5, startTime + 0.01);
+      gain.gain.setValueAtTime(0.5, startTime + duration - 0.01);
+      gain.gain.linearRampToValueAtTime(0, startTime + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(startTime);
+      osc.stop(startTime + duration);
+    }
+
+    // Build a schedule of tones and highlight timings
+    function buildSchedule(morseStr) {
+      const DOT = 0.1;
+      const DASH = 0.3;
+      const SYM_GAP = 0.1;
+      const LETTER_GAP = 0.3;
+      const WORD_GAP = 0.7;
+
+      const schedule = []; // { startTime, duration, groupIndex, symbolIndex }
+      let t = 0;
+      const tokens = morseStr.split(' ');
+      let groupIdx = 0;
+
+      tokens.forEach((token, i) => {
+        if (token === '/') {
+          t += WORD_GAP;
+          groupIdx++;
+          return;
+        }
+
+        for (let si = 0; si < token.length; si++) {
+          const sym = token[si];
+          const dur = sym === '.' ? DOT : DASH;
+          schedule.push({ startTime: t, duration: dur, groupIndex: groupIdx, symbolIndex: si });
+          t += dur;
+          if (si < token.length - 1) {
+            t += SYM_GAP;
+          }
+        }
+        t += LETTER_GAP;
+        groupIdx++;
+      });
+
+      return { schedule, totalDuration: t };
+    }
+
+    async function playMorse() {
+      const morseStr = getMorseString();
+      if (!morseStr || isPlaying) return;
+
+      isPlaying = true;
+      stopRequested = false;
+      playBtn.style.display = 'none';
+      stopBtn.style.display = '';
+
+      const ctx = getAudioContext();
+      if (ctx.state === 'suspended') await ctx.resume();
+
+      const { schedule, totalDuration } = buildSchedule(morseStr);
+
+      // If in morse-to-text mode, we need to render the morse with spans for highlighting
+      // Use a temporary container approach
+      let highlightTarget = null;
+      if (currentMode === 'text-to-morse') {
+        // Re-render to ensure spans are present
+        renderMorseOutput(morseStr);
+        highlightTarget = morseOutput;
+      } else {
+        // Render morse into textOutput temporarily as morse spans for visual feedback
+        // Actually, let's highlight in the morse input area - but that's a textarea.
+        // Instead, render morse with spans into a temporary overlay in textOutput
+        // For simplicity, we'll create a visual morse display in the text output area temporarily
+        highlightTarget = null; // We'll handle this below
+      }
+
+      const baseTime = ctx.currentTime + 0.1;
+
+      // Schedule all tones
+      for (const item of schedule) {
+        playTone(ctx, 600, baseTime + item.startTime, item.duration);
+      }
+
+      // Visual highlighting via requestAnimationFrame
+      const charGroups = highlightTarget ? highlightTarget.querySelectorAll('.char-group') : [];
+
+      function highlightLoop() {
+        if (stopRequested) {
+          clearHighlights();
+          return;
+        }
+        const elapsed = ctx.currentTime - baseTime;
+        if (elapsed >= totalDuration) {
+          clearHighlights();
+          finishPlayback();
+          return;
+        }
+
+        // Find current active item
+        let activeItem = null;
+        for (const item of schedule) {
+          if (elapsed >= item.startTime && elapsed < item.startTime + item.duration) {
+            activeItem = item;
+            break;
+          }
+        }
+
+        // Clear all highlights
+        charGroups.forEach(g => {
+          g.classList.remove('active');
+          g.querySelectorAll('.symbol').forEach(s => s.classList.remove('highlight'));
+        });
+
+        if (activeItem && charGroups.length > 0) {
+          // Find the right group — groups are indexed sequentially (non-/ tokens)
+          let gIdx = 0;
+          const tokens = morseStr.split(' ');
+          let targetGroup = null;
+          for (let ti = 0; ti < tokens.length; ti++) {
+            const group = charGroups[ti];
+            if (!group) continue;
+            if (gIdx === activeItem.groupIndex && tokens[ti] !== '/') {
+              targetGroup = group;
+              break;
+            }
+            if (tokens[ti] !== '/') gIdx++;
+            else gIdx++;
+          }
+
+          if (targetGroup) {
+            targetGroup.classList.add('active');
+            const symbols = targetGroup.querySelectorAll('.symbol');
+            if (symbols[activeItem.symbolIndex]) {
+              symbols[activeItem.symbolIndex].classList.add('highlight');
+            }
+          }
+        }
+
+        requestAnimationFrame(highlightLoop);
+      }
+
+      function clearHighlights() {
+        charGroups.forEach(g => {
+          g.classList.remove('active');
+          g.querySelectorAll('.symbol').forEach(s => s.classList.remove('highlight'));
+        });
+      }
+
+      if (charGroups.length > 0) {
+        requestAnimationFrame(highlightLoop);
+      }
+
+      // Wait for playback to finish
+      await new Promise(resolve => {
+        const checkDone = () => {
+          if (stopRequested || ctx.currentTime - baseTime >= totalDuration) {
+            resolve();
+            return;
+          }
+          setTimeout(checkDone, 50);
+        };
+        checkDone();
+      });
+
+      finishPlayback();
+    }
+
+    function finishPlayback() {
+      isPlaying = false;
+      stopRequested = false;
+      playBtn.style.display = '';
+      stopBtn.style.display = 'none';
+    }
+
+    function stopPlayback() {
+      stopRequested = true;
+      // Close and recreate audio context to stop all scheduled tones
+      if (audioCtx) {
+        audioCtx.close();
+        audioCtx = null;
+      }
+      finishPlayback();
+    }
+
+    function getMorseString() {
+      if (currentMode === 'text-to-morse') {
+        return textToMorse(textInput.value);
+      } else {
+        return morseInput.value.trim();
+      }
+    }
+
+    playBtn.addEventListener('click', playMorse);
+    stopBtn.addEventListener('click', stopPlayback);
+
+    // --- Copy ---
+    copyBtn.addEventListener('click', () => {
+      let text = '';
+      if (currentMode === 'text-to-morse') {
+        text = morseOutput.textContent;
+      } else {
+        text = textOutput.textContent;
+      }
+      if (!text) return;
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Copied to clipboard');
+      });
+    });
+
+    function showToast(msg) {
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 1800);
+    }
+
+    // --- Reference Chart ---
+    function buildReferenceChart() {
+      const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+      const digits = '0123456789'.split('');
+
+      let html = '<div class="chart-section-label">Letters</div><div class="chart-grid">';
+      letters.forEach(ch => {
+        html += `<div class="chart-item"><span class="char">${ch}</span><span class="code">${CHAR_TO_MORSE[ch]}</span></div>`;
+      });
+      html += '</div><div class="chart-section-label">Numbers</div><div class="chart-grid">';
+      digits.forEach(ch => {
+        html += `<div class="chart-item"><span class="char">${ch}</span><span class="code">${CHAR_TO_MORSE[ch]}</span></div>`;
+      });
+      html += '</div>';
+      refChart.innerHTML = html;
+    }
+
+    buildReferenceChart();
+
+    refToggle.addEventListener('click', () => {
+      refToggle.classList.toggle('open');
+      refChart.classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
