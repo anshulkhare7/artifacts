@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pixel Art Editor</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #e8e8e8;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: #333;
+  }
+
+  h1 {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.4rem;
+    margin: 20px 0 4px;
+    color: #2c3e50;
+    text-align: center;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: #777;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  .app-container {
+    display: flex;
+    gap: 20px;
+    padding: 0 20px 30px;
+    max-width: 1100px;
+    width: 100%;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* --- Toolbar --- */
+  .toolbar {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 200px;
+    height: fit-content;
+  }
+
+  .toolbar-section h3 {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  /* Grid size selector */
+  .grid-size-options {
+    display: flex;
+    gap: 6px;
+  }
+
+  .grid-size-options button {
+    flex: 1;
+    padding: 6px 4px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #555;
+    transition: all 0.15s;
+  }
+
+  .grid-size-options button.active {
+    border-color: #3498db;
+    background: #ebf5fb;
+    color: #3498db;
+  }
+
+  .grid-size-options button:hover:not(.active) {
+    border-color: #aaa;
+  }
+
+  /* Tools */
+  .tool-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  .tool-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 10px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+    cursor: pointer;
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #555;
+    transition: all 0.15s;
+  }
+
+  .tool-btn:hover:not(.active) {
+    border-color: #aaa;
+  }
+
+  .tool-btn.active {
+    border-color: #3498db;
+    background: #ebf5fb;
+    color: #3498db;
+  }
+
+  .tool-btn .icon {
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+  }
+
+  /* Color palette */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px;
+  }
+
+  .palette-swatch {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: 6px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .palette-swatch:hover {
+    transform: scale(1.15);
+    z-index: 1;
+  }
+
+  .palette-swatch.active {
+    border-color: #333;
+    box-shadow: 0 0 0 2px #fff, 0 0 0 4px #333;
+  }
+
+  .custom-color-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 6px;
+  }
+
+  .custom-color-row input[type="color"] {
+    width: 36px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+  }
+
+  .custom-color-row input[type="color"]::-webkit-color-swatch-wrapper { padding: 2px; }
+  .custom-color-row input[type="color"]::-webkit-color-swatch { border: 1px solid #ccc; border-radius: 4px; }
+
+  .custom-color-row span {
+    font-size: 0.8rem;
+    color: #777;
+  }
+
+  /* Action buttons */
+  .action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .action-btn {
+    padding: 9px 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    transition: all 0.15s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: center;
+  }
+
+  .action-btn.primary {
+    background: linear-gradient(135deg, #3498db, #2980b9);
+    color: #fff;
+  }
+  .action-btn.primary:hover { background: linear-gradient(135deg, #2980b9, #2471a3); }
+
+  .action-btn.danger {
+    background: #fdecea;
+    color: #c0392b;
+  }
+  .action-btn.danger:hover { background: #f5c6cb; }
+
+  .action-btn.secondary {
+    background: #f0f0f0;
+    color: #555;
+  }
+  .action-btn.secondary:hover { background: #e0e0e0; }
+
+  /* --- Grid Area --- */
+  .grid-wrapper {
+    background: #fff;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: fit-content;
+  }
+
+  .grid-container {
+    display: grid;
+    border: 2px solid #ccc;
+    border-radius: 2px;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .grid-container.show-gridlines .pixel-cell {
+    border: 0.5px solid rgba(0,0,0,0.1);
+  }
+
+  .pixel-cell {
+    width: 100%;
+    aspect-ratio: 1;
+    background: #ffffff;
+    cursor: crosshair;
+    border: 0.5px solid transparent;
+    transition: none;
+  }
+
+  /* Undo hint */
+  .shortcut-hint {
+    font-size: 0.7rem;
+    color: #aaa;
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* Responsive */
+  @media (max-width: 700px) {
+    .app-container {
+      flex-direction: column;
+      align-items: center;
+    }
+    .toolbar {
+      flex-direction: row;
+      flex-wrap: wrap;
+      min-width: unset;
+      width: 100%;
+      max-width: 500px;
+    }
+    .toolbar-section { min-width: 140px; flex: 1; }
+  }
+</style>
+</head>
+<body>
+
+<h1>Pixel Art Editor</h1>
+<p class="subtitle">Click &amp; drag to draw. Right-click to erase. Ctrl+Z to undo.</p>
+
+<div class="app-container">
+  <div class="toolbar">
+
+    <!-- Grid Size -->
+    <div class="toolbar-section">
+      <h3>Grid Size</h3>
+      <div class="grid-size-options">
+        <button data-size="8" onclick="setGridSize(8)">8&times;8</button>
+        <button data-size="16" class="active" onclick="setGridSize(16)">16&times;16</button>
+        <button data-size="32" onclick="setGridSize(32)">32&times;32</button>
+      </div>
+    </div>
+
+    <!-- Tools -->
+    <div class="toolbar-section">
+      <h3>Tools</h3>
+      <div class="tool-buttons">
+        <button class="tool-btn active" data-tool="pen" onclick="setTool('pen')">
+          <span class="icon">&#9998;</span> Pen
+        </button>
+        <button class="tool-btn" data-tool="eraser" onclick="setTool('eraser')">
+          <span class="icon">&#9744;</span> Eraser
+        </button>
+        <button class="tool-btn" data-tool="fill" onclick="setTool('fill')">
+          <span class="icon">&#9727;</span> Fill
+        </button>
+        <button class="tool-btn" data-tool="eyedropper" onclick="setTool('eyedropper')">
+          <span class="icon">&#9738;</span> Pick
+        </button>
+      </div>
+    </div>
+
+    <!-- Color Palette -->
+    <div class="toolbar-section">
+      <h3>Colors</h3>
+      <div class="palette-grid" id="paletteGrid"></div>
+      <div class="custom-color-row">
+        <input type="color" id="customColor" value="#000000" title="Pick any color">
+        <span>Custom color</span>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="toolbar-section">
+      <h3>Actions</h3>
+      <div class="action-buttons">
+        <button class="action-btn secondary" id="gridToggleBtn" onclick="toggleGridLines()">
+          &#9638; Hide Grid
+        </button>
+        <button class="action-btn primary" onclick="exportPNG()">
+          &#8681; Export PNG
+        </button>
+        <button class="action-btn danger" onclick="clearAll()">
+          &#10006; Clear All
+        </button>
+      </div>
+      <div class="shortcut-hint">Ctrl+Z &mdash; Undo</div>
+    </div>
+
+  </div>
+
+  <div class="grid-wrapper">
+    <div class="grid-container show-gridlines" id="gridContainer"></div>
+  </div>
+</div>
+
+<script>
+  // ---- State ----
+  const EMPTY_COLOR = '#ffffff';
+  let gridSize = 16;
+  let currentTool = 'pen';
+  let currentColor = '#000000';
+  let gridData = [];
+  let undoStack = [];
+  const MAX_UNDO = 50;
+  let isDrawing = false;
+  let showGrid = true;
+  let pendingSnapshot = null;
+
+  // Classic pixel-art palette (20 colors)
+  const PALETTE = [
+    '#000000','#ffffff','#9d9d9d','#be2633','#e06f8b',
+    '#493c2b','#a46422','#eb8931','#f7e26b','#2f484e',
+    '#44891a','#a3ce27','#1b2632','#005784','#31a2f2',
+    '#b2dcef','#342a97','#7e2553','#a8734a','#e4a672'
+  ];
+
+  // ---- Palette Setup ----
+  function buildPalette() {
+    const grid = document.getElementById('paletteGrid');
+    grid.innerHTML = '';
+    PALETTE.forEach(c => {
+      const swatch = document.createElement('div');
+      swatch.className = 'palette-swatch' + (c === currentColor ? ' active' : '');
+      swatch.style.background = c;
+      swatch.title = c;
+      swatch.addEventListener('click', () => selectColor(c));
+      grid.appendChild(swatch);
+    });
+  }
+
+  function selectColor(color) {
+    currentColor = color;
+    document.getElementById('customColor').value = color;
+    document.querySelectorAll('.palette-swatch').forEach(s => {
+      s.classList.toggle('active', s.title === color);
+    });
+    // Switch to pen when picking a color (unless using fill)
+    if (currentTool === 'eraser' || currentTool === 'eyedropper') {
+      setTool('pen');
+    }
+  }
+
+  document.getElementById('customColor').addEventListener('input', function() {
+    selectColor(this.value);
+  });
+
+  // ---- Tool Selection ----
+  function setTool(tool) {
+    currentTool = tool;
+    document.querySelectorAll('.tool-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.tool === tool);
+    });
+  }
+
+  // ---- Grid ----
+  function initGridData(size) {
+    gridData = Array.from({ length: size }, () => Array(size).fill(EMPTY_COLOR));
+  }
+
+  function buildGrid() {
+    const container = document.getElementById('gridContainer');
+    container.innerHTML = '';
+
+    // Calculate cell size: fit nicely in viewport
+    const maxGridPx = Math.min(500, window.innerWidth - 280);
+    const cellSize = Math.floor(maxGridPx / gridSize);
+
+    container.style.gridTemplateColumns = `repeat(${gridSize}, ${cellSize}px)`;
+    container.style.gridTemplateRows = `repeat(${gridSize}, ${cellSize}px)`;
+
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'pixel-cell';
+        cell.dataset.row = r;
+        cell.dataset.col = c;
+        cell.style.background = gridData[r][c];
+        cell.addEventListener('mousedown', onCellMouseDown);
+        cell.addEventListener('mouseenter', onCellMouseEnter);
+        cell.addEventListener('touchstart', onCellTouchStart, { passive: false });
+        cell.addEventListener('touchmove', onCellTouchMove, { passive: false });
+        cell.addEventListener('contextmenu', e => e.preventDefault());
+        container.appendChild(cell);
+      }
+    }
+  }
+
+  function setGridSize(size) {
+    document.querySelectorAll('.grid-size-options button').forEach(b => {
+      b.classList.toggle('active', parseInt(b.dataset.size) === size);
+    });
+    gridSize = size;
+    initGridData(size);
+    undoStack = [];
+    buildGrid();
+  }
+
+  function getCell(r, c) {
+    return document.querySelector(`.pixel-cell[data-row="${r}"][data-col="${c}"]`);
+  }
+
+  // ---- Undo ----
+  function saveSnapshot() {
+    return gridData.map(row => [...row]);
+  }
+
+  function pushUndo(snapshot) {
+    undoStack.push(snapshot);
+    if (undoStack.length > MAX_UNDO) undoStack.shift();
+  }
+
+  function undo() {
+    if (undoStack.length === 0) return;
+    gridData = undoStack.pop();
+    // Refresh visuals
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
+        const cell = getCell(r, c);
+        if (cell) cell.style.background = gridData[r][c];
+      }
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'z') {
+      e.preventDefault();
+      undo();
+    }
+  });
+
+  // ---- Drawing ----
+  function paintCell(r, c, color) {
+    gridData[r][c] = color;
+    const cell = getCell(r, c);
+    if (cell) cell.style.background = color;
+  }
+
+  function applyTool(r, c, isRightClick) {
+    if (isRightClick || currentTool === 'eraser') {
+      paintCell(r, c, EMPTY_COLOR);
+    } else if (currentTool === 'pen') {
+      paintCell(r, c, currentColor);
+    } else if (currentTool === 'fill') {
+      floodFill(r, c, currentColor);
+    } else if (currentTool === 'eyedropper') {
+      selectColor(gridData[r][c]);
+    }
+  }
+
+  function onCellMouseDown(e) {
+    e.preventDefault();
+    const r = parseInt(this.dataset.row);
+    const c = parseInt(this.dataset.col);
+    const isRight = e.button === 2;
+
+    // Save snapshot before first action of a stroke
+    pendingSnapshot = saveSnapshot();
+    isDrawing = true;
+
+    applyTool(r, c, isRight);
+
+    // For fill and eyedropper, commit the undo immediately
+    if (currentTool === 'fill' || currentTool === 'eyedropper') {
+      if (pendingSnapshot) {
+        pushUndo(pendingSnapshot);
+        pendingSnapshot = null;
+      }
+      isDrawing = false;
+    }
+  }
+
+  function onCellMouseEnter(e) {
+    if (!isDrawing) return;
+    const r = parseInt(this.dataset.row);
+    const c = parseInt(this.dataset.col);
+    const isRight = (e.buttons & 2) !== 0;
+
+    if (currentTool === 'pen' || currentTool === 'eraser' || isRight) {
+      applyTool(r, c, isRight);
+    }
+  }
+
+  document.addEventListener('mouseup', () => {
+    if (isDrawing && pendingSnapshot) {
+      pushUndo(pendingSnapshot);
+      pendingSnapshot = null;
+    }
+    isDrawing = false;
+  });
+
+  // Touch support
+  function onCellTouchStart(e) {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (!el || !el.classList.contains('pixel-cell')) return;
+    const r = parseInt(el.dataset.row);
+    const c = parseInt(el.dataset.col);
+
+    pendingSnapshot = saveSnapshot();
+    isDrawing = true;
+    applyTool(r, c, false);
+
+    if (currentTool === 'fill' || currentTool === 'eyedropper') {
+      if (pendingSnapshot) {
+        pushUndo(pendingSnapshot);
+        pendingSnapshot = null;
+      }
+      isDrawing = false;
+    }
+  }
+
+  function onCellTouchMove(e) {
+    e.preventDefault();
+    if (!isDrawing) return;
+    const touch = e.touches[0];
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (!el || !el.classList.contains('pixel-cell')) return;
+    const r = parseInt(el.dataset.row);
+    const c = parseInt(el.dataset.col);
+    applyTool(r, c, false);
+  }
+
+  document.addEventListener('touchend', () => {
+    if (isDrawing && pendingSnapshot) {
+      pushUndo(pendingSnapshot);
+      pendingSnapshot = null;
+    }
+    isDrawing = false;
+  });
+
+  // ---- Flood Fill (BFS) ----
+  function floodFill(startR, startC, fillColor) {
+    const targetColor = gridData[startR][startC];
+    if (targetColor === fillColor) return;
+
+    const queue = [[startR, startC]];
+    const visited = new Set();
+    visited.add(`${startR},${startC}`);
+
+    while (queue.length > 0) {
+      const [r, c] = queue.shift();
+      paintCell(r, c, fillColor);
+
+      const neighbors = [[r-1,c],[r+1,c],[r,c-1],[r,c+1]];
+      for (const [nr, nc] of neighbors) {
+        if (nr < 0 || nr >= gridSize || nc < 0 || nc >= gridSize) continue;
+        const key = `${nr},${nc}`;
+        if (visited.has(key)) continue;
+        if (gridData[nr][nc] !== targetColor) continue;
+        visited.add(key);
+        queue.push([nr, nc]);
+      }
+    }
+  }
+
+  // ---- Grid Lines Toggle ----
+  function toggleGridLines() {
+    showGrid = !showGrid;
+    const container = document.getElementById('gridContainer');
+    container.classList.toggle('show-gridlines', showGrid);
+    document.getElementById('gridToggleBtn').innerHTML = showGrid
+      ? '&#9638; Hide Grid'
+      : '&#9638; Show Grid';
+  }
+
+  // ---- Clear All ----
+  function clearAll() {
+    pushUndo(saveSnapshot());
+    initGridData(gridSize);
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
+        const cell = getCell(r, c);
+        if (cell) cell.style.background = EMPTY_COLOR;
+      }
+    }
+  }
+
+  // ---- Export PNG ----
+  function exportPNG() {
+    const scale = gridSize <= 16 ? 16 : 8;
+    const canvasSize = gridSize * scale;
+    const canvas = document.createElement('canvas');
+    canvas.width = canvasSize;
+    canvas.height = canvasSize;
+    const ctx = canvas.getContext('2d');
+
+    for (let r = 0; r < gridSize; r++) {
+      for (let c = 0; c < gridSize; c++) {
+        ctx.fillStyle = gridData[r][c];
+        ctx.fillRect(c * scale, r * scale, scale, scale);
+      }
+    }
+
+    canvas.toBlob(blob => {
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `pixel-art-${gridSize}x${gridSize}.png`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }, 'image/png');
+  }
+
+  // ---- Init ----
+  function init() {
+    buildPalette();
+    initGridData(gridSize);
+    buildGrid();
+  }
+
+  init();
+</script>
+</body>
+</html>
