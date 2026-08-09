@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indian Thought — A Lineage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --slate:#272e33;
+    --slate2:#2e363c;
+    --chalk:#e9e5da;
+    --chalk-dim:#b9b4a8;
+    --faint:#6d7378;
+    --spine:#e9e5da;
+    --bhakti:#d9b36c;
+    --dharma:#d98d8d;
+    --modern:#9ec49a;
+    --pramana:#8fb8d9;
+    --shramana:#b3a1d9;
+    --tantra:#7ec9bd;
+    --rail:#4a5258;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
+  body{
+    background:var(--slate);
+    background-image:radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.03), transparent 50%);
+    color:var(--chalk);
+    font-family:Georgia,'Times New Roman',serif;
+    line-height:1.5;
+    padding-bottom:120px;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 14px}
+
+  /* ---------- header ---------- */
+  header{padding:34px 0 10px;text-align:center}
+  .over{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;color:var(--faint);text-transform:uppercase}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;line-height:1.1;margin:8px 0 4px}
+  .sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--chalk-dim)}
+  .rule{width:54px;height:1px;background:var(--rail);margin:16px auto}
+
+  /* ---------- controls ---------- */
+  .controls{position:sticky;top:0;z-index:40;background:linear-gradient(var(--slate) 82%,transparent);padding:10px 0 16px}
+  .searchrow{display:flex;gap:8px}
+  .search{
+    flex:1;background:var(--slate2);border:1px solid var(--rail);border-radius:8px;
+    color:var(--chalk);font-family:Georgia,serif;font-size:15px;padding:9px 12px;outline:none;
+  }
+  .search::placeholder{color:var(--faint)}
+  .search:focus{border-color:var(--chalk-dim)}
+  .mode{
+    background:var(--slate2);border:1px solid var(--rail);border-radius:8px;color:var(--chalk-dim);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;padding:9px 13px;cursor:pointer;white-space:nowrap;
+  }
+  .mode.on{background:var(--chalk);color:var(--slate);border-color:var(--chalk);font-weight:500}
+  .mode:focus-visible,.chip:focus-visible,.row:focus-visible{outline:2px solid var(--pramana);outline-offset:2px}
+  .chips{display:flex;gap:6px;overflow-x:auto;padding:10px 2px 2px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.03em;white-space:nowrap;
+    padding:6px 11px;border-radius:99px;border:1px solid var(--rail);background:transparent;
+    color:var(--chalk-dim);cursor:pointer;display:flex;align-items:center;gap:6px;
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .chip.on{border-color:var(--chalk);color:var(--chalk)}
+
+  /* ---------- era ---------- */
+  .era{margin-top:34px}
+  .era-head{display:flex;align-items:baseline;gap:14px;margin-bottom:4px}
+  .era-num{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:44px;line-height:1;color:var(--faint)}
+  .era-title{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;line-height:1.15}
+  .era-dates{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.05em}
+  .era-theme{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--chalk-dim);margin:2px 0 14px;padding-left:2px}
+  .era.trad-shramana .era-title{color:var(--shramana)}
+  .era.trad-bhakti .era-title{color:var(--bhakti)}
+  .era.trad-pramana .era-title{color:var(--pramana)}
+
+  /* ---------- rail + rows ---------- */
+  .rows{position:relative;padding-left:26px}
+  .rows::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:0;border-left:2px dashed var(--rail)}
+  .grouplabel{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--faint);margin:16px 0 6px;position:relative;
+  }
+  .grouplabel::before{content:'';position:absolute;left:-22px;top:7px;width:12px;height:0;border-top:2px dashed var(--rail)}
+  .row{
+    position:relative;border:1px solid transparent;border-radius:9px;padding:8px 10px;margin:2px 0;cursor:pointer;
+    transition:background .15s,opacity .2s;
+  }
+  .row:hover{background:var(--slate2)}
+  .row.open{background:var(--slate2);border-color:var(--rail)}
+  .row .st{
+    position:absolute;left:-22.5px;top:15px;width:11px;height:11px;border-radius:50%;
+    background:var(--slate);border:2.5px solid var(--chalk);
+  }
+  .row.key .st::after{content:'';position:absolute;inset:2px;border-radius:50%;background:currentColor}
+  .nameline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .pname{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19.5px;line-height:1.15}
+  .pdates{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint)}
+  .pblurb{font-size:14.5px;color:var(--chalk-dim);margin-top:1px}
+  .detail{display:none;margin-top:9px;padding-top:9px;border-top:1px dashed var(--rail)}
+  .row.open .detail{display:block}
+  .detail .full{font-size:14.5px;color:var(--chalk)}
+  .infl{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+  .infl .lab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;margin-right:2px;width:100%}
+  .ichip{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:4px 9px;border-radius:6px;
+    border:1px solid var(--rail);background:var(--slate);color:var(--chalk-dim);cursor:pointer;
+  }
+  .ichip:hover{border-color:var(--chalk-dim);color:var(--chalk)}
+  .row.dim{opacity:.22;pointer-events:auto}
+  .hideme{display:none!important}
+  .flash{animation:flash 1.4s ease}
+  @keyframes flash{0%,60%{background:rgba(233,229,218,.14)}100%{background:transparent}}
+
+  /* stream colorings on station dots */
+  .s-spine .st{border-color:var(--spine);color:var(--spine)}
+  .s-bhakti .st{border-color:var(--bhakti);color:var(--bhakti)}
+  .s-dharma .st{border-color:var(--dharma);color:var(--dharma)}
+  .s-modern .st{border-color:var(--modern);color:var(--modern)}
+  .s-pramana .st{border-color:var(--pramana);color:var(--pramana)}
+  .s-shramana .st{border-color:var(--shramana);color:var(--shramana)}
+  .s-tantra .st{border-color:var(--tantra);color:var(--tantra)}
+
+  /* ---------- pivot marker ---------- */
+  .pivot{margin:46px 0 10px;text-align:center;position:relative}
+  .pivot svg{display:block;margin:0 auto -6px}
+  .pivot .badge{
+    display:inline-flex;flex-direction:column;align-items:center;gap:2px;
+    border:2px solid var(--chalk);border-radius:14px;padding:13px 26px;background:var(--slate);
+    position:relative;z-index:2;
+  }
+  .pivot .pnum{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:15px;letter-spacing:.28em;color:var(--chalk-dim)}
+  .pivot .pwho{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:27px;line-height:1.05}
+  .pivot .pwhat{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15.5px;color:var(--chalk-dim);max-width:300px}
+  .pivot .caption{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:10px}
+
+  /* the split fork */
+  .fork{margin:10px 0 -14px}
+  .fork svg{display:block;margin:0 auto}
+
+  .footer{margin-top:60px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);letter-spacing:.06em;line-height:2}
+  .count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);text-align:right;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="over">3,500 years · seven streams · four pivots</div>
+    <h1>Indian Thought</h1>
+    <div class="sub">a lineage where the idea outlives the name, drawn in chalk</div>
+    <div class="rule"></div>
+  </header>
+
+  <div class="controls">
+    <div class="searchrow">
+      <input class="search" id="search" type="search" placeholder="Find a thinker, text, or idea…" aria-label="Search thinkers and texts">
+      <button class="mode" id="modeBtn" title="Show only the load-bearing figures">Spine</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <main id="app"></main>
+
+  <div class="footer">
+    tap a name to expand · tap an influence to jump<br>
+    filled dots = spine figures · streams are colored chalk<br>
+    names here are often attributions — the texts carry the lineage
+  </div>
+</div>
+
+<script>
+const STREAMS = {
+  spine:    {label:'Self & ultimate reality',      color:'var(--spine)'},
+  shramana: {label:'Shramana — Buddhist, Jain, materialist', color:'var(--shramana)'},
+  pramana:  {label:'Logic, language & knowledge',  color:'var(--pramana)'},
+  dharma:   {label:'Dharma, society & politics',   color:'var(--dharma)'},
+  bhakti:   {label:'Bhakti & devotion',            color:'var(--bhakti)'},
+  tantra:   {label:'Tantra & aesthetics',          color:'var(--tantra)'},
+  modern:   {label:'Modern & reform',              color:'var(--modern)'}
+};
+
+// era: {num, title, dates, theme, trad?}
+const ERAS = [
+ {id:'e1', num:'I', title:'The Vedic Age', dates:'c. 1500–800 BCE', theme:'Ritual, cosmic order — and the first recorded doubt'},
+ {id:'e2', num:'II', title:'The Upanishads', dates:'c. 800–300 BCE', theme:'The turn inward: from outer sacrifice to the knowing self'},
+ {id:'e3', num:'III', title:'The Shramana Revolt', dates:'c. 600–300 BCE', theme:'Renouncers against the Veda; materialists against everything', trad:'shramana'},
+ {id:'e4', num:'IV', title:'Epic & Empire', dates:'c. 400 BCE – 400 CE', theme:'Dharma dramatized, codified, and politicized'},
+ {id:'e5', num:'V', title:'The Six Darshanas', dates:'c. 200 BCE – 500 CE', theme:'Orthodox worldviews compressed into sutras — each a text plus centuries of commentary'},
+ {id:'e6', num:'VI', title:'The Age of Dialectic', dates:'c. 100–700 CE', theme:'Buddhist, Jain, and Hindu logicians argue for six centuries — and sharpen each other'},
+ {id:'e7', num:'VII', title:'Vedanta & Tantra', dates:'c. 600–1300', theme:'Commentary wars over Brahman; consciousness as power in Kashmir'},
+ {id:'e8', num:'VIII', title:'The Bhakti Centuries', dates:'c. 600–1700', theme:'Philosophy leaves Sanskrit: devotion, dissent, and vernacular song', trad:'bhakti'},
+ {id:'e9', num:'IX', title:'Navya-Nyaya', dates:'c. 1300–1700', theme:'The new logic — precision instruments for cognition, centuries before Frege', trad:'pramana'},
+ {id:'e10', num:'X', title:'The Modern Encounter', dates:'1800–now', theme:'Colonial rupture: reform, revival, and a reply to the West'}
+];
+
+// Pivots inserted before given era ids
+const PIVOTS = {
+ e2:{num:'PIVOT I', who:'The Upanishadic Turn', what:'from outer ritual to the knowing self — Brahman and Atman become the question'},
+ e3:{num:'PIVOT II', who:'Buddha / Mahavira', what:'the Veda’s authority refused — thought forks into astika and nastika', fork:true},
+ e7:{num:'PIVOT III', who:'Shankara', what:'the debate age consolidated — nearly everything after responds to Advaita'},
+ e10:{num:'PIVOT IV', who:'The Colonial Encounter', what:'Indian thought reformed, revived — and replying to the West'}
+};
+
+// p: id, n(ame), d(ates), b(short blurb), f(ull detail), e(ra), s(tream), k(ey/spine), g(roup label), from[ids]
+const P = [
+// I. Vedic Age
+{id:'rigveda',n:'The Rigveda',d:'c. 1500–1200 BCE',b:'1,028 hymns; rita — order above the gods',f:'The oldest layer: hymns to Agni, Indra, Soma — but behind the gods stands rita, the impersonal cosmic order even they obey. Philosophy’s raw material, chanted for a millennium before being written.',e:'e1',s:'spine',k:1,g:'The hymns'},
+{id:'nasadiya',n:'Nasadiya Sukta',d:'Rigveda X.129',b:'The creation hymn that ends in doubt',f:'"Then there was neither existence nor non-existence…" It asks where creation came from and answers: perhaps it formed itself, perhaps not — he who surveys it in highest heaven, only he knows. Or perhaps he does not know. Skepticism present at the very source.',e:'e1',s:'spine',k:1,from:['rigveda']},
+{id:'purushasukta',n:'Purusha Sukta',d:'Rigveda X.90',b:'Cosmos from the primal sacrifice',f:'The universe — and the four varnas — issue from the dismemberment of a cosmic being. The charter myth of caste, contested for the next three thousand years; Ambedkar’s ultimate target.',e:'e1',s:'spine',from:['rigveda']},
+{id:'brahmanas',n:'The Brahmanas',d:'c. 900–700 BCE',b:'Ritual as cosmic technology',f:'Prose manuals of sacrifice: performed correctly, the ritual itself sustains the world — the gods become almost optional. Mimamsa later builds a whole philosophy on this premise.',e:'e1',s:'spine',from:['rigveda'],g:'Ritual science'},
+{id:'aranyakas',n:'The Aranyakas',d:'c. 800–600 BCE',b:'Forest texts — the ritual internalized',f:'Composed for hermits who could no longer perform the great public sacrifices: the ritual re-read as symbol and meditation. The hinge between sacrifice and philosophy.',e:'e1',s:'spine',from:['brahmanas']},
+
+// II. Upanishads
+{id:'brihad',n:'Brihadaranyaka Upanishad',d:'c. 700 BCE',b:'The great dialogues at Janaka’s court',f:'The oldest and largest Upanishad: debate as tournament, with cattle and gold as the prize and cosmic questions as the game. Home of Yajnavalkya, Gargi, and Maitreyi.',e:'e2',s:'spine',k:1,from:['aranyakas'],g:'The great dialogues'},
+{id:'yajnavalkya',n:'Yajnavalkya',d:'c. 700 BCE',b:'Neti neti — the self beyond all description',f:'"Not this, not this": the self is the unknowable knower — you cannot see the seer of seeing. Also the earliest recorded teaching of karma and rebirth, given in private. Arguably the first named philosopher anywhere on earth.',e:'e2',s:'spine',k:1,from:['brihad']},
+{id:'gargi',n:'Gargi Vachaknavi',d:'c. 700 BCE',b:'The questioner who pressed past the sayable',f:'"On what is the world woven, warp and weft?" She interrogates Yajnavalkya to the very edge — where he warns her head will split if she pushes further. A woman philosopher at the tradition’s founding table.',e:'e2',s:'spine',from:['yajnavalkya']},
+{id:'maitreyi',n:'Maitreyi',d:'c. 700 BCE',b:'Immortality over wealth',f:'Offered half of Yajnavalkya’s estate as he leaves for the forest, she asks instead: will it make me immortal? No? Then what use is it? The dialogue on the Self as what is truly dear follows.',e:'e2',s:'spine',from:['yajnavalkya']},
+{id:'uddalaka',n:'Uddalaka Aruni',d:'c. 700 BCE',b:'"Tat tvam asi" — that thou art',f:'In the Chandogya Upanishad he teaches his son by experiment: dissolve salt in water — you cannot see it, yet it is everywhere in it. So the subtle essence pervades all: that is reality, that is the self, that thou art. Every Vedanta is a commentary on this sentence.',e:'e2',s:'spine',k:1},
+{id:'katha',n:'Katha Upanishad',d:'c. 500 BCE',b:'Nachiketa bargains with Death',f:'A boy sent to Death’s house wins three boons and asks the forbidden question: what happens after dying? Death tries to buy him off with wealth and pleasures; he refuses. Contains the chariot analogy of the self — body as chariot, mind as reins, atman as rider.',e:'e2',s:'spine',g:'The verse Upanishads'},
+{id:'mandukya',n:'Mandukya Upanishad',d:'c. 100 BCE–100 CE',b:'AUM and the four states of consciousness',f:'Twelve verses only: waking, dream, deep sleep — and turiya, the fourth, pure awareness beneath all three. The seed text Gaudapada and Shankara grow into Advaita.',e:'e2',s:'spine'},
+{id:'shvetashvatara',n:'Shvetashvatara Upanishad',d:'c. 400–200 BCE',b:'The theistic turn — Brahman as a personal Lord',f:'Brahman acquires a face: Rudra-Shiva as the one God to be known by devotion. The bridge from the impersonal absolute to the Gita, Shaivism, and the whole bhakti future.',e:'e2',s:'spine'},
+{id:'karmaframe',n:'The Frame: karma, samsara, moksha',d:'crystallized c. 700–300 BCE',b:'Action, the wheel of rebirth, and release',f:'Deeds ripen across lives; existence recurs; the goal is release. This frame — not any doctrine about God — is what every later school shares. Orthodox and heretic alike orient to it, for or against.',e:'e2',s:'spine',k:1,from:['yajnavalkya','uddalaka'],g:'The frame crystallizes'},
+
+// III. Shramana Revolt
+{id:'buddha',n:'The Buddha',d:'c. 5th c. BCE',b:'Four noble truths; no-self; dependent origination',f:'Siddhartha Gautama: suffering has a cause and a cure; everything arises dependently; and — against the Upanishads — there is no atman, only a bundle of processes. Accepts karma, rejects the self, ignores the Veda. The tradition’s greatest internal rival.',e:'e3',s:'shramana',k:1,from:['karmaframe'],g:'The middle way'},
+{id:'mahavira',n:'Mahavira',d:'trad. 599–527 BCE',b:'Absolute ahimsa; many-sided truth',f:'The 24th tirthankara — the Jain line claims predecessors stretching back centuries (Parshvanatha, at least, is historical). Karma as subtle matter that literally weighs the soul down; anekantavada — every truth-claim holds only from some standpoint. Nonviolence taken to its logical limit.',e:'e3',s:'shramana',k:1,from:['karmaframe'],g:'The Jain path'},
+{id:'gosala',n:'Makkhali Gosala',d:'c. 5th c. BCE',b:'Niyati — iron determinism',f:'Leader of the Ajivikas, once Mahavira’s companion: liberation arrives on its own fixed schedule, after 8,400,000 aeons, and effort changes nothing. A major school for a thousand years — now known only through its enemies.',e:'e3',s:'shramana',from:['mahavira'],g:'The lost schools — known via enemies'},
+{id:'ajita',n:'Ajita Kesakambali',d:'c. 5th c. BCE',b:'The first materialist on record',f:'Wore a blanket of hair; taught that humans are four elements that scatter at death — no afterlife, no karma, no debt to priests. "Fools and wise alike are cut off and perish."',e:'e3',s:'shramana'},
+{id:'sanjaya',n:'Sanjaya Belatthiputta',d:'c. 5th c. BCE',b:'Suspend judgment on every question',f:'Refused to affirm, deny, both-affirm-and-deny, or neither — on any metaphysical question. Mocked as an "eel-wriggler." Compare Pyrrho, who traveled to India with Alexander and went home a skeptic.',e:'e3',s:'shramana'},
+{id:'charvaka',n:'Charvaka / Lokayata',d:'c. 600 BCE onward',b:'Perception only; matter only; this life only',f:'Attributed to a shadowy Brihaspati: perception is the sole valid means of knowledge, consciousness arises from matter as intoxication from fermented grain, and the Veda is the prattle of knaves. "While life is yours, live joyously." Every text lost; the whole school survives in hostile quotation.',e:'e3',s:'shramana',k:1,from:['ajita']},
+{id:'panini',n:'Panini',d:'c. 4th c. BCE',b:'Generative grammar, 2,400 years early',f:'The Ashtadhyayi: about 4,000 rules that generate the whole of Sanskrit — ordered, recursive, with meta-rules governing rule-application. Modern linguistics acknowledges it as the first generative grammar. For every darshana after, it is the model of what a rigorous system looks like: India’s Euclid.',e:'e3',s:'pramana',k:1,g:'The science of language'},
+
+// IV. Epic & Empire
+{id:'mahabharata',n:'The Mahabharata',d:'c. 400 BCE–400 CE',b:'"Dharma is subtle" — ethics through catastrophe',f:'A civil war in which every principle fails somewhere and the righteous win by cheating. Not a treatise but a stress-test: dharma examined by narrative, dilemma by dilemma, across 100,000 verses.',e:'e4',s:'dharma',g:'The epics'},
+{id:'gita',n:'The Bhagavad Gita',d:'c. 200 BCE–200 CE',b:'Act without attachment — three yogas in one poem',f:'Krishna’s answer to Arjuna’s collapse: you cannot renounce action, only its fruits. Knowledge, action, and devotion woven into one path — the Upanishads reconciled with life in the world, and the renouncers answered without leaving the battlefield.',e:'e4',s:'spine',k:1,from:['katha','shvetashvatara','samkhya','buddha','mahabharata']},
+{id:'kautilya',n:'Kautilya',d:'c. 300 BCE (text layered later)',b:'Arthashastra — power without illusions',f:'Attributed to Chanakya, minister to the first Maurya: espionage, the mandala of natural allies and enemies, statecraft measured by results alone. India’s Machiavelli, roughly 1,800 years before Machiavelli.',e:'e4',s:'dharma',k:1,g:'Statecraft & law'},
+{id:'manu',n:'The Manusmriti',d:'c. 200 BCE–200 CE',b:'Dharma codified — varna made law',f:'Duties by caste and stage of life, frozen into a legal code. The most contested text in the lineage: colonial courts enforced it, reformers denounced it, and Ambedkar publicly burned it in 1927.',e:'e4',s:'dharma',from:['purushasukta']},
+{id:'ashoka',n:'Ashoka',d:'r. 268–232 BCE',b:'Dhamma as imperial policy',f:'After the slaughter at Kalinga, an emperor’s remorse carved in stone: edicts on tolerance between sects, welfare, restraint. The first state built on an ethical philosophy — cited ever since, down to Amartya Sen.',e:'e4',s:'dharma',from:['buddha']},
+
+// V. Six Darshanas
+{id:'samkhya',n:'Samkhya',d:'attr. Kapila; karika c. 350 CE',b:'Consciousness vs matter — the oldest system',f:'Radical dualism: purusha (pure consciousness) merely witnesses; prakriti (nature) does everything, evolving through 25 tattvas. Liberation is discriminating the two. Godless, and untroubled by it. The background metaphysics of Yoga, the Gita, and Ayurveda.',e:'e5',s:'spine',k:1,from:['karmaframe'],g:'Samkhya–Yoga pair'},
+{id:'yogasutras',n:'The Yoga Sutras',d:'Patanjali, c. 200–400 CE',b:'"Yoga is the stilling of the mind’s fluctuations"',f:'Samkhya made practice: the eight limbs, from ethics through posture and breath to absorption. Compiled from older traditions — and visibly in conversation with Buddhist meditation theory.',e:'e5',s:'spine',k:1,from:['samkhya','buddha']},
+{id:'nyaya',n:'Nyaya',d:'attr. Gautama Akshapada',b:'Logic and the four ways of knowing',f:'Four pramanas — perception, inference, comparison, testimony; the five-membered syllogism; a complete theory of debate, including how to lose honestly. The tradition’s logic department for two thousand years.',e:'e5',s:'pramana',k:1,g:'Nyaya–Vaisheshika pair'},
+{id:'vaisheshika',n:'Vaisheshika',d:'attr. Kanada',b:'Atomism and the categories of being',f:'Reality inventoried: six categories, with wholes built from indivisible atoms. The Democritus move, made independently — and welded to Nyaya so thoroughly the two became one school.',e:'e5',s:'pramana'},
+{id:'mimamsa',n:'Purva Mimamsa',d:'attr. Jaimini',b:'The Veda is eternal — and authorless',f:'The ritualists’ philosophy: the Veda was composed by no one, human or divine (apaurusheya), so its injunctions carry intrinsic authority. En route, a deep theory of language, testimony, and sentence-meaning that everyone else had to engage.',e:'e5',s:'pramana',from:['brahmanas','panini'],g:'Mimamsa–Vedanta pair'},
+{id:'brahmasutras',n:'The Brahma Sutras',d:'Badarayana, c. 200 BCE–200 CE',b:'The Upanishads systematized',f:'555 aphorisms distilling the Upanishads — so terse they cannot be read without a commentary. Which is the point: Shankara, Ramanuja, and Madhva each fight their war as a bhashya on this text.',e:'e5',s:'spine',k:1,from:['brihad','uddalaka']},
+
+// VI. Age of Dialectic
+{id:'nagarjuna',n:'Nagarjuna',d:'c. 150–250',b:'Emptiness — nothing has intrinsic nature',f:'Madhyamaka: whatever arises dependently is empty of self-nature — including emptiness itself. Two truths, conventional and ultimate; the tetralemma dissolving every position. The most influential Indian philosopher after the Buddha; grandfather of Zen and of Tibet’s curriculum.',e:'e6',s:'shramana',k:1,from:['buddha'],g:'Mahayana turns'},
+{id:'vasubandhu',n:'Asanga & Vasubandhu',d:'4th c.',b:'Yogachara — consciousness-only',f:'Half-brothers who built the other great Mahayana school: experience analyzed without an external remainder — the three natures, the storehouse consciousness. Vasubandhu’s Abhidharmakosha remains the encyclopedia of Buddhist psychology.',e:'e6',s:'shramana',from:['buddha']},
+{id:'dignaga',n:'Dignaga',d:'c. 480–540',b:'Buddhist logic; meaning as exclusion',f:'Cut the pramanas to two — perception and inference — and rebuilt inference from the ground up. Apoha: "cow" means not-non-cow; general terms work by exclusion, so no universals needed. Logic becomes the battlefield of Indian philosophy.',e:'e6',s:'pramana',from:['vasubandhu'],g:'The epistemological turn'},
+{id:'dharmakirti',n:'Dharmakirti',d:'c. 600–660',b:'The summit of Buddhist epistemology',f:'The Pramanavarttika: perception, inference, and the momentariness of everything, argued with a rigor that set the agenda for five centuries. Hindu, Jain, and Buddhist alike wrote with one eye on him — the thinker everyone after had to answer.',e:'e6',s:'pramana',k:1,from:['dignaga']},
+{id:'buddhaghosa',n:'Buddhaghosa',d:'5th c.',b:'Theravada systematized',f:'The Visuddhimagga — the Path of Purification: the entire Theravada training, ethics to absorption to insight, in one book. The scholastic backbone of Sri Lanka and Southeast Asia; ancestor of modern vipassana and the mindfulness industry.',e:'e6',s:'shramana',from:['buddha'],g:'Consolidations'},
+{id:'umasvati',n:'Umasvati',d:'c. 2nd–5th c.',b:'Jain doctrine in sutra form',f:'The Tattvartha Sutra — the one text every Jain sect accepts. Opens with the whole path in a line: right vision, right knowledge, right conduct.',e:'e6',s:'shramana',from:['mahavira']},
+{id:'kundakunda',n:'Kundakunda',d:'early centuries CE (contested)',b:'Two truths, Jain style',f:'From the conventional standpoint, souls act and are bound; from the ultimate standpoint, the soul is pure knowing, untouched. Digambara Jainism’s most revered philosopher — dates uncertain by half a millennium.',e:'e6',s:'shramana',from:['mahavira']},
+{id:'bhartrihari',n:'Bhartrihari',d:'c. 450–510',b:'Language is reality — shabda-brahman',f:'The Vakyapadiya: Brahman is of the nature of the word, and the world its unfolding. Sphota — meaning flashes whole, not syllable by syllable; and there is no cognition without language. The linguistic turn, fourteen centuries early.',e:'e6',s:'pramana',k:1,from:['panini','mimamsa'],g:'The grammarians'},
+
+// VII. Vedanta & Tantra
+{id:'gaudapada',n:'Gaudapada',d:'c. 6th c.',b:'Ajativada — nothing is ever born',f:'The Mandukya Karika: waking and dream are equally unreal; nothing ever truly comes into being. So close to Nagarjuna that rivals accused the whole line of crypto-Buddhism. Shankara’s teacher’s teacher.',e:'e7',s:'spine',from:['mandukya','nagarjuna'],g:'Advaita — the non-dual line'},
+{id:'shankara',n:'Shankara',d:'c. 700–750',b:'Advaita — the world as appearance of the One',f:'Only nirguna Brahman is real; the world is maya — neither real nor unreal; the self was never bound, so liberation is knowledge, not attainment. Commentaries on the triple canon, four monasteries at India’s corners, dead — tradition says — at 32. The great consolidator: the Kant of this lineage.',e:'e7',s:'spine',k:1,from:['gaudapada','brahmasutras','uddalaka','mandana']},
+{id:'kumarila',n:'Kumarila Bhatta',d:'c. 700',b:'The Veda defended; knowledge self-validating',f:'Mimamsa’s champion against the Buddhists: cognition is intrinsically valid until defeated — you don’t need a proof to trust your eyes. Fought Dharmakirti’s school to a standstill.',e:'e7',s:'pramana',from:['mimamsa','dharmakirti'],g:'Mimamsa’s last stand'},
+{id:'prabhakara',n:'Prabhakara',d:'c. 700',b:'Knowledge never errs',f:'Rival Mimamsa school: there is no false cognition, only incomplete grasp — error is failure to discriminate two truths. A century of Indian epistemology runs on the Kumarila–Prabhakara quarrel.',e:'e7',s:'pramana',from:['mimamsa']},
+{id:'mandana',n:'Mandana Mishra',d:'c. 700',b:'Sphota, Advaita — and the legendary debate',f:'Ritualist, grammarian, and independent Advaitin. Legend has Shankara defeat him in a debate judged by Mandana’s own wife, Ubhaya Bharati — who then challenged Shankara herself.',e:'e7',s:'spine',from:['kumarila','bhartrihari']},
+{id:'vachaspati',n:'Vachaspati Mishra',d:'c. 900–980',b:'Master of all systems',f:'Wrote authoritative commentaries on all six darshanas, each from inside that school’s own standpoint — the tradition’s most complete mind.',e:'e7',s:'pramana',from:['shankara','nyaya'],g:'The synthesizers & logicians'},
+{id:'udayana',n:'Udayana',d:'c. 1000',b:'Proofs of God — Nyaya theism',f:'The Nyayakusumanjali: formal arguments for God’s existence from causation, from authority, from the assignment of karma. Caps the 600-year Hindu–Buddhist debate just as Buddhism fades from India.',e:'e7',s:'pramana',from:['nyaya','dharmakirti']},
+{id:'vasugupta',n:'Vasugupta',d:'c. 800–850',b:'Shiva Sutras — reality as vibration',f:'Found — tradition says — carved on a rock in a dream: consciousness is the one reality, and the world its vibration (spanda). Kashmir Shaivism begins.',e:'e7',s:'tantra',g:'Kashmir Shaivism — consciousness as power'},
+{id:'utpaladeva',n:'Utpaladeva',d:'c. 900–950',b:'Pratyabhijna — recognition',f:'You do not become Shiva; you recognize you already are. Liberation as a shift of recognition, argued with full Nyaya-grade rigor against the Buddhists.',e:'e7',s:'tantra',from:['vasugupta']},
+{id:'abhinavagupta',n:'Abhinavagupta',d:'c. 950–1016',b:'Tantra, recognition, and the theory of rasa',f:'The Tantraloka systematized the entire tantric universe; his aesthetics made rasa — savored emotion — a taste of liberation itself, the closest ordinary life comes to moksha. Philosopher, mystic, musicologist: the tradition’s greatest aesthetician.',e:'e7',s:'tantra',k:1,from:['utpaladeva']},
+{id:'ramanuja',n:'Ramanuja',d:'1017–1137',b:'Qualified non-dualism — the world as God’s body',f:'Against Shankara: Brahman is real AND the world and souls are real — as his body. A God without qualities cannot be loved, and love (bhakti) is the point. Channels the Tamil Alvars into high Vedanta.',e:'e7',s:'spine',k:1,from:['brahmasutras','alvars','shankara'],g:'Vedanta contra Shankara'},
+{id:'madhva',n:'Madhva',d:'1238–1317',b:'Dualism — difference is real, forever',f:'Five eternal differences: God/soul, God/matter, soul/soul, soul/matter, matter/matter. Uncompromising realism against every non-dualism; his Bengal descendants include Chaitanya’s movement.',e:'e7',s:'spine',k:1,from:['brahmasutras','ramanuja']},
+
+// VIII. Bhakti Centuries
+{id:'alvars',n:'The Alvars & Nayanars',d:'600–900',b:'God in Tamil — devotion as its own knowing',f:'Twelve poets of Vishnu, sixty-three of Shiva: philosophy as love-poetry, in the vernacular, open to every caste. The spring the whole bhakti river flows from — and Ramanuja’s second canon.',e:'e8',s:'bhakti',k:1,from:['gita'],g:'The southern spring'},
+{id:'basava',n:'Basava',d:'12th c.',b:'Work is worship; caste rejected',f:'Lingayat vachanas in plain Kannada: the body is the true temple, work is worship, and caste is nothing. A social revolution conducted in aphorism.',e:'e8',s:'bhakti'},
+{id:'jnaneshwar',n:'Jnaneshwar',d:'1275–1296',b:'The Gita sung in Marathi',f:'The Jnaneshwari — Advaita and the Gita rendered into Marathi verse by a teenager; dead by 21. Vernacular philosophy’s founding miracle, still sung in Maharashtra.',e:'e8',s:'bhakti',from:['gita'],g:'Vernacular Vedanta'},
+{id:'kabir',n:'Kabir',d:'c. 1440–1518',b:'Neither Hindu nor Muslim — the formless God within',f:'A weaver of Banaras mocking pundit and mullah alike in couplets everyone could remember: if God is in the mosque, whose is the rest? Nirguna bhakti — devotion to the formless — with the social critique built in. Hindus and Muslims both claimed his corpse.',e:'e8',s:'bhakti',k:1,from:['alvars'],g:'The nirguna sants — the formless God'},
+{id:'nanak',n:'Guru Nanak',d:'1469–1539',b:'One formless God; no caste — a new path',f:'"There is no Hindu, there is no Muslim." One creator, honest work, shared bread, and a communal kitchen where everyone eats in one line. The sant insight institutionalized: Sikhism.',e:'e8',s:'bhakti',k:1,from:['kabir']},
+{id:'chaitanya',n:'Chaitanya',d:'1486–1534',b:'Ecstatic love as metaphysics',f:'Krishna-bhakti as trance, song, and street procession; doctrinally, achintya bheda abheda — the soul is inconceivably both different and non-different from God. Bengal Vaishnavism begins here; ISKCON is its 20th-century echo.',e:'e8',s:'bhakti',from:['madhva'],g:'Saguna floods — God with form and story'},
+{id:'mirabai',n:'Mirabai',d:'c. 1498–1547',b:'Devotion as defiance',f:'A Rajput princess who called Krishna her only husband and walked out of palace, propriety, and — legend says — an attempted poisoning. Bhakti as a woman’s declaration of independence.',e:'e8',s:'bhakti'},
+{id:'tulsidas',n:'Tulsidas',d:'1532–1623',b:'Rama’s story for everyone',f:'The Ramcharitmanas: the Ramayana retold in Awadhi so the plowman could sing it. Arguably the most-read poem in human history.',e:'e8',s:'bhakti'},
+{id:'tukaram',n:'Tukaram',d:'1608–1649',b:'The everyman’s song to God',f:'A failed shopkeeper’s abhangas to Vitthala: doubt, debt, grief, and grace in the language of the street. The Marathi line from Jnaneshwar completed.',e:'e8',s:'bhakti',from:['jnaneshwar']},
+
+// IX. Navya-Nyaya
+{id:'gangesha',n:'Gangesha',d:'c. 1320',b:'Tattvachintamani — epistemology refounded',f:'The "Jewel of Reflection on Truth": the four pramanas rebuilt with a new technical language of limitors, describers, and relational abstracts. Indian philosophy’s second logical revolution.',e:'e9',s:'pramana',k:1,from:['udayana'],g:'The new logicians'},
+{id:'raghunatha',n:'Raghunatha Shiromani',d:'c. 1477–1547',b:'The categories rebuilt',f:'Took the new logic’s tools to Vaisheshika’s own furniture — abolishing, merging, and inventing categories on argument alone. Radical metaphysics from inside pure technique.',e:'e9',s:'pramana',from:['gangesha']},
+{id:'gadadhara',n:'Gadadhara',d:'17th c.',b:'The technical apex',f:'The instrument at maximum precision — analyses of cognition so exact that Ingalls and Matilal later compared them, seriously, to modern formal logic. Also the point where the tradition became nearly unreadable without a decade of training.',e:'e9',s:'pramana',from:['raghunatha']},
+
+// X. Modern Encounter
+{id:'rammohan',n:'Rammohan Roy',d:'1772–1833',b:'Upanishads + Enlightenment — reform begins',f:'Founded the Brahmo Samaj: one formless God, read straight out of the Upanishads he translated; campaigned with the British against sati and with Bengal against missionary caricature. The "father of the Indian renaissance."',e:'e10',s:'modern',k:1,from:['brihad'],g:'Reform'},
+{id:'dayananda',n:'Dayananda Saraswati',d:'1824–1883',b:'"Back to the Vedas"',f:'The Arya Samaj: the Vedas alone, read as monotheist and rational; idol-worship, untouchability, and caste-by-birth rejected as later corruption. Revival as purification.',e:'e10',s:'modern',from:['rigveda']},
+{id:'ramakrishna',n:'Ramakrishna',d:'1836–1886',b:'All paths reach the same summit',f:'A temple priest who practiced Vaishnava, Tantric, Advaita, Islamic, and Christian disciplines in turn and reported one summit: "as many faiths, so many paths." Mysticism as empiricism.',e:'e10',s:'bhakti',from:['chaitanya'],g:'Revival — Vedanta answers back'},
+{id:'vivekananda',n:'Vivekananda',d:'1863–1902',b:'Practical Vedanta; Chicago 1893',f:'"Sisters and brothers of America —" and Hinduism speaks for itself to the West for the first time. Advaita turned outward: service to man as worship of God; strength as a spiritual category.',e:'e10',s:'modern',k:1,from:['ramakrishna','shankara']},
+{id:'aurobindo',n:'Aurobindo',d:'1872–1950',b:'Evolution continued into the divine',f:'Revolutionary turned yogi of Pondicherry: evolution does not stop at mind — matter ascends toward supermind, and the world is not maya but God becoming. The Life Divine as an answer to both Shankara and Darwin.',e:'e10',s:'modern',from:['gita']},
+{id:'tagore',n:'Tagore',d:'1861–1941',b:'The religion of man',f:'Nobel 1913. The infinite is met in persons, art, and love, not renunciation; the nation is a machine to be feared. Debated Gandhi on nationalism and Einstein on whether reality exists apart from man — and yielded in neither.',e:'e10',s:'modern',from:['kabir'],g:'Poets & prophets'},
+{id:'iqbal',n:'Muhammad Iqbal',d:'1877–1938',b:'Khudi — the self, reconstructed',f:'Poet-philosopher of Lahore: against the self-dissolving mysticism of late Sufism, khudi — the fortified, creative self; The Reconstruction of Religious Thought in Islam read Nietzsche and Bergson through the Quran. His idea of a Muslim homeland became Pakistan.',e:'e10',s:'modern'},
+{id:'gandhi',n:'Gandhi',d:'1869–1948',b:'Satyagraha — truth-force as politics',f:'Jain ahimsa and the Gita’s selfless action scaled to mass politics: non-violence not as weakness but as a force that converts the opponent. "Truth is God" — the experiment conducted on an empire, then inherited by King and Mandela.',e:'e10',s:'dharma',k:1,from:['gita','mahavira'],g:'Freedom’s philosophers'},
+{id:'ambedkar',n:'Ambedkar',d:'1891–1956',b:'Annihilation of caste; a new Buddhism',f:'Untouchable-born, Columbia-trained; burned the Manusmriti in 1927, drafted the Constitution in 1950, and weeks before dying led half a million Dalits into Navayana Buddhism — the Buddha read as social rationalist, karma and rebirth left at the door. The tradition’s fiercest internal critic.',e:'e10',s:'dharma',k:1,from:['buddha','manu']},
+{id:'ramana',n:'Ramana Maharshi',d:'1879–1950',b:'"Who am I?" — self-enquiry',f:'At sixteen, a spontaneous death-experience; the rest of his life at Arunachala, mostly silent. The whole method in one instruction: trace the I-thought to its source. Advaita reduced to a single question.',e:'e10',s:'spine',from:['shankara'],g:'The silent teachers'},
+{id:'krishnamurti',n:'J. Krishnamurti',d:'1895–1986',b:'"Truth is a pathless land"',f:'Groomed from boyhood as the World Teacher; in 1929 he dissolved the order built for him with those words. No method, no guru, no system — only choiceless awareness of what is.',e:'e10',s:'modern'},
+{id:'kcb',n:'K.C. Bhattacharyya',d:'1875–1949',b:'Svaraj in ideas; the subject as freedom',f:'"Swaraj in Ideas": political freedom is hollow while thought stays borrowed. His own answer: the subject known not as object but as freedom — Kant answered from Calcutta, in Vedanta’s vocabulary.',e:'e10',s:'modern',g:'The academy'},
+{id:'radhakrishnan',n:'Radhakrishnan',d:'1888–1975',b:'Interpreter between two worlds',f:'Oxford’s Spalding chair, then President of India. His translations and histories fixed how the twentieth century — East and West — read Indian philosophy: as idealism with Advaita at the summit. Later scholars pushed back on exactly that framing.',e:'e10',s:'modern',from:['shankara','vivekananda']},
+{id:'matilal',n:'B.K. Matilal',d:'1935–1991',b:'Indian logic in the analytic idiom',f:'Trained in Navya-Nyaya in Calcutta, then Harvard; Oxford’s Spalding chair after Radhakrishnan. Showed Nyaya and Dharmakirti doing epistemology and logic at full analytic rigor — and demolished the "mystical East" cliché for good.',e:'e10',s:'pramana',k:1,from:['gangesha','dharmakirti']},
+{id:'mohanty',n:'J.N. Mohanty',d:'1928–2023',b:'Husserl meets Nyaya',f:'Master of two rigorous traditions — Husserlian phenomenology and Navya-Nyaya — and built the working bridge between them: consciousness and intentionality examined with both toolkits.',e:'e10',s:'pramana',from:['nyaya']},
+{id:'dayakrishna',n:'Daya Krishna',d:'1924–2007',b:'Questioning the myths about Indian philosophy',f:'Attacked every received frame — that Indian philosophy is "spiritual," that the schools are fixed, that moksha drives it all — and ran samvad experiments putting pandits and professors in live debate. The tradition’s own Socratic gadfly.',e:'e10',s:'modern'},
+{id:'sen',n:'Amartya Sen',d:'b. 1933',b:'The argumentative Indian; nyaya vs niti',f:'Nobel economist reclaiming the tradition’s public reason: Ashoka’s councils, Akbar’s dialogues. Justice as nyaya — actual lives people can lead — against perfect-institution niti; with Nussbaum, the capabilities approach.',e:'e10',s:'dharma',from:['ashoka']},
+];
+
+const byId = {}; P.forEach(p=>byId[p.id]=p);
+// reverse influence
+const influenced = {};
+P.forEach(p=>(p.from||[]).forEach(src=>{ (influenced[src]=influenced[src]||[]).push(p.id); }));
+
+const app = document.getElementById('app');
+let spineMode=false, activeStream=null, q='';
+
+function pivotSVG(){
+  return `<svg width="220" height="46" viewBox="0 0 220 46" aria-hidden="true">
+    <path d="M10 2 C 60 30, 90 40, 110 44 M60 2 C 90 26, 100 38, 110 44 M110 2 L110 44 M160 2 C 130 26, 120 38, 110 44 M210 2 C 160 30, 130 40, 110 44"
+      fill="none" stroke="#4a5258" stroke-width="1.6" stroke-dasharray="4 4"/>
+  </svg>`;
+}
+function forkSVG(){
+  return `<svg width="220" height="46" viewBox="0 0 220 46" aria-hidden="true">
+    <path d="M110 2 L110 14 M110 14 C 110 28, 40 30, 30 44 M110 14 C 110 28, 180 30, 190 44"
+      fill="none" stroke="#4a5258" stroke-width="1.6" stroke-dasharray="4 4"/>
+    <text x="26" y="42" fill="#b3a1d9" font-family="IBM Plex Mono,monospace" font-size="9" text-anchor="middle" dy="-6">NASTIKA</text>
+    <text x="192" y="42" fill="#e9e5da" font-family="IBM Plex Mono,monospace" font-size="9" text-anchor="middle" dy="-6">ASTIKA</text>
+  </svg>`;
+}
+
+function render(){
+  let html='';
+  ERAS.forEach(era=>{
+    const pv = PIVOTS[era.id];
+    if(pv){
+      html += `<div class="pivot">${pivotSVG()}
+        <div class="badge"><div class="pnum">${pv.num}</div><div class="pwho">${pv.who}</div><div class="pwhat">${pv.what}</div></div>
+        <div class="caption">every stream passes through here</div>
+        ${pv.fork? `<div class="fork">${forkSVG()}</div>`:''}
+      </div>`;
+    }
+    const people = P.filter(p=>p.e===era.id);
+    let rows=''; let lastGroup=null;
+    people.forEach(p=>{
+      if(p.g && p.g!==lastGroup){ rows+=`<div class="grouplabel" data-era="${era.id}">${p.g}</div>`; lastGroup=p.g; }
+      const inflFrom=(p.from||[]).map(id=>byId[id]?`<button class="ichip" data-jump="${id}">← ${byId[id].n}</button>`:'').join('');
+      const inflTo=(influenced[p.id]||[]).slice(0,6).map(id=>`<button class="ichip" data-jump="${id}">→ ${byId[id].n}</button>`).join('');
+      rows += `<div class="row s-${p.s} ${p.k?'key':''}" id="p-${p.id}" data-id="${p.id}" tabindex="0" role="button" aria-expanded="false">
+        <span class="st"></span>
+        <div class="nameline"><span class="pname">${p.n}</span><span class="pdates">${p.d}</span></div>
+        <div class="pblurb">${p.b}</div>
+        <div class="detail">
+          <div class="full">${p.f}</div>
+          ${(inflFrom||inflTo)?`<div class="infl">
+            ${inflFrom?`<span class="lab">Influenced by</span>${inflFrom}`:''}
+            ${inflTo?`<span class="lab">Influenced</span>${inflTo}`:''}
+          </div>`:''}
+        </div>
+      </div>`;
+    });
+    html += `<section class="era ${era.trad?'trad-'+era.trad:''}" id="${era.id}">
+      <div class="era-head"><span class="era-num">${era.num}</span>
+        <div><div class="era-title">${era.title}</div><div class="era-dates">${era.dates}</div></div>
+      </div>
+      <div class="era-theme">${era.theme}</div>
+      <div class="rows">${rows}</div>
+    </section>`;
+  });
+  app.innerHTML = html;
+}
+render();
+
+// chips
+const chipsEl=document.getElementById('chips');
+chipsEl.innerHTML = `<button class="chip on" data-s="">All streams</button>` +
+  Object.entries(STREAMS).map(([k,v])=>`<button class="chip" data-s="${k}"><span class="dot" style="background:${v.color}"></span>${v.label}</button>`).join('');
+
+function applyFilters(){
+  const rows=[...document.querySelectorAll('.row')];
+  let visible=0;
+  rows.forEach(r=>{
+    const p=byId[r.dataset.id];
+    const matchQ = !q || (p.n+' '+p.b+' '+p.f+' '+p.d).toLowerCase().includes(q);
+    const matchSpine = !spineMode || p.k;
+    const show = matchQ && matchSpine;
+    r.classList.toggle('hideme', !show);
+    if(show) visible++;
+    r.classList.toggle('dim', !!activeStream && p.s!==activeStream);
+  });
+  // hide group labels & eras with nothing visible
+  document.querySelectorAll('.grouplabel').forEach(g=>{
+    let el=g.nextElementSibling, any=false;
+    while(el && !el.classList.contains('grouplabel')){ if(el.classList.contains('row') && !el.classList.contains('hideme')){any=true;break;} el=el.nextElementSibling; }
+    g.classList.toggle('hideme', !any || spineMode);
+  });
+  document.querySelectorAll('.era').forEach(s=>{
+    const any=s.querySelector('.row:not(.hideme)');
+    s.classList.toggle('hideme', !any);
+  });
+  document.querySelectorAll('.pivot').forEach(pv=>pv.classList.toggle('hideme', visible===0));
+  document.getElementById('count').textContent = `${visible} of ${P.length} figures`;
+}
+applyFilters();
+
+chipsEl.addEventListener('click',e=>{
+  const c=e.target.closest('.chip'); if(!c) return;
+  chipsEl.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on');
+  activeStream = c.dataset.s || null;
+  applyFilters();
+});
+document.getElementById('modeBtn').addEventListener('click',e=>{
+  spineMode=!spineMode;
+  e.currentTarget.classList.toggle('on', spineMode);
+  e.currentTarget.textContent = spineMode? 'Full map':'Spine';
+  applyFilters();
+});
+document.getElementById('search').addEventListener('input',e=>{
+  q=e.target.value.trim().toLowerCase(); applyFilters();
+});
+
+function toggleRow(r,open){
+  const willOpen = open!==undefined? open : !r.classList.contains('open');
+  r.classList.toggle('open', willOpen);
+  r.setAttribute('aria-expanded', willOpen?'true':'false');
+}
+app.addEventListener('click',e=>{
+  const jump=e.target.closest('[data-jump]');
+  if(jump){
+    e.stopPropagation();
+    const target=document.getElementById('p-'+jump.dataset.jump);
+    if(target){
+      // ensure visible: leaving filters intact but un-hide if spine/search hides it
+      if(target.classList.contains('hideme')){
+        spineMode=false; q=''; document.getElementById('search').value='';
+        const mb=document.getElementById('modeBtn'); mb.classList.remove('on'); mb.textContent='Spine';
+        applyFilters();
+      }
+      toggleRow(target,true);
+      target.scrollIntoView({block:'center'});
+      target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
+    }
+    return;
+  }
+  const r=e.target.closest('.row');
+  if(r) toggleRow(r);
+});
+app.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('row')){ e.preventDefault(); toggleRow(e.target); }
+});
+</script>
+</body>
+</html>
