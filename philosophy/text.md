@@ -1,5 +1,5 @@
-# Western Philosophy: A Lineage Map
-*A 10,000-foot genealogy. Arrows (→) mark direct influence or reaction. Each name: 3–6 words on the core contribution.*
+# Western Thought: A Lineage Map
+*A 10,000-foot genealogy of philosophy and its neighbors — science, faith, letters. Arrows (→) mark direct influence or reaction. Each name: 3–6 words on the core contribution.*
 
 ---
 
@@ -163,6 +163,7 @@
   - **Rawls** — justice as fairness; veil of ignorance *(revived political philosophy)*
     - → Nozick — libertarian rejoinder; minimal state
   - Parfit — personal identity doesn't matter; ethics
+  - **The cognitive turn:** Chomsky (innate grammar; killed behaviorism; *revives Cartesian innatism vs Locke's blank slate*), Fodor (language of thought; modularity)
   - **Philosophy of mind:** Dennett (consciousness deflated), Chalmers (hard problem), Searle (Chinese room), Nagel (what is it like to be a bat)
 
 ### B. CONTINENTAL (European: existence, history, power)
@@ -203,6 +204,30 @@
 - **Continental continuations:** Žižek (Lacan + Hegel + pop culture), Agamben (state of exception), Butler (gender performativity), Meillassoux (speculative realism — against Kant's correlationism)
 - **Experimental philosophy** — testing intuitions empirically
 - **Emerging fronts:** philosophy of AI and machine ethics; digital personhood; climate/intergenerational ethics
+
+---
+
+## XI. THE ADJACENT GIANTS — science, faith, letters
+*Not philosophers by department; lineage-shapers by effect*
+
+- **Euclid** (fl. 300 BCE) — axiomatic method; the model of certainty *(→ Descartes, Spinoza, Newton)*
+- **Paul of Tarsus** (c. 5–64) — faith over law; universal creed *(→ Augustine, Luther, Kierkegaard; Nietzsche's target)*
+- **Copernicus** (1473–1543) — heliocentrism; the first decentering
+- **Luther** (1483–1546) — conscience & scripture vs Church authority *(→ modern individualism; Hegel, Weber)*
+- **Galileo** (1564–1642) — nature written in mathematics; science vs authority
+- **Newton** (1642–1727) — mechanical universe under law *(Kant's project: explaining how Newton is possible)*
+- **Adam Smith** (1723–1790) — invisible hand; moral sentiments *(→ Marx's target and source)*
+- **Comte** (1798–1857) — positivism; invented sociology *(→ Mill, Durkheim)*
+- **Darwin** (1809–1882) — design without a designer *(→ James, Dennett; teleology's end)*
+- **Dostoevsky** (1821–1881) — philosophy through novels *(→ Nietzsche, Camus, existentialism)*
+- **Freud** (1856–1939) — the unconscious; the third decentering *(→ Lacan, Frankfurt School)*
+- **Durkheim** (1858–1917) — social facts; society sui generis
+- **Weber** (1864–1920) — rationalization; disenchantment of the world
+- **Einstein** (1879–1955) — relativity; Kant's a priori space-time cracked
+- **Skinner** (1904–1990) — behaviorism at full strength *(Chomsky's target)*
+- **Gödel** (1906–1978) — incompleteness; truth outruns proof *(ends Russell–Hilbert foundations)*
+- **Turing** (1912–1954) — computation defined; the imitation game *(→ Searle, Dennett, Chalmers, Bostrom)*
+- **Kuhn** (1922–1996) — paradigm shifts; science's history matters *(philosopher proper — belongs in IX·A too)*
 
 ---
 

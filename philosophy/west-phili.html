@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Western Thought — A Lineage</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --slate:#272e33;
+    --slate2:#2e363c;
+    --chalk:#e9e5da;
+    --chalk-dim:#b9b4a8;
+    --faint:#6d7378;
+    --spine:#e9e5da;
+    --ethics:#d9b36c;
+    --political:#d98d8d;
+    --faith:#9ec49a;
+    --analytic:#8fb8d9;
+    --continental:#b3a1d9;
+    --science:#7ec9bd;
+    --rail:#4a5258;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
+  body{
+    background:var(--slate);
+    background-image:radial-gradient(ellipse at 20% 0%, rgba(255,255,255,.03), transparent 50%);
+    color:var(--chalk);
+    font-family:Georgia,'Times New Roman',serif;
+    line-height:1.5;
+    padding-bottom:120px;
+  }
+  .wrap{max-width:680px;margin:0 auto;padding:0 14px}
+
+  /* ---------- header ---------- */
+  header{padding:34px 0 10px;text-align:center}
+  .over{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.24em;color:var(--faint);text-transform:uppercase}
+  h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:34px;line-height:1.1;margin:8px 0 4px}
+  .sub{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:17px;color:var(--chalk-dim)}
+  .rule{width:54px;height:1px;background:var(--rail);margin:16px auto}
+
+  /* ---------- controls ---------- */
+  .controls{position:sticky;top:0;z-index:40;background:linear-gradient(var(--slate) 82%,transparent);padding:10px 0 16px}
+  .searchrow{display:flex;gap:8px}
+  .search{
+    flex:1;background:var(--slate2);border:1px solid var(--rail);border-radius:8px;
+    color:var(--chalk);font-family:Georgia,serif;font-size:15px;padding:9px 12px;outline:none;
+  }
+  .search::placeholder{color:var(--faint)}
+  .search:focus{border-color:var(--chalk-dim)}
+  .mode{
+    background:var(--slate2);border:1px solid var(--rail);border-radius:8px;color:var(--chalk-dim);
+    font-family:'IBM Plex Mono',monospace;font-size:12px;padding:9px 13px;cursor:pointer;white-space:nowrap;
+  }
+  .mode.on{background:var(--chalk);color:var(--slate);border-color:var(--chalk);font-weight:500}
+  .mode:focus-visible,.chip:focus-visible,.row:focus-visible{outline:2px solid var(--analytic);outline-offset:2px}
+  .chips{display:flex;gap:6px;overflow-x:auto;padding:10px 2px 2px;scrollbar-width:none}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{
+    font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:.03em;white-space:nowrap;
+    padding:6px 11px;border-radius:99px;border:1px solid var(--rail);background:transparent;
+    color:var(--chalk-dim);cursor:pointer;display:flex;align-items:center;gap:6px;
+  }
+  .chip .dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+  .chip.on{border-color:var(--chalk);color:var(--chalk)}
+
+  /* ---------- era ---------- */
+  .era{margin-top:34px}
+  .era-head{display:flex;align-items:baseline;gap:14px;margin-bottom:4px}
+  .era-num{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:44px;line-height:1;color:var(--faint)}
+  .era-title{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:23px;line-height:1.15}
+  .era-dates{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);letter-spacing:.05em}
+  .era-theme{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:16px;color:var(--chalk-dim);margin:2px 0 14px;padding-left:2px}
+  .era.trad-analytic .era-title{color:var(--analytic)}
+  .era.trad-continental .era-title{color:var(--continental)}
+
+  /* ---------- rail + rows ---------- */
+  .rows{position:relative;padding-left:26px}
+  .rows::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:0;border-left:2px dashed var(--rail)}
+  .grouplabel{
+    font-family:'IBM Plex Mono',monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--faint);margin:16px 0 6px;position:relative;
+  }
+  .grouplabel::before{content:'';position:absolute;left:-22px;top:7px;width:12px;height:0;border-top:2px dashed var(--rail)}
+  .row{
+    position:relative;border:1px solid transparent;border-radius:9px;padding:8px 10px;margin:2px 0;cursor:pointer;
+    transition:background .15s,opacity .2s;
+  }
+  .row:hover{background:var(--slate2)}
+  .row.open{background:var(--slate2);border-color:var(--rail)}
+  .row .st{
+    position:absolute;left:-22.5px;top:15px;width:11px;height:11px;border-radius:50%;
+    background:var(--slate);border:2.5px solid var(--chalk);
+  }
+  .row.key .st::after{content:'';position:absolute;inset:2px;border-radius:50%;background:currentColor}
+  .nameline{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}
+  .pname{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:19.5px;line-height:1.15}
+  .pdates{font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint)}
+  .pblurb{font-size:14.5px;color:var(--chalk-dim);margin-top:1px}
+  .detail{display:none;margin-top:9px;padding-top:9px;border-top:1px dashed var(--rail)}
+  .row.open .detail{display:block}
+  .detail .full{font-size:14.5px;color:var(--chalk)}
+  .infl{margin-top:9px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+  .infl .lab{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.1em;color:var(--faint);text-transform:uppercase;margin-right:2px;width:100%}
+  .ichip{
+    font-family:'IBM Plex Mono',monospace;font-size:11.5px;padding:4px 9px;border-radius:6px;
+    border:1px solid var(--rail);background:var(--slate);color:var(--chalk-dim);cursor:pointer;
+  }
+  .ichip:hover{border-color:var(--chalk-dim);color:var(--chalk)}
+  .row.dim{opacity:.22;pointer-events:auto}
+  .hideme{display:none!important}
+  .flash{animation:flash 1.4s ease}
+  @keyframes flash{0%,60%{background:rgba(233,229,218,.14)}100%{background:transparent}}
+
+  /* stream colorings on station dots */
+  .s-spine .st{border-color:var(--spine);color:var(--spine)}
+  .s-ethics .st{border-color:var(--ethics);color:var(--ethics)}
+  .s-political .st{border-color:var(--political);color:var(--political)}
+  .s-faith .st{border-color:var(--faith);color:var(--faith)}
+  .s-analytic .st{border-color:var(--analytic);color:var(--analytic)}
+  .s-continental .st{border-color:var(--continental);color:var(--continental)}
+  .s-science .st{border-color:var(--science);color:var(--science)}
+
+  /* ---------- pivot marker ---------- */
+  .pivot{margin:46px 0 10px;text-align:center;position:relative}
+  .pivot svg{display:block;margin:0 auto -6px}
+  .pivot .badge{
+    display:inline-flex;flex-direction:column;align-items:center;gap:2px;
+    border:2px solid var(--chalk);border-radius:14px;padding:13px 26px;background:var(--slate);
+    position:relative;z-index:2;
+  }
+  .pivot .pnum{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:15px;letter-spacing:.28em;color:var(--chalk-dim)}
+  .pivot .pwho{font-family:'Cormorant Garamond',serif;font-weight:700;font-size:27px;line-height:1.05}
+  .pivot .pwhat{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:15.5px;color:var(--chalk-dim);max-width:300px}
+  .pivot .caption{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);margin-top:10px}
+
+  /* the split fork */
+  .fork{margin:10px 0 -14px}
+  .fork svg{display:block;margin:0 auto}
+
+  .footer{margin-top:60px;text-align:center;font-family:'IBM Plex Mono',monospace;font-size:10.5px;color:var(--faint);letter-spacing:.06em;line-height:2}
+  .count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--faint);text-align:right;margin-top:6px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="over">2,600 years · seven streams · four pivots</div>
+    <h1>Western Thought</h1>
+    <div class="sub">philosophy and its neighbors, drawn in chalk</div>
+    <div class="rule"></div>
+  </header>
+
+  <div class="controls">
+    <div class="searchrow">
+      <input class="search" id="search" type="search" placeholder="Find a philosopher or idea…" aria-label="Search philosophers">
+      <button class="mode" id="modeBtn" title="Show only the load-bearing figures">Spine</button>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div class="count" id="count"></div>
+  </div>
+
+  <main id="app"></main>
+
+  <div class="footer">
+    tap a name to expand · tap an influence to jump<br>
+    filled dots = spine figures · streams are colored chalk
+  </div>
+</div>
+
+<script>
+const STREAMS = {
+  spine:      {label:'Metaphysics & knowledge', color:'var(--spine)'},
+  ethics:     {label:'Ethics & how to live',    color:'var(--ethics)'},
+  political:  {label:'Political',               color:'var(--political)'},
+  faith:      {label:'Faith & reason',          color:'var(--faith)'},
+  analytic:   {label:'Analytic',                color:'var(--analytic)'},
+  continental:{label:'Continental',             color:'var(--continental)'},
+  science:    {label:'Science & mathematics',   color:'var(--science)'}
+};
+
+// era: {num, title, dates, theme, trad?}
+const ERAS = [
+ {id:'e1', num:'I', title:'The Pre-Socratics', dates:'c. 600–400 BCE', theme:'What is the world made of — and does it change?'},
+ {id:'e2', num:'II', title:'Classical Athens', dates:'c. 470–322 BCE', theme:'The turn to ethics, knowledge, and the ideal state'},
+ {id:'e3', num:'III', title:'Hellenistic & Roman', dates:'322 BCE – 500 CE', theme:'Philosophy as a way of life: how to be tranquil'},
+ {id:'e4', num:'IV', title:'Medieval', dates:'c. 400–1400', theme:'Faith seeking understanding: Greek reason meets revelation'},
+ {id:'e5', num:'V', title:'Renaissance', dates:'c. 1400–1600', theme:'Recovery of the ancients; turn to the human'},
+ {id:'e6', num:'VI', title:'Early Modern', dates:'c. 1600–1780', theme:'The epistemological turn: what can I know, and how?'},
+ {id:'e7', num:'VII', title:'Kant', dates:'1724–1804', theme:'The great synthesis — nearly everything after responds to him'},
+ {id:'e8', num:'VIII', title:'The Nineteenth Century', dates:'1800s', theme:'Post-Kant: splinters in every direction'},
+ {id:'e9', num:'IX·A', title:'The Analytic Tradition', dates:'20th century', theme:'Logic, language, clarity — the Anglo-American line', trad:'analytic'},
+ {id:'e10', num:'IX·B', title:'The Continental Tradition', dates:'20th century', theme:'Existence, history, power — the European line', trad:'continental'},
+ {id:'e11', num:'X', title:'Late 20th → 21st Century', dates:'1970s–now', theme:'Fragmentation, the applied turn, and new machine questions'}
+];
+
+// Pivots inserted before given era ids
+const PIVOTS = {
+ e2:{num:'PIVOT I', who:'Socrates', what:'from the cosmos to the human — ethics becomes philosophy\u2019s center'},
+ e6:{num:'PIVOT II', who:'Descartes', what:'from the world to the knower — epistemology takes the throne'},
+ e7:{num:'PIVOT III', who:'Kant', what:'from the knower to the conditions of knowing'},
+ e9:{num:'PIVOT IV', who:'Frege / Husserl', what:'from consciousness to language & experience — the great split', fork:true}
+};
+
+// p: id, n(ame), d(ates), b(short blurb), f(ull detail), e(ra), s(tream), k(ey/spine), g(roup label), from[ids]
+const P = [
+// I. Pre-Socratics
+{id:'thales',n:'Thales',d:'c. 624–546 BCE',b:'Water as first principle',f:'First to explain nature by nature — no gods required. Everything is water. The claim is wrong; the move invented philosophy.',e:'e1',s:'spine',k:1,g:'Milesians — first naturalistic explanations'},
+{id:'anaximander',n:'Anaximander',d:'c. 610–546 BCE',b:'The boundless (apeiron)',f:'The origin of things is the indefinite, the boundless — the first abstract first-principle.',e:'e1',s:'spine',from:['thales']},
+{id:'anaximenes',n:'Anaximenes',d:'c. 586–526 BCE',b:'Air; condensation & rarefaction',f:'Air becomes everything through thickening and thinning — the first mechanism of change.',e:'e1',s:'spine',from:['anaximander']},
+{id:'pythagoras',n:'Pythagoras',d:'c. 570–495 BCE',b:'Reality is number; soul transmigrates',f:'Mathematics as the structure of the cosmos; the soul survives death and migrates. Deep influence on Plato.',e:'e1',s:'spine',g:'Lone voices'},
+{id:'heraclitus',n:'Heraclitus',d:'c. 535–475 BCE',b:'Flux, fire, logos — "everything flows"',f:'Reality is ceaseless change governed by a hidden rational order (logos). You cannot step in the same river twice.',e:'e1',s:'spine',k:1},
+{id:'parmenides',n:'Parmenides',d:'c. 515–450 BCE',b:'Being is one and unchanging',f:'Reason over the senses: what is cannot come from what is not, so change is illusion. The anti-Heraclitus — their standoff sets the agenda for everything after.',e:'e1',s:'spine',k:1,g:'Eleatics — against change'},
+{id:'zenoE',n:'Zeno of Elea',d:'c. 490–430 BCE',b:'Paradoxes defending Parmenides',f:'Achilles and the tortoise, the arrow — motion leads to contradiction, therefore Parmenides is right.',e:'e1',s:'spine',from:['parmenides']},
+{id:'empedocles',n:'Empedocles',d:'c. 494–434 BCE',b:'Four elements; love & strife',f:'Reconciles being with change: eternal elements mix and separate under two forces. Bridge to atomism.',e:'e1',s:'spine',from:['parmenides','heraclitus'],g:'Pluralists — reconciling change with being'},
+{id:'anaxagoras',n:'Anaxagoras',d:'c. 500–428 BCE',b:'Mind (nous) orders the cosmos',f:'A cosmic Mind sets everything in motion — the first appeal to intelligence as cosmic cause.',e:'e1',s:'spine'},
+{id:'democritus',n:'Democritus',d:'c. 460–370 BCE',b:'Atoms and void — materialism',f:'Everything is indivisible atoms moving in empty space. The most modern-sounding ancient theory; Epicurus builds on it.',e:'e1',s:'spine',k:1,from:['empedocles'],g:'Atomists'},
+{id:'protagoras',n:'Protagoras',d:'c. 490–420 BCE',b:'"Man is the measure of all things"',f:'Truth is relative to the perceiver; virtue can be taught for a fee. Socrates\u2019 great foil.',e:'e1',s:'spine',g:'Sophists — rhetoric and relativism'},
+{id:'gorgias',n:'Gorgias',d:'c. 483–375 BCE',b:'Rhetoric; nothing exists (and so what)',f:'Master rhetorician: nothing exists; if it did we couldn\u2019t know it; if we knew it we couldn\u2019t say it.',e:'e1',s:'spine'},
+
+// II. Classical
+{id:'socrates',n:'Socrates',d:'470–399 BCE',b:'The examined life; the questioning method',f:'Wrote nothing; asked everything. The elenchus — relentless cross-examination — turns philosophy from nature to ethics. Executed by Athens for it.',e:'e2',s:'ethics',k:1,from:['protagoras']},
+{id:'plato',n:'Plato',d:'c. 428–348 BCE',b:'Theory of Forms; the ideal state',f:'Perfect, eternal Forms behind the changing world; the soul\u2019s immortality; philosopher-kings. All of Western philosophy as "footnotes to Plato" (Whitehead).',e:'e2',s:'spine',k:1,from:['socrates','pythagoras','parmenides','heraclitus']},
+{id:'aristotle',n:'Aristotle',d:'384–322 BCE',b:'Logic, empiricism, virtue ethics, four causes',f:'Plato\u2019s student, then his great corrector: forms live in things, not beyond them. Invented formal logic, systematized every field. Dominates the next 1,800 years.',e:'e2',s:'spine',k:1,from:['plato']},
+
+// III. Hellenistic
+{id:'euclid',n:'Euclid',d:'fl. 300 BCE',b:'The axiomatic method',f:'The Elements: all of geometry deduced from five postulates. The model of certain knowledge for two millennia — Descartes, Spinoza, and Newton all wrote in its shadow.',e:'e3',s:'science',g:'Mathematics as method'},
+{id:'diogenes',n:'Diogenes the Cynic',d:'c. 412–323 BCE',b:'Reject convention; live naturally',f:'Lived in a barrel, mocked Alexander. Virtue is agreement with nature; society\u2019s norms are shams.',e:'e3',s:'ethics',from:['socrates'],g:'Cynics'},
+{id:'zenoS',n:'Zeno of Citium',d:'c. 334–262 BCE',b:'Founder of Stoicism',f:'Virtue alone suffices for happiness; accept fate; the cosmos is rational. Founded the school on a painted porch (stoa).',e:'e3',s:'ethics',k:1,from:['diogenes','heraclitus'],g:'Stoics — virtue and acceptance'},
+{id:'epictetus',n:'Epictetus',d:'c. 50–135 CE',b:'Freedom through what you control',f:'Born a slave: some things are up to us, some are not — freedom lies entirely in the first.',e:'e3',s:'ethics',from:['zenoS']},
+{id:'seneca',n:'Seneca',d:'c. 4 BCE–65 CE',b:'Stoicism as practical letters',f:'Advisor to Nero; wrote Stoicism as literature. Ordered to die by his own student.',e:'e3',s:'ethics',from:['zenoS']},
+{id:'marcus',n:'Marcus Aurelius',d:'121–180 CE',b:'Emperor\u2019s private Stoic notebook',f:'The Meditations — a Roman emperor coaching himself to virtue. Philosophy as private practice at maximum power.',e:'e3',s:'ethics',from:['epictetus']},
+{id:'epicurus',n:'Epicurus',d:'341–270 BCE',b:'Pleasure = absence of pain; don\u2019t fear death',f:'Atomist physics in service of tranquility: death is nothing to us, the gods don\u2019t care, simple pleasures suffice.',e:'e3',s:'ethics',k:1,from:['democritus'],g:'Epicureans'},
+{id:'pyrrho',n:'Pyrrho',d:'c. 360–270 BCE',b:'Suspend judgment; peace through doubt',f:'Traveled with Alexander to India; returned teaching that suspending all judgment brings tranquility.',e:'e3',s:'ethics',g:'Skeptics — Pyrrhonian and Academic'},
+{id:'sextus',n:'Sextus Empiricus',d:'c. 160–210 CE',b:'Systematized Pyrrhonian skepticism',f:'His writings, rediscovered in the Renaissance, detonated under early modern philosophy — Montaigne and Descartes both react to him.',e:'e3',s:'ethics',from:['pyrrho']},
+{id:'arcesilaus',n:'Arcesilaus',d:'c. 316–241 BCE',b:'Turned Plato\u2019s Academy skeptical',f:'Head of the Academy who argued both sides of everything and asserted nothing — Plato\u2019s own school as an engine of doubt.',e:'e3',s:'ethics',from:['plato','pyrrho']},
+{id:'carneades',n:'Carneades',d:'214–129 BCE',b:'Probability instead of certainty',f:'Scandalized Rome by arguing for justice one day and against it the next. We act on the plausible, never the certain.',e:'e3',s:'ethics',from:['arcesilaus']},
+{id:'cicero',n:'Cicero',d:'106–43 BCE',b:'Translated Greek thought into Latin',f:'Rome\u2019s greatest orator, and the pipeline: Stoicism, skepticism, and Epicureanism reach the Latin West through him. The Renaissance humanists\u2019 source text.',e:'e3',s:'ethics',k:1,from:['carneades','zenoS'],g:'Transmission'},
+{id:'paul',n:'Paul of Tarsus',d:'c. 5–64 CE',b:'Faith over law; a universal creed',f:'Turned a Jewish sect into a message for everyone: salvation by faith, one community beyond ethnicity or empire. Arguably the most consequential thinker in Western history — Augustine, Luther, and Kierkegaard are all rereading him; Nietzsche blamed him personally.',e:'e3',s:'faith',k:1,g:'Christianity enters the stream'},
+{id:'plotinus',n:'Plotinus',d:'204–270 CE',b:'The One; emanation — mystical Platonism',f:'All reality flows out from an ineffable One and yearns to return. The bridge from pagan philosophy to Christian theology.',e:'e3',s:'spine',k:1,from:['plato'],g:'Neoplatonism — bridge to Christian thought'},
+
+// IV. Medieval
+{id:'augustine',n:'Augustine',d:'354–430',b:'Platonized Christianity; time, will, sin',f:'Restless heart, stolen pears, and the invention of inner autobiography. Platonism baptized: evil as absence, time as the soul\u2019s stretching.',e:'e4',s:'faith',k:1,from:['paul','plotinus','plato']},
+{id:'boethius',n:'Boethius',d:'c. 477–524',b:'Consolation of Philosophy; logic to the West',f:'Wrote his masterpiece awaiting execution. His translations were nearly all the Aristotle Europe had for 600 years.',e:'e4',s:'faith',from:['aristotle']},
+{id:'psdionysius',n:'Pseudo-Dionysius',d:'c. 5th–6th c.',b:'Apophatic (negative) theology',f:'God is known best by what cannot be said. Christian Neoplatonism\u2019s mystical current — feeds Aquinas and Eckhart.',e:'e4',s:'faith',from:['plotinus']},
+{id:'avicenna',n:'Avicenna (Ibn Sina)',d:'980–1037',b:'Essence vs existence; the flying man',f:'Persian polymath whose metaphysics shaped scholasticism. Part of the Islamic transmission that returned Aristotle to Europe.',e:'e4',s:'faith',from:['aristotle'],g:'The transmission — Islamic & Jewish philosophy'},
+{id:'averroes',n:'Averroes (Ibn Rushd)',d:'1126–1198',b:'The Commentator on Aristotle',f:'His Aristotle commentaries were so authoritative Latin Europe simply called him "the Commentator." Sparked the faith-vs-reason crisis Aquinas resolved.',e:'e4',s:'faith',from:['aristotle']},
+{id:'maimonides',n:'Maimonides',d:'1138–1204',b:'Negative theology; reason & Torah',f:'The Guide for the Perplexed — reconciling Aristotle with Jewish revelation. Direct influence on Aquinas and, later, Spinoza.',e:'e4',s:'faith',from:['aristotle']},
+{id:'anselm',n:'Anselm',d:'1033–1109',b:'The ontological argument',f:'God as "that than which nothing greater can be conceived" must exist. The argument philosophers keep killing and cannot bury.',e:'e4',s:'faith',from:['augustine'],g:'High scholasticism'},
+{id:'abelard',n:'Abelard',d:'1079–1142',b:'Logic; ethics of intention',f:'Sic et Non — lining up contradictory authorities and reasoning through them. Morality lies in intention, not act.',e:'e4',s:'faith'},
+{id:'aquinas',n:'Thomas Aquinas',d:'1225–1274',b:'Aristotle + Christianity; five ways; natural law',f:'The grand synthesis: reason and revelation as two harmonious paths to one truth. Still the official philosophy of the Catholic Church.',e:'e4',s:'faith',k:1,from:['aristotle','augustine','averroes','maimonides','psdionysius']},
+{id:'scotus',n:'Duns Scotus',d:'c. 1266–1308',b:'Univocity of being; haecceity',f:'The Subtle Doctor: being means the same for God and creatures; each thing has an unrepeatable "thisness."',e:'e4',s:'faith',from:['aquinas']},
+{id:'ockham',n:'William of Ockham',d:'c. 1287–1347',b:'Nominalism; the razor',f:'Universals are just names; don\u2019t multiply entities beyond necessity. Begins unraveling scholasticism — clears ground for empiricism.',e:'e4',s:'faith',k:1,from:['scotus']},
+
+// V. Renaissance
+{id:'erasmus',n:'Erasmus',d:'1466–1536',b:'Humanist learning; Praise of Folly',f:'Restored classical texts and mocked scholastic hairsplitting. Christian humanism at its wittiest.',e:'e5',s:'ethics',from:['cicero'],g:'Humanists — the classical revival'},
+{id:'pico',n:'Pico della Mirandola',d:'1463–1494',b:'Oration on the Dignity of Man',f:'Humans have no fixed nature — we make ourselves. The Renaissance manifesto, and a distant ancestor of existentialism.',e:'e5',s:'ethics',from:['plato']},
+{id:'machiavelli',n:'Machiavelli',d:'1469–1527',b:'Power divorced from morality',f:'The Prince: politics as it is, not as it ought to be. Better to be feared than loved, if you cannot be both.',e:'e5',s:'political',k:1},
+{id:'montaigne',n:'Montaigne',d:'1533–1592',b:'Invented the essay; revived skepticism',f:'"What do I know?" — self-examination as method, doubt as honesty. Sextus Empiricus reborn in a French tower.',e:'e5',s:'ethics',k:1,from:['sextus','cicero']},
+{id:'bacon',n:'Francis Bacon',d:'1561–1626',b:'Inductive method; knowledge is power',f:'Torture nature for her secrets: systematic experiment over inherited authority. The manifesto of the scientific revolution.',e:'e5',s:'spine',k:1,from:['ockham']},
+{id:'luther',n:'Luther',d:'1483–1546',b:'Scripture and conscience against Church authority',f:'Here I stand: the individual conscience reading scripture against the institution. The Reformation splinters Christendom — and downstream seeds modern individualism; Hegel and Weber both trace modernity to it.',e:'e5',s:'faith',from:['paul','augustine','ockham'],g:'Reformation'},
+{id:'copernicus',n:'Copernicus',d:'1473–1543',b:'The Earth moves',f:'Heliocentrism dethrones humanity from the cosmic center — the first great decentering, later echoed by Darwin and Freud.',e:'e5',s:'science',g:'The heavens rearranged'},
+
+// VI. Early Modern
+{id:'galileo',n:'Galileo',d:'1564–1642',b:'The book of nature is written in mathematics',f:'Telescope plus geometry against Aristotle plus Church. His trial made science-versus-authority permanent furniture of Western thought.',e:'e6',s:'science',from:['copernicus','euclid'],g:'The new science'},
+{id:'newton',n:'Newton',d:'1642–1727',b:'The mechanical universe under law',f:'Gravity, laws of motion, calculus: one mathematics for the heavens and the earth. The clockwork cosmos every Enlightenment thinker inherited — Kant\u2019s whole project is explaining how Newton is possible.',e:'e6',s:'science',k:1,from:['galileo','euclid','descartes']},
+{id:'descartes',n:'Descartes',d:'1596–1650',b:'Cogito; mind–body dualism; methodic doubt',f:'Doubt everything until something survives: I think, therefore I am. Mind and body as separate substances — a problem philosophy still hasn\u2019t solved. Father of modern philosophy.',e:'e6',s:'spine',k:1,from:['montaigne','augustine'],g:'Rationalists — knowledge from reason'},
+{id:'spinoza',n:'Spinoza',d:'1632–1677',b:'One substance: God = Nature; determinism',f:'Excommunicated lens-grinder. Only one substance exists; freedom is understanding necessity; ethics proved like geometry.',e:'e6',s:'spine',k:1,from:['descartes','maimonides','euclid']},
+{id:'leibniz',n:'Leibniz',d:'1646–1716',b:'Monads; best possible world; sufficient reason',f:'Co-invented calculus; reality as infinite mind-like monads; nothing without a reason. Voltaire mocked the "best possible world" — unfairly.',e:'e6',s:'spine',from:['descartes','spinoza']},
+{id:'pascal',n:'Pascal',d:'1623–1662',b:'The Wager; "the heart has its reasons"',f:'Mathematical genius against Cartesian confidence: reason\u2019s last step is knowing its limits. Anguish before the infinite — existentialism\u2019s ancestor.',e:'e6',s:'faith',from:['descartes','montaigne'],g:'Counter-voice'},
+{id:'locke',n:'Locke',d:'1632–1704',b:'Blank slate; natural rights; consent',f:'The mind starts empty and experience writes on it. In politics: life, liberty, property — government by consent. Grandfather of both empiricism and the American founding.',e:'e6',s:'spine',k:1,from:['descartes','bacon'],g:'Empiricists — knowledge from experience'},
+{id:'berkeley',n:'Berkeley',d:'1685–1753',b:'To be is to be perceived',f:'Matter doesn\u2019t exist — only minds and ideas, held steady by God\u2019s perception. Empiricism pushed to idealism.',e:'e6',s:'spine',from:['locke']},
+{id:'hume',n:'Hume',d:'1711–1776',b:'Causation is habit; the is/ought gap',f:'We never see causes, only constant conjunction; the self is a bundle of perceptions; you can\u2019t derive ought from is. Radical skepticism delivered cheerfully — and it woke Kant.',e:'e6',s:'spine',k:1,from:['berkeley','locke']},
+{id:'hobbes',n:'Hobbes',d:'1588–1679',b:'Leviathan; state of nature is war',f:'Life without the state: solitary, poor, nasty, brutish, and short. We trade liberty for security — the social contract at its bleakest.',e:'e6',s:'political',k:1,from:['machiavelli'],g:'Political philosophy — the parallel track'},
+{id:'rousseau',n:'Rousseau',d:'1712–1778',b:'General will; inequality critique',f:'Man is born free and is everywhere in chains. Civilization corrupts; legitimacy flows from the general will. Fuel for the French Revolution.',e:'e6',s:'political',k:1,from:['hobbes','locke']},
+{id:'montesquieu',n:'Montesquieu',d:'1689–1755',b:'Separation of powers',f:'Liberty survives only when legislative, executive, and judicial power check each other. Constitution-writers\u2019 favorite philosopher.',e:'e6',s:'political',from:['locke']},
+{id:'smith',n:'Adam Smith',d:'1723–1790',b:'The invisible hand; moral sentiments',f:'Hume\u2019s best friend: sympathy grounds morality, and self-interested exchange can yield unplanned public benefit. Founded economics from inside moral philosophy.',e:'e6',s:'political',from:['hume'],g:'Political economy'},
+{id:'vico',n:'Vico',d:'1668–1744',b:'Verum factum — we know what we make',f:'History, not nature, is what humans can truly understand, because we made it. Ignored for a century, then claimed as prophet by Hegelians and hermeneutics alike.',e:'e6',s:'continental',from:['descartes'],g:'Counter-Enlightenment seeds'},
+{id:'herder',n:'Herder',d:'1744–1803',b:'Cultures as organic wholes; language shapes thought',f:'Against universal reason: each culture is its own world with its own genius. Feeds Romanticism, historicism — and, less happily, nationalism.',e:'e6',s:'continental',from:['vico']},
+
+// VII. Kant
+{id:'kant',n:'Immanuel Kant',d:'1724–1804',b:'Mind structures experience; the categorical imperative',f:'The Copernican revolution: objects conform to our cognition, not vice versa. We know appearances, never things-in-themselves. In ethics: act only on maxims you could will as universal law. Merges rationalism and empiricism; nearly all later philosophy is a response.',e:'e7',s:'spine',k:1,from:['hume','leibniz','rousseau','newton']},
+
+// VIII. 19th century
+{id:'fichte',n:'Fichte',d:'1762–1814',b:'The self posits reality',f:'Radicalized Kant: drop the thing-in-itself, the I generates its world through free activity.',e:'e8',s:'spine',from:['kant'],g:'German Idealism — radicalizing Kant'},
+{id:'schelling',n:'Schelling',d:'1775–1854',b:'Nature and spirit identical',f:'Nature is visible spirit, spirit invisible nature. Hegel\u2019s roommate, then rival.',e:'e8',s:'spine',from:['fichte']},
+{id:'hegel',n:'Hegel',d:'1770–1831',b:'Dialectic; history as Spirit\u2019s self-realization',f:'Ideas develop through contradiction and resolution; history is freedom becoming conscious of itself; master and slave locked in mutual recognition. The most system of all systems.',e:'e8',s:'spine',k:1,from:['kant','fichte','schelling','herder']},
+{id:'feuerbach',n:'Feuerbach',d:'1804–1872',b:'God is humanity\u2019s self-projection',f:'Theology is anthropology: we project our best qualities onto heaven, then worship them. The hinge that flips Hegel\u2019s idealism into materialism.',e:'e8',s:'spine',from:['hegel']},
+{id:'marx',n:'Marx',d:'1818–1883',b:'Materialist dialectic; class struggle',f:'Hegel stood on his head: not ideas but material production drives history. "Philosophers have only interpreted the world; the point is to change it."',e:'e8',s:'political',k:1,from:['hegel','feuerbach','smith']},
+{id:'schopenhauer',n:'Schopenhauer',d:'1788–1860',b:'Blind Will drives everything; pessimism',f:'Behind appearances churns an aimless striving Will; life oscillates between pain and boredom; art and compassion offer brief escape. First major Western import of the Upanishads.',e:'e8',s:'spine',k:1,from:['kant'],g:'Revolts against the system'},
+{id:'kierkegaard',n:'Kierkegaard',d:'1813–1855',b:'Subjective truth; the leap of faith',f:'Against Hegel\u2019s system: truth is lived, not thought; faith is a passionate leap over an abyss reason cannot cross. Father of existentialism.',e:'e8',s:'continental',k:1,from:['hegel','pascal']},
+{id:'nietzsche',n:'Nietzsche',d:'1844–1900',b:'God is dead; will to power; genealogy of morals',f:'Christian-Platonic values unmasked as resentment; morality has a history and it isn\u2019t pretty. Create your own values or inherit someone else\u2019s. Eternal recurrence as the ultimate test: could you will your life again, forever?',e:'e8',s:'continental',k:1,from:['schopenhauer','heraclitus','dostoevsky']},
+{id:'dilthey',n:'Dilthey',d:'1833–1911',b:'Human sciences vs natural sciences',f:'Nature we explain; human life we must understand (Verstehen) from within. The bridge from German Idealism to hermeneutics and phenomenology.',e:'e8',s:'continental',from:['hegel','kant'],g:'Hermeneutic bridge'},
+{id:'bentham',n:'Bentham',d:'1748–1832',b:'Greatest happiness calculus',f:'Morality as arithmetic: maximize pleasure, minimize pain, count everyone equally. Had himself stuffed and displayed at UCL.',e:'e8',s:'ethics',from:['hume'],g:'Utilitarians — the British ethical line'},
+{id:'mill',n:'J.S. Mill',d:'1806–1873',b:'Refined utilitarianism; the harm principle',f:'Higher and lower pleasures; liberty limited only by harm to others. On Liberty is still the strongest case for free speech ever made.',e:'e8',s:'ethics',k:1,from:['bentham','comte']},
+{id:'peirce',n:'Peirce',d:'1839–1914',b:'Meaning = practical consequences',f:'A concept\u2019s meaning is the difference it makes in practice. Founded pragmatism and semiotics; died poor and unread.',e:'e8',s:'analytic',from:['kant'],g:'American Pragmatism'},
+{id:'james',n:'William James',d:'1842–1910',b:'Truth is what works',f:'Ideas are true insofar as they prove useful in experience. Also wrote the founding textbook of psychology.',e:'e8',s:'analytic',from:['peirce','darwin']},
+{id:'dewey',n:'Dewey',d:'1859–1952',b:'Instrumentalism; democracy & education',f:'Thinking is a tool for solving problems; democracy is a way of life, learned by doing.',e:'e8',s:'analytic',from:['james']},
+{id:'darwin',n:'Darwin',d:'1809–1882',b:'Evolution by natural selection',f:'Design without a designer: purpose-like order from blind variation and selection. Demolished teleology more thoroughly than any philosopher had managed — Dennett calls it the best idea anyone ever had.',e:'e8',s:'science',k:1,g:'Science reshapes the self-image'},
+{id:'freud',n:'Freud',d:'1856–1939',b:'The unconscious — not master in our own house',f:'The third decentering after Copernicus and Darwin: the ego isn\u2019t sovereign even in its own psyche. Scientifically contested, culturally inescapable — half of continental philosophy is processing him.',e:'e8',s:'science',k:1,from:['schopenhauer','nietzsche','darwin']},
+{id:'comte',n:'Comte',d:'1798–1857',b:'Positivism; invented "sociology"',f:'Knowledge matures from theological to metaphysical to positive (scientific) stages — and society itself becomes an object of science.',e:'e8',s:'science',from:['bacon','hume'],g:'The new social sciences'},
+{id:'weber',n:'Weber',d:'1864–1920',b:'Rationalization; the disenchantment of the world',f:'Modernity as an iron cage of bureaucratic rationality; the Protestant ethic as capitalism\u2019s unlikely midwife. Sociology at philosophical depth.',e:'e8',s:'science',from:['marx','kant','nietzsche','luther']},
+{id:'durkheim',n:'Durkheim',d:'1858–1917',b:'Social facts; society is real sui generis',f:'Suicide rates, religion, morality — explained by social structure, not individual psychology. Society exists over and above its members.',e:'e8',s:'science',from:['comte']},
+{id:'dostoevsky',n:'Dostoevsky',d:'1821–1881',b:'"If God does not exist, everything is permitted"',f:'The Underground Man, the Grand Inquisitor, Ivan Karamazov: philosophy\u2019s hardest questions run through novels. Nietzsche called him the only psychologist he could learn from; existentialism\u2019s dark wellspring.',e:'e8',s:'continental',from:['pascal'],g:'Literature as philosophy'},
+
+// IX-A. Analytic
+{id:'frege',n:'Frege',d:'1848–1925',b:'Modern logic; sense vs reference',f:'Invented quantificational logic — the biggest advance since Aristotle — and split meaning into sense and reference. The founding father, unread in his lifetime.',e:'e9',s:'analytic',k:1,from:['kant','leibniz'],g:'Founders'},
+{id:'russell',n:'Russell',d:'1872–1970',b:'Logical atomism; theory of descriptions',f:'Found the paradox that broke Frege\u2019s system, then tried to rebuild mathematics on logic (Principia). Analysis as philosophy\u2019s method.',e:'e9',s:'analytic',k:1,from:['frege','mill']},
+{id:'moore',n:'G.E. Moore',d:'1873–1958',b:'Common sense; the naturalistic fallacy',f:'Here is one hand, here is another — the external world proved. Good is indefinable; deriving it from nature is fallacy.',e:'e9',s:'analytic',from:['russell']},
+{id:'wittgenstein',n:'Wittgenstein',d:'1889–1951',b:'Two philosophies: picture theory, then language games',f:'Tractatus: language pictures the world; whereof one cannot speak, thereof one must be silent. Then the Investigations demolished it: meaning is use, language is a toolbox of games, a private language is impossible. The only philosopher to found two rival movements.',e:'e9',s:'analytic',k:1,from:['frege','russell']},
+{id:'carnap',n:'Carnap',d:'1891–1970',b:'Logical positivism; verification principle',f:'Vienna Circle standard-bearer: a statement is meaningful only if verifiable — so metaphysics is nonsense. The program failed magnificently and productively.',e:'e9',s:'analytic',from:['wittgenstein','frege'],g:'Positivism and its unravelling'},
+{id:'popper',n:'Popper',d:'1902–1994',b:'Falsification, not verification',f:'Science advances by bold conjectures and ruthless refutation. A theory that can\u2019t be wrong isn\u2019t science — aimed at Freud and Marx.',e:'e9',s:'analytic',k:1,from:['carnap','hume']},
+{id:'quine',n:'Quine',d:'1908–2000',b:'Demolished the analytic/synthetic distinction',f:'Two Dogmas of Empiricism: no clean line between truths of meaning and truths of fact; our beliefs face experience as one web. Positivism\u2019s in-house executioner.',e:'e9',s:'analytic',k:1,from:['carnap']},
+{id:'einstein',n:'Einstein',d:'1879–1955',b:'Relativity — space and time dethroned',f:'Simultaneity is relative; geometry is physics. Kant\u2019s a priori space and time cracked open, and philosophy of science had to rebuild. He credited Hume for the courage to doubt absolute time.',e:'e9',s:'science',from:['hume','newton'],g:'Science reshapes philosophy'},
+{id:'godel',n:'Gödel',d:'1906–1978',b:'Incompleteness — truth outruns proof',f:'Any consistent system rich enough for arithmetic contains truths it cannot prove. Ended the Russell–Hilbert dream of complete foundations; a Platonist walking among positivists.',e:'e9',s:'science',from:['leibniz','frege','russell']},
+{id:'turing',n:'Turing',d:'1912–1954',b:'Computation defined; the imitation game',f:'The universal machine gives "computable" a precise meaning; the Turing test reframes "can machines think?" as an empirical question. Every AI debate since — Searle, Dennett, Chalmers, Bostrom — happens on his ground.',e:'e9',s:'science',k:1,from:['godel']},
+{id:'kuhn',n:'Kuhn',d:'1922–1996',b:'Paradigm shifts; normal science',f:'Science advances not by smooth accumulation but by revolutions between incommensurable paradigms. Made "paradigm shift" a cliché and philosophy of science permanently historical.',e:'e9',s:'analytic',k:1,from:['popper','einstein']},
+{id:'ryle',n:'Ryle',d:'1900–1976',b:'The ghost in the machine',f:'Cartesian dualism as a category mistake — the mind isn\u2019t a thing inside the body but a way the body behaves.',e:'e9',s:'analytic',from:['wittgenstein'],g:'Ordinary language'},
+{id:'austin',n:'J.L. Austin',d:'1911–1960',b:'Speech acts — how to do things with words',f:'Saying is doing: promising, naming, marrying. Utterances don\u2019t just describe; they perform.',e:'e9',s:'analytic',from:['wittgenstein']},
+{id:'anscombe',n:'Anscombe',d:'1919–2001',b:'Intention; fired the virtue-ethics revival',f:'Wittgenstein\u2019s student and translator. Intention founded modern action theory; her 1958 paper told moral philosophy to stop legislating and return to virtue — MacIntyre built the stadium she opened.',e:'e9',s:'analytic',from:['wittgenstein','aristotle'],g:'Mid-century turns'},
+{id:'sellars',n:'Sellars',d:'1912–1989',b:'Demolished the Myth of the Given',f:'Nothing is simply "given" to the mind free of concepts — even seeing red is theory-laden. The hinge of analytic anti-foundationalism.',e:'e9',s:'analytic',from:['kant','quine']},
+{id:'rorty',n:'Rorty',d:'1931–2007',b:'Anti-foundationalism; the analytic–continental bridge',f:'Philosophy and the Mirror of Nature: knowledge doesn\u2019t mirror reality, and philosophy should drop the pretense. Dewey\u2019s pragmatism turned against analytic foundations.',e:'e9',s:'analytic',from:['sellars','quine','dewey','wittgenstein']},
+{id:'kripke',n:'Kripke',d:'1940–2022',b:'Rigid designators; necessity reborn',f:'Naming and Necessity, delivered without notes at 29: names refer directly, some truths are necessary yet known only empirically. Revived metaphysics inside analytic philosophy.',e:'e9',s:'analytic',k:1,from:['russell','wittgenstein'],g:'Later branches'},
+{id:'davidson',n:'Davidson',d:'1917–2003',b:'Meaning, action, anomalous monism',f:'Understanding a language means knowing its truth-conditions; mental events are physical but mental laws don\u2019t exist.',e:'e9',s:'analytic',from:['quine']},
+{id:'putnam',n:'Putnam',d:'1926–2016',b:'Twin Earth — meaning ain\u2019t in the head',f:'What "water" means depends on the world, not just the mind. Changed positions so often it became a methodology.',e:'e9',s:'analytic',from:['quine','kripke']},
+{id:'lewis',n:'David Lewis',d:'1941–2001',b:'Possible worlds are real',f:'Modal realism, taken with a straight face: every possible world exists as concretely as ours. The metaphysician\u2019s metaphysician.',e:'e9',s:'analytic',from:['quine']},
+{id:'rawls',n:'Rawls',d:'1921–2002',b:'Justice as fairness; the veil of ignorance',f:'Design society without knowing your place in it. Single-handedly revived political philosophy after decades of positivist silence.',e:'e9',s:'political',k:1,from:['kant','mill','locke']},
+{id:'nozick',n:'Nozick',d:'1938–2002',b:'Libertarian rejoinder; the minimal state',f:'Anarchy, State, and Utopia: taxation as forced labor, the state legitimate only as night-watchman. Rawls\u2019 sparring partner.',e:'e9',s:'political',from:['rawls','locke']},
+{id:'parfit',n:'Parfit',d:'1942–2017',b:'Personal identity doesn\u2019t matter',f:'Reasons and Persons: the self is not what matters — psychological continuity is, and it comes in degrees. Ethics done with teletransporters.',e:'e9',s:'ethics',from:['hume','sidgwick'.replace('sidgwick','mill')]},
+{id:'skinner',n:'Skinner',d:'1904–1990',b:'Behaviorism at full strength',f:'Mind-talk is unscientific; behavior is shaped by reinforcement, full stop. The peak of the blank-slate program — and the target Chomsky demolished.',e:'e9',s:'science',from:['locke'],g:'The cognitive turn'},
+{id:'chomsky',n:'Chomsky',d:'b. 1928',b:'Innate grammar; killed behaviorism',f:'The poverty-of-stimulus argument: children learn grammar too fast from too little data for the blank slate to be true — Descartes\u2019 innate ideas re-fought against Locke, and winning, 300 years later. His 1959 Skinner review launched the cognitive revolution; debated Quine on meaning and Foucault on human nature.',e:'e9',s:'analytic',k:1,from:['descartes','skinner'],g:'The cognitive turn'},
+{id:'fodor',n:'Fodor',d:'1935–2017',b:'Language of thought; modularity of mind',f:'Thinking happens in an inner symbolic language ("mentalese"); the mind is built of specialized modules. Converted Chomsky\u2019s linguistics into full-blown philosophy of mind.',e:'e9',s:'analytic',from:['chomsky']},
+{id:'dennett',n:'Dennett',d:'1942–2024',b:'Consciousness deflated; the intentional stance',f:'Consciousness is not a magic inner theater but a "user illusion" of brain processes. Darwin\u2019s idea as universal acid.',e:'e9',s:'analytic',from:['ryle','quine','darwin','turing'],g:'Philosophy of mind'},
+{id:'searle',n:'Searle',d:'b. 1932',b:'The Chinese Room',f:'A system can manipulate symbols perfectly without understanding anything — syntax is not semantics. The classic strike against strong AI.',e:'e9',s:'analytic',from:['austin','turing']},
+{id:'nagel',n:'Nagel',d:'b. 1937',b:'What is it like to be a bat?',f:'Subjective experience — the what-it-is-likeness — escapes every objective description. The problem Chalmers later named "hard."',e:'e9',s:'analytic'},
+
+// IX-B. Continental
+{id:'brentano',n:'Brentano',d:'1838–1917',b:'Intentionality — consciousness is about something',f:'Every mental act points beyond itself: you fear something, judge something. The founding concept of phenomenology — and it crossed over into analytic philosophy of mind too.',e:'e10',s:'continental',from:['aristotle'],g:'Founders'},
+{id:'bergson',n:'Bergson',d:'1859–1941',b:'Lived time (durée); intuition over intellect',f:'Clock time is space in disguise; real time is felt duration. Debated Einstein, won the Nobel, filled lecture halls — then Deleuze revived him.',e:'e10',s:'continental',from:['kant']},
+{id:'husserl',n:'Husserl',d:'1859–1938',b:'Phenomenology — describe experience itself',f:'Bracket all assumptions about the external world and describe consciousness exactly as it presents itself. Back to the things themselves!',e:'e10',s:'continental',k:1,from:['brentano','descartes','kant']},
+{id:'heidegger',n:'Heidegger',d:'1889–1976',b:'Being and Time; Dasein; being-toward-death',f:'The question of Being, forgotten since the Greeks. We are thrown into a world, defined by care, authentic only when facing death. Towering and compromised — he joined the Nazi party.',e:'e10',s:'continental',k:1,from:['husserl','dilthey','kierkegaard','nietzsche']},
+{id:'sartre',n:'Sartre',d:'1905–1980',b:'Existence precedes essence; condemned to be free',f:'No God, no fixed human nature — we are what we make ourselves, and fleeing that freedom is bad faith. Existentialism as café, novel, and politics.',e:'e10',s:'continental',k:1,from:['heidegger','husserl','kierkegaard'],g:'Existential & hermeneutic lines'},
+{id:'beauvoir',n:'Beauvoir',d:'1908–1986',b:'"One is not born, but becomes, a woman"',f:'The Second Sex: woman as the Other, femininity as social construction. Existentialism\u2019s sharpest application — founded modern feminist philosophy.',e:'e10',s:'continental',from:['sartre','heidegger']},
+{id:'merleau',n:'Merleau-Ponty',d:'1908–1961',b:'Embodied perception',f:'We don\u2019t have bodies; we are bodies. Perception is bodily grip on the world before thought. Now beloved by cognitive science.',e:'e10',s:'continental',from:['husserl']},
+{id:'gadamer',n:'Gadamer',d:'1900–2002',b:'Hermeneutics; fusion of horizons',f:'Understanding is dialogue: our prejudices aren\u2019t obstacles but starting points, transformed when horizons meet. Truth and Method at age 60; lived to 102.',e:'e10',s:'continental',from:['heidegger','dilthey']},
+{id:'levinas',n:'Levinas',d:'1906–1995',b:'Ethics of the Other\u2019s face',f:'Before ontology, before knowledge, the face of the Other commands: do not kill me. Ethics as first philosophy.',e:'e10',s:'continental',from:['husserl','heidegger']},
+{id:'benjamin',n:'Walter Benjamin',d:'1892–1940',b:'Art in the age of mechanical reproduction',f:'Reproduction strips art\u2019s aura; history should be read against the grain, for the defeated. Died fleeing the Nazis; now everywhere in media theory.',e:'e10',s:'continental',from:['marx'],g:'Frankfurt School — Marx + Freud'},
+{id:'adorno',n:'Horkheimer & Adorno',d:'1895–1973 / 1903–1969',b:'Dialectic of Enlightenment; the culture industry',f:'Enlightenment reason curdles into domination; mass culture manufactures conformity. Written in Californian exile, watching Hollywood.',e:'e10',s:'continental',from:['marx','hegel','freud','benjamin']},
+{id:'marcuse',n:'Marcuse',d:'1898–1979',b:'One-Dimensional Man',f:'Affluent society absorbs dissent by satisfying false needs. Improbable guru of the 1968 student revolts.',e:'e10',s:'continental',from:['adorno','marx']},
+{id:'habermas',n:'Habermas',d:'b. 1929',b:'Communicative rationality; the public sphere',f:'Reason lives in undistorted dialogue aimed at agreement. The Frankfurt School\u2019s turn from despair to democratic hope.',e:'e10',s:'continental',from:['adorno','kant']},
+{id:'saussure',n:'Saussure',d:'1857–1913',b:'Language as a system of differences',f:'Signs mean by contrast, not by attachment to things. The linguistic template structuralism applied to everything.',e:'e10',s:'continental',g:'Structuralism → post-structuralism'},
+{id:'levistrauss',n:'Lévi-Strauss',d:'1908–2009',b:'Structural anthropology',f:'Myths and kinship across cultures share deep binary structures — the same mental grammar underneath.',e:'e10',s:'continental',from:['saussure']},
+{id:'lacan',n:'Lacan',d:'1901–1981',b:'The unconscious is structured like a language',f:'Freud rewritten through Saussure: desire slides along chains of signifiers; the mirror stage founds the ego on misrecognition. Without him, no Žižek, no Butler, half of film theory gone.',e:'e10',s:'continental',from:['freud','saussure']},
+{id:'foucault',n:'Foucault',d:'1926–1984',b:'Power/knowledge; discipline; genealogy',f:'Prisons, clinics, sexuality: institutions produce the very subjects they claim to describe. Power is not held but exercised — everywhere, productively. Nietzsche\u2019s genealogy industrialized.',e:'e10',s:'continental',k:1,from:['nietzsche','levistrauss']},
+{id:'derrida',n:'Derrida',d:'1930–2004',b:'Deconstruction; différance',f:'Meaning is endlessly deferred through chains of difference; every text undoes its own hierarchies. Infuriating or liberating, rarely neither.',e:'e10',s:'continental',k:1,from:['saussure','heidegger','husserl']},
+{id:'deleuze',n:'Deleuze',d:'1925–1995',b:'Difference, rhizomes, desire',f:'Philosophy as concept-creation: identity is secondary to difference, thought spreads like rhizomes, not trees. With Guattari: capitalism and schizophrenia.',e:'e10',s:'continental',from:['bergson','nietzsche','spinoza']},
+{id:'arendt',n:'Arendt',d:'1906–1975',b:'The banality of evil; action & natality',f:'Eichmann was no monster, just thoughtless — evil as failure to think. Politics as the space where humans begin new things.',e:'e10',s:'political',k:1,from:['heidegger','kant'],g:'Independent voices'},
+{id:'camus',n:'Camus',d:'1913–1960',b:'The absurd; revolt',f:'The universe is silent and we demand meaning — that clash is the absurd. Response: neither suicide nor faith, but revolt. One must imagine Sisyphus happy.',e:'e10',s:'continental',from:['nietzsche','kierkegaard','dostoevsky']},
+{id:'ricoeur',n:'Ricoeur',d:'1913–2005',b:'Narrative identity',f:'We understand ourselves through the stories we tell; texts and lives are read the same way. The gentlest of the French masters.',e:'e10',s:'continental',from:['husserl','gadamer']},
+
+// X. Late 20th–21st
+{id:'macintyre',n:'MacIntyre',d:'1929–2025',b:'After Virtue — the return to Aristotle',f:'Modern moral discourse is fragments of dead traditions; only virtue ethics rooted in community and practice coheres. Answered Anscombe\u2019s 1958 call.',e:'e11',s:'ethics',k:1,from:['anscombe','aristotle','aquinas'],g:'Ethics revived'},
+{id:'williams',n:'Bernard Williams',d:'1929–2003',b:'Moral luck; against ethical theory',f:'Morality\u2019s tidy systems ignore how much of goodness depends on luck and character. The great anti-theorist of ethics.',e:'e11',s:'ethics',from:['nietzsche','mill']},
+{id:'singer',n:'Peter Singer',d:'b. 1946',b:'Animal liberation; effective altruism',f:'If suffering counts, species membership doesn\u2019t; if you can prevent great harm at small cost, you must. Utilitarianism applied without anesthesia.',e:'e11',s:'ethics',from:['mill','bentham']},
+{id:'korsgaard',n:'Korsgaard',d:'b. 1952',b:'Kantian constructivism',f:'Moral obligations spring from our own self-conception as rational agents — we legislate the law that binds us.',e:'e11',s:'ethics',from:['kant','rawls']},
+{id:'nussbaum',n:'Nussbaum',d:'b. 1947',b:'The capabilities approach',f:'Justice measured by what people are actually able to do and be — with Amartya Sen, reshaped development economics.',e:'e11',s:'ethics',from:['aristotle','rawls']},
+{id:'williamson',n:'Williamson',d:'b. 1955',b:'Knowledge first',f:'Stop analyzing knowledge into belief plus extras — knowledge is the basic state. Analytic epistemology inverted.',e:'e11',s:'analytic',from:['kripke'],g:'Analytic metaphysics & mind'},
+{id:'chalmers',n:'Chalmers',d:'b. 1966',b:'The hard problem of consciousness',f:'Explaining brain function is easy-ish; explaining why there is subjective experience at all is the hard problem. Also: we might be in a simulation, and that\u2019s fine.',e:'e11',s:'analytic',k:1,from:['nagel','dennett']},
+{id:'clark',n:'Andy Clark',d:'b. 1957',b:'The extended mind',f:'Cognition leaks into notebooks, phones, and tools — the mind is not brain-bound. Written with Chalmers.',e:'e11',s:'analytic',from:['chalmers','merleau']},
+{id:'bostrom',n:'Bostrom',d:'b. 1973',b:'Superintelligence; existential risk',f:'If machine intelligence surpasses ours, the control problem becomes the most important question we\u2019ve ever faced. Also authored the simulation argument.',e:'e11',s:'analytic',from:['chalmers'],g:'Philosophy of AI & information'},
+{id:'floridi',n:'Floridi',d:'b. 1964',b:'Philosophy of information',f:'Reality as the infosphere; ethics for a world of data, algorithms, and artificial agents.',e:'e11',s:'analytic'},
+{id:'zizek',n:'Žižek',d:'b. 1949',b:'Lacan + Hegel + pop culture',f:'Ideology critique through Hitchcock and toilets: we know very well what we\u2019re doing, but we do it anyway. Philosophy as performance.',e:'e11',s:'continental',from:['lacan','hegel','marx'],g:'Continental continuations'},
+{id:'agamben',n:'Agamben',d:'b. 1942',b:'The state of exception',f:'Emergency powers become the norm; sovereignty decides whose life is bare and unprotected. Foucault\u2019s darkest heir.',e:'e11',s:'continental',from:['foucault','benjamin']},
+{id:'butler',n:'Judith Butler',d:'b. 1956',b:'Gender performativity',f:'Gender is not what you are but what you repeatedly do — identity produced by performance. Foucault and Lacan applied.',e:'e11',s:'continental',from:['foucault','lacan','beauvoir']},
+{id:'meillassoux',n:'Meillassoux',d:'b. 1967',b:'Speculative realism — against correlationism',f:'After Kant, philosophy only discusses the world-for-us; Meillassoux wants the world-without-us back. The contingency of everything is the one necessity.',e:'e11',s:'continental',from:['kant','badiou'.replace('badiou','deleuze')]},
+];
+
+const byId = {}; P.forEach(p=>byId[p.id]=p);
+// reverse influence
+const influenced = {};
+P.forEach(p=>(p.from||[]).forEach(src=>{ (influenced[src]=influenced[src]||[]).push(p.id); }));
+
+const app = document.getElementById('app');
+let spineMode=false, activeStream=null, q='';
+
+function pivotSVG(){
+  return `<svg width="220" height="46" viewBox="0 0 220 46" aria-hidden="true">
+    <path d="M10 2 C 60 30, 90 40, 110 44 M60 2 C 90 26, 100 38, 110 44 M110 2 L110 44 M160 2 C 130 26, 120 38, 110 44 M210 2 C 160 30, 130 40, 110 44"
+      fill="none" stroke="#4a5258" stroke-width="1.6" stroke-dasharray="4 4"/>
+  </svg>`;
+}
+function forkSVG(){
+  return `<svg width="220" height="46" viewBox="0 0 220 46" aria-hidden="true">
+    <path d="M110 2 L110 14 M110 14 C 110 28, 40 30, 30 44 M110 14 C 110 28, 180 30, 190 44"
+      fill="none" stroke="#4a5258" stroke-width="1.6" stroke-dasharray="4 4"/>
+    <text x="26" y="42" fill="#8fb8d9" font-family="IBM Plex Mono,monospace" font-size="9" text-anchor="middle" dy="-6">ANALYTIC</text>
+    <text x="192" y="42" fill="#b3a1d9" font-family="IBM Plex Mono,monospace" font-size="9" text-anchor="middle" dy="-6">CONTINENTAL</text>
+  </svg>`;
+}
+
+function render(){
+  let html='';
+  ERAS.forEach(era=>{
+    const pv = PIVOTS[era.id];
+    if(pv){
+      html += `<div class="pivot">${pivotSVG()}
+        <div class="badge"><div class="pnum">${pv.num}</div><div class="pwho">${pv.who}</div><div class="pwhat">${pv.what}</div></div>
+        <div class="caption">every stream passes through here</div>
+        ${pv.fork? `<div class="fork">${forkSVG()}</div>`:''}
+      </div>`;
+    }
+    const people = P.filter(p=>p.e===era.id);
+    let rows=''; let lastGroup=null;
+    people.forEach(p=>{
+      if(p.g && p.g!==lastGroup){ rows+=`<div class="grouplabel" data-era="${era.id}">${p.g}</div>`; lastGroup=p.g; }
+      const inflFrom=(p.from||[]).map(id=>byId[id]?`<button class="ichip" data-jump="${id}">← ${byId[id].n}</button>`:'').join('');
+      const inflTo=(influenced[p.id]||[]).slice(0,6).map(id=>`<button class="ichip" data-jump="${id}">→ ${byId[id].n}</button>`).join('');
+      rows += `<div class="row s-${p.s} ${p.k?'key':''}" id="p-${p.id}" data-id="${p.id}" tabindex="0" role="button" aria-expanded="false">
+        <span class="st"></span>
+        <div class="nameline"><span class="pname">${p.n}</span><span class="pdates">${p.d}</span></div>
+        <div class="pblurb">${p.b}</div>
+        <div class="detail">
+          <div class="full">${p.f}</div>
+          ${(inflFrom||inflTo)?`<div class="infl">
+            ${inflFrom?`<span class="lab">Influenced by</span>${inflFrom}`:''}
+            ${inflTo?`<span class="lab">Influenced</span>${inflTo}`:''}
+          </div>`:''}
+        </div>
+      </div>`;
+    });
+    html += `<section class="era ${era.trad?'trad-'+era.trad:''}" id="${era.id}">
+      <div class="era-head"><span class="era-num">${era.num}</span>
+        <div><div class="era-title">${era.title}</div><div class="era-dates">${era.dates}</div></div>
+      </div>
+      <div class="era-theme">${era.theme}</div>
+      <div class="rows">${rows}</div>
+    </section>`;
+  });
+  app.innerHTML = html;
+}
+render();
+
+// chips
+const chipsEl=document.getElementById('chips');
+chipsEl.innerHTML = `<button class="chip on" data-s="">All streams</button>` +
+  Object.entries(STREAMS).map(([k,v])=>`<button class="chip" data-s="${k}"><span class="dot" style="background:${v.color}"></span>${v.label}</button>`).join('');
+
+function applyFilters(){
+  const rows=[...document.querySelectorAll('.row')];
+  let visible=0;
+  rows.forEach(r=>{
+    const p=byId[r.dataset.id];
+    const matchQ = !q || (p.n+' '+p.b+' '+p.f+' '+p.d).toLowerCase().includes(q);
+    const matchSpine = !spineMode || p.k;
+    const show = matchQ && matchSpine;
+    r.classList.toggle('hideme', !show);
+    if(show) visible++;
+    r.classList.toggle('dim', !!activeStream && p.s!==activeStream);
+  });
+  // hide group labels & eras with nothing visible
+  document.querySelectorAll('.grouplabel').forEach(g=>{
+    let el=g.nextElementSibling, any=false;
+    while(el && !el.classList.contains('grouplabel')){ if(el.classList.contains('row') && !el.classList.contains('hideme')){any=true;break;} el=el.nextElementSibling; }
+    g.classList.toggle('hideme', !any || spineMode);
+  });
+  document.querySelectorAll('.era').forEach(s=>{
+    const any=s.querySelector('.row:not(.hideme)');
+    s.classList.toggle('hideme', !any);
+  });
+  document.querySelectorAll('.pivot').forEach(pv=>pv.classList.toggle('hideme', visible===0));
+  document.getElementById('count').textContent = `${visible} of ${P.length} figures`;
+}
+applyFilters();
+
+chipsEl.addEventListener('click',e=>{
+  const c=e.target.closest('.chip'); if(!c) return;
+  chipsEl.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+  c.classList.add('on');
+  activeStream = c.dataset.s || null;
+  applyFilters();
+});
+document.getElementById('modeBtn').addEventListener('click',e=>{
+  spineMode=!spineMode;
+  e.currentTarget.classList.toggle('on', spineMode);
+  e.currentTarget.textContent = spineMode? 'Full map':'Spine';
+  applyFilters();
+});
+document.getElementById('search').addEventListener('input',e=>{
+  q=e.target.value.trim().toLowerCase(); applyFilters();
+});
+
+function toggleRow(r,open){
+  const willOpen = open!==undefined? open : !r.classList.contains('open');
+  r.classList.toggle('open', willOpen);
+  r.setAttribute('aria-expanded', willOpen?'true':'false');
+}
+app.addEventListener('click',e=>{
+  const jump=e.target.closest('[data-jump]');
+  if(jump){
+    e.stopPropagation();
+    const target=document.getElementById('p-'+jump.dataset.jump);
+    if(target){
+      // ensure visible: leaving filters intact but un-hide if spine/search hides it
+      if(target.classList.contains('hideme')){
+        spineMode=false; q=''; document.getElementById('search').value='';
+        const mb=document.getElementById('modeBtn'); mb.classList.remove('on'); mb.textContent='Spine';
+        applyFilters();
+      }
+      toggleRow(target,true);
+      target.scrollIntoView({block:'center'});
+      target.classList.remove('flash'); void target.offsetWidth; target.classList.add('flash');
+    }
+    return;
+  }
+  const r=e.target.closest('.row');
+  if(r) toggleRow(r);
+});
+app.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ') && e.target.classList.contains('row')){ e.preventDefault(); toggleRow(e.target); }
+});
+</script>
+</body>
+</html>
