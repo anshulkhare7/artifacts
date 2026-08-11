@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Color Palette Extractor</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ee 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12);
+            overflow: hidden;
+        }
+
+        .header {
+            padding: 28px 32px 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .content {
+            padding: 28px 32px 32px;
+        }
+
+        /* Drop Zone */
+        .drop-zone {
+            border: 2.5px dashed #cbd5e1;
+            border-radius: 16px;
+            padding: 48px 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            background: #fafbfc;
+            position: relative;
+        }
+
+        .drop-zone:hover {
+            border-color: #94a3b8;
+            background: #f1f5f9;
+        }
+
+        .drop-zone.dragover {
+            border-color: #6366f1;
+            background: #eef2ff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
+        }
+
+        .drop-zone.has-image {
+            padding: 16px;
+            border-style: solid;
+            border-color: #e2e8f0;
+            cursor: default;
+        }
+
+        .drop-icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+            display: block;
+            color: #94a3b8;
+        }
+
+        .drop-zone h3 {
+            font-size: 16px;
+            color: #374151;
+            margin-bottom: 6px;
+            font-weight: 600;
+        }
+
+        .drop-zone span {
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+        .drop-zone input[type="file"] {
+            display: none;
+        }
+
+        .image-preview {
+            display: none;
+            width: 100%;
+        }
+
+        .image-preview img {
+            max-width: 100%;
+            max-height: 400px;
+            display: block;
+            margin: 0 auto;
+            border-radius: 10px;
+            object-fit: contain;
+        }
+
+        .image-actions {
+            display: none;
+            justify-content: center;
+            margin-top: 12px;
+        }
+
+        .btn-remove {
+            background: none;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            padding: 6px 16px;
+            font-size: 13px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-remove:hover {
+            background: #fef2f2;
+            border-color: #fca5a5;
+            color: #ef4444;
+        }
+
+        /* Controls */
+        .controls {
+            display: none;
+            align-items: center;
+            gap: 20px;
+            margin-top: 24px;
+            padding: 16px 20px;
+            background: #f8fafc;
+            border-radius: 12px;
+        }
+
+        .controls label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .slider-group {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+
+        .slider-group input[type="range"] {
+            flex: 1;
+            height: 6px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: #e2e8f0;
+            border-radius: 3px;
+            outline: none;
+        }
+
+        .slider-group input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #6366f1;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+        }
+
+        .slider-group input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #6366f1;
+            cursor: pointer;
+            border: none;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+        }
+
+        .color-count-display {
+            font-size: 14px;
+            font-weight: 700;
+            color: #6366f1;
+            min-width: 20px;
+            text-align: center;
+        }
+
+        .btn-extract {
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 10px 22px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+
+        .btn-extract:hover {
+            background: #4f46e5;
+            box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+        }
+
+        /* Palette Bar */
+        .palette-bar-section {
+            display: none;
+            margin-top: 28px;
+        }
+
+        .section-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 10px;
+        }
+
+        .palette-bar {
+            display: flex;
+            height: 48px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+        }
+
+        .palette-bar div {
+            flex: 1;
+            transition: flex 0.3s ease;
+        }
+
+        .palette-bar div:hover {
+            flex: 1.5;
+        }
+
+        /* Swatches */
+        .swatches-section {
+            display: none;
+            margin-top: 24px;
+        }
+
+        .swatches {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+            gap: 14px;
+        }
+
+        .swatch {
+            border-radius: 14px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.07);
+            transition: transform 0.2s, box-shadow 0.2s;
+            background: white;
+            border: 1px solid #f0f0f0;
+        }
+
+        .swatch:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+        }
+
+        .swatch-color {
+            height: 100px;
+            position: relative;
+        }
+
+        .swatch-info {
+            padding: 12px 14px;
+        }
+
+        .swatch-hex {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 2px;
+        }
+
+        .swatch-rgb {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .btn-copy {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: #f3f4f6;
+            border: none;
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 12px;
+            color: #6b7280;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .btn-copy:hover {
+            background: #e5e7eb;
+            color: #374151;
+        }
+
+        .btn-copy.copied {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+        /* Loading */
+        .loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 100;
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(2px);
+        }
+
+        .loading-overlay.active {
+            display: flex;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top-color: #6366f1;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Canvas (hidden) */
+        #hiddenCanvas {
+            display: none;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+
+            .header {
+                padding: 20px 18px 16px;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+
+            .content {
+                padding: 18px 18px 24px;
+            }
+
+            .controls {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+            }
+
+            .swatches {
+                grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Color Palette Extractor</h1>
+            <p>Drop an image to extract its dominant colors</p>
+        </div>
+        <div class="content">
+            <div class="drop-zone" id="dropZone">
+                <div id="dropPrompt">
+                    <span class="drop-icon">&#x1f3a8;</span>
+                    <h3>Drag &amp; drop an image here</h3>
+                    <span>or click to browse files</span>
+                </div>
+                <div class="image-preview" id="imagePreview">
+                    <img id="previewImg" alt="Uploaded image preview">
+                </div>
+                <div class="image-actions" id="imageActions">
+                    <button class="btn-remove" id="btnRemove">Remove image</button>
+                </div>
+                <input type="file" id="fileInput" accept="image/*">
+            </div>
+
+            <div class="controls" id="controls">
+                <label>Colors:</label>
+                <div class="slider-group">
+                    <input type="range" id="colorSlider" min="3" max="10" value="6">
+                    <span class="color-count-display" id="colorCountDisplay">6</span>
+                </div>
+                <button class="btn-extract" id="btnExtract">Re-extract</button>
+            </div>
+
+            <div class="palette-bar-section" id="paletteBarSection">
+                <div class="section-label">Palette</div>
+                <div class="palette-bar" id="paletteBar"></div>
+            </div>
+
+            <div class="swatches-section" id="swatchesSection">
+                <div class="section-label">Extracted Colors</div>
+                <div class="swatches" id="swatches"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="loading-overlay" id="loadingOverlay">
+        <div class="spinner"></div>
+    </div>
+
+    <canvas id="hiddenCanvas"></canvas>
+
+    <script>
+        // --- DOM References ---
+        const dropZone = document.getElementById('dropZone');
+        const dropPrompt = document.getElementById('dropPrompt');
+        const imagePreview = document.getElementById('imagePreview');
+        const imageActions = document.getElementById('imageActions');
+        const previewImg = document.getElementById('previewImg');
+        const fileInput = document.getElementById('fileInput');
+        const btnRemove = document.getElementById('btnRemove');
+        const controls = document.getElementById('controls');
+        const colorSlider = document.getElementById('colorSlider');
+        const colorCountDisplay = document.getElementById('colorCountDisplay');
+        const btnExtract = document.getElementById('btnExtract');
+        const paletteBarSection = document.getElementById('paletteBarSection');
+        const paletteBar = document.getElementById('paletteBar');
+        const swatchesSection = document.getElementById('swatchesSection');
+        const swatches = document.getElementById('swatches');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        const hiddenCanvas = document.getElementById('hiddenCanvas');
+
+        let currentImage = null;
+
+        // --- Drag and Drop ---
+        dropZone.addEventListener('click', (e) => {
+            if (!currentImage) fileInput.click();
+        });
+
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                loadImage(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) loadImage(file);
+        });
+
+        btnRemove.addEventListener('click', (e) => {
+            e.stopPropagation();
+            resetAll();
+        });
+
+        colorSlider.addEventListener('input', () => {
+            colorCountDisplay.textContent = colorSlider.value;
+        });
+
+        btnExtract.addEventListener('click', () => {
+            if (currentImage) extractColors();
+        });
+
+        // --- Load Image ---
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    currentImage = img;
+                    previewImg.src = e.target.result;
+                    dropPrompt.style.display = 'none';
+                    imagePreview.style.display = 'block';
+                    imageActions.style.display = 'flex';
+                    dropZone.classList.add('has-image');
+                    controls.style.display = 'flex';
+                    extractColors();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- Reset ---
+        function resetAll() {
+            currentImage = null;
+            previewImg.src = '';
+            fileInput.value = '';
+            dropPrompt.style.display = '';
+            imagePreview.style.display = 'none';
+            imageActions.style.display = 'none';
+            dropZone.classList.remove('has-image');
+            controls.style.display = 'none';
+            paletteBarSection.style.display = 'none';
+            swatchesSection.style.display = 'none';
+            swatches.innerHTML = '';
+            paletteBar.innerHTML = '';
+        }
+
+        // --- Extract Colors ---
+        function extractColors() {
+            if (!currentImage) return;
+            const numColors = parseInt(colorSlider.value, 10);
+
+            loadingOverlay.classList.add('active');
+
+            // Use requestAnimationFrame to let the overlay render before heavy work
+            requestAnimationFrame(() => {
+                setTimeout(() => {
+                    const pixels = getPixelData(currentImage);
+                    const palette = medianCut(pixels, numColors);
+                    renderResults(palette);
+                    loadingOverlay.classList.remove('active');
+                }, 30);
+            });
+        }
+
+        // --- Get Pixel Data from Image ---
+        function getPixelData(img) {
+            const ctx = hiddenCanvas.getContext('2d');
+            // Scale down large images for performance
+            const maxDim = 200;
+            let w = img.width;
+            let h = img.height;
+            if (w > maxDim || h > maxDim) {
+                const scale = maxDim / Math.max(w, h);
+                w = Math.round(w * scale);
+                h = Math.round(h * scale);
+            }
+            hiddenCanvas.width = w;
+            hiddenCanvas.height = h;
+            ctx.drawImage(img, 0, 0, w, h);
+            const imageData = ctx.getImageData(0, 0, w, h);
+            const data = imageData.data;
+            const pixels = [];
+            for (let i = 0; i < data.length; i += 4) {
+                // Skip fully transparent pixels
+                if (data[i + 3] < 128) continue;
+                pixels.push([data[i], data[i + 1], data[i + 2]]);
+            }
+            return pixels;
+        }
+
+        // --- Median Cut Quantization ---
+        function medianCut(pixels, numColors) {
+            if (pixels.length === 0) return [[128, 128, 128]];
+
+            // Initial bucket
+            let buckets = [pixels];
+
+            while (buckets.length < numColors) {
+                // Find the bucket with the largest range in any channel
+                let maxRange = -1;
+                let bucketIndex = -1;
+
+                for (let i = 0; i < buckets.length; i++) {
+                    const range = getBucketRange(buckets[i]);
+                    if (range.maxRange > maxRange) {
+                        maxRange = range.maxRange;
+                        bucketIndex = i;
+                    }
+                }
+
+                if (bucketIndex === -1 || buckets[bucketIndex].length < 2) break;
+
+                const bucket = buckets[bucketIndex];
+                const range = getBucketRange(bucket);
+                const channel = range.channel;
+
+                // Sort by the channel with the widest range
+                bucket.sort((a, b) => a[channel] - b[channel]);
+
+                const mid = Math.floor(bucket.length / 2);
+                const left = bucket.slice(0, mid);
+                const right = bucket.slice(mid);
+
+                buckets.splice(bucketIndex, 1, left, right);
+            }
+
+            // Average each bucket to get the representative color
+            return buckets.map(bucket => {
+                const total = bucket.length;
+                if (total === 0) return [128, 128, 128];
+                let r = 0, g = 0, b = 0;
+                for (const px of bucket) {
+                    r += px[0];
+                    g += px[1];
+                    b += px[2];
+                }
+                return [
+                    Math.round(r / total),
+                    Math.round(g / total),
+                    Math.round(b / total)
+                ];
+            });
+        }
+
+        function getBucketRange(bucket) {
+            let rMin = 255, rMax = 0;
+            let gMin = 255, gMax = 0;
+            let bMin = 255, bMax = 0;
+
+            for (const px of bucket) {
+                if (px[0] < rMin) rMin = px[0];
+                if (px[0] > rMax) rMax = px[0];
+                if (px[1] < gMin) gMin = px[1];
+                if (px[1] > gMax) gMax = px[1];
+                if (px[2] < bMin) bMin = px[2];
+                if (px[2] > bMax) bMax = px[2];
+            }
+
+            const rRange = rMax - rMin;
+            const gRange = gMax - gMin;
+            const bRange = bMax - bMin;
+
+            let maxRange = rRange, channel = 0;
+            if (gRange > maxRange) { maxRange = gRange; channel = 1; }
+            if (bRange > maxRange) { maxRange = bRange; channel = 2; }
+
+            return { maxRange, channel };
+        }
+
+        // --- Render Results ---
+        function renderResults(palette) {
+            // Sort palette by luminance (dark to light)
+            palette.sort((a, b) => {
+                const lumA = 0.299 * a[0] + 0.587 * a[1] + 0.114 * a[2];
+                const lumB = 0.299 * b[0] + 0.587 * b[1] + 0.114 * b[2];
+                return lumA - lumB;
+            });
+
+            // Palette bar
+            paletteBar.innerHTML = '';
+            palette.forEach(c => {
+                const div = document.createElement('div');
+                div.style.backgroundColor = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+                paletteBar.appendChild(div);
+            });
+            paletteBarSection.style.display = 'block';
+
+            // Swatches
+            swatches.innerHTML = '';
+            palette.forEach(c => {
+                const hex = rgbToHex(c[0], c[1], c[2]);
+                const rgbStr = `rgb(${c[0]}, ${c[1]}, ${c[2]})`;
+
+                const swatch = document.createElement('div');
+                swatch.className = 'swatch';
+
+                const colorDiv = document.createElement('div');
+                colorDiv.className = 'swatch-color';
+                colorDiv.style.backgroundColor = rgbStr;
+
+                const infoDiv = document.createElement('div');
+                infoDiv.className = 'swatch-info';
+
+                const hexDiv = document.createElement('div');
+                hexDiv.className = 'swatch-hex';
+                hexDiv.textContent = hex;
+
+                const rgbDiv = document.createElement('div');
+                rgbDiv.className = 'swatch-rgb';
+                rgbDiv.textContent = rgbStr;
+
+                const copyBtn = document.createElement('button');
+                copyBtn.className = 'btn-copy';
+                copyBtn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
+                copyBtn.addEventListener('click', () => copyToClipboard(hex, copyBtn));
+
+                infoDiv.appendChild(hexDiv);
+                infoDiv.appendChild(rgbDiv);
+                infoDiv.appendChild(copyBtn);
+                swatch.appendChild(colorDiv);
+                swatch.appendChild(infoDiv);
+                swatches.appendChild(swatch);
+            });
+            swatchesSection.style.display = 'block';
+        }
+
+        // --- Helpers ---
+        function rgbToHex(r, g, b) {
+            return '#' + [r, g, b].map(v => v.toString(16).padStart(2, '0')).join('').toUpperCase();
+        }
+
+        function copyToClipboard(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> Copy';
+                    btn.classList.remove('copied');
+                }, 1500);
+            });
+        }
+    </script>
+</body>
+</html>
