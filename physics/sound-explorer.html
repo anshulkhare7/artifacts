@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sound Frequency Explorer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #0a0a0f;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 800px;
+      width: 100%;
+    }
+
+    h1 {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.6rem;
+      color: #00ff88;
+      text-align: center;
+      margin-bottom: 6px;
+      letter-spacing: 2px;
+    }
+
+    .tagline {
+      text-align: center;
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 24px;
+    }
+
+    /* Canvas / Oscilloscope */
+    .scope-container {
+      background: #0d1117;
+      border: 1px solid #1a2a1a;
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 20px;
+      position: relative;
+      box-shadow: 0 0 30px rgba(0, 255, 136, 0.05);
+    }
+
+    canvas {
+      width: 100%;
+      height: 220px;
+      display: block;
+      border-radius: 8px;
+      background: #050a08;
+    }
+
+    .freq-display {
+      font-family: 'Share Tech Mono', monospace;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .freq-value {
+      font-size: 2.2rem;
+      color: #00ff88;
+      text-shadow: 0 0 20px rgba(0, 255, 136, 0.4);
+    }
+
+    .freq-unit {
+      font-size: 1rem;
+      color: #00cc6a;
+      margin-left: 4px;
+    }
+
+    .note-display {
+      font-size: 0.95rem;
+      color: #88aaaa;
+      margin-top: 4px;
+    }
+
+    .note-name {
+      color: #00ddff;
+      font-weight: 600;
+    }
+
+    .cents-offset {
+      color: #888;
+      font-size: 0.85rem;
+    }
+
+    /* Controls */
+    .controls {
+      background: #0d1117;
+      border: 1px solid #1a1a2e;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .control-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .control-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .control-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      min-width: 90px;
+      flex-shrink: 0;
+    }
+
+    /* Custom range slider */
+    input[type="range"] {
+      -webkit-appearance: none;
+      appearance: none;
+      flex: 1;
+      height: 6px;
+      border-radius: 3px;
+      background: #1a2a1a;
+      outline: none;
+      cursor: pointer;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #00ff88;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      cursor: pointer;
+      border: 2px solid #0a0a0f;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #00ff88;
+      box-shadow: 0 0 10px rgba(0, 255, 136, 0.5);
+      cursor: pointer;
+      border: 2px solid #0a0a0f;
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 3px;
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 6px;
+      border-radius: 3px;
+      background: #1a2a1a;
+    }
+
+    /* Volume slider accent */
+    .volume-slider::-webkit-slider-thumb {
+      background: #ffaa00;
+      box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+    }
+
+    .volume-slider::-moz-range-thumb {
+      background: #ffaa00;
+      box-shadow: 0 0 10px rgba(255, 170, 0, 0.5);
+    }
+
+    .freq-input {
+      width: 90px;
+      background: #111820;
+      border: 1px solid #2a3a2a;
+      border-radius: 6px;
+      color: #00ff88;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.95rem;
+      padding: 6px 10px;
+      text-align: right;
+      outline: none;
+      flex-shrink: 0;
+    }
+
+    .freq-input:focus {
+      border-color: #00ff88;
+      box-shadow: 0 0 8px rgba(0, 255, 136, 0.2);
+    }
+
+    .volume-value {
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 0.9rem;
+      color: #ffaa00;
+      min-width: 42px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    /* Waveform selector */
+    .waveform-selector {
+      display: flex;
+      gap: 6px;
+      flex: 1;
+      flex-wrap: wrap;
+    }
+
+    .wave-btn {
+      padding: 7px 14px;
+      border: 1px solid #2a3a2a;
+      border-radius: 20px;
+      background: #111820;
+      color: #888;
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .wave-btn:hover {
+      border-color: #00ff88;
+      color: #ccc;
+    }
+
+    .wave-btn.active {
+      background: #00ff88;
+      color: #0a0a0f;
+      border-color: #00ff88;
+      font-weight: 600;
+      box-shadow: 0 0 12px rgba(0, 255, 136, 0.3);
+    }
+
+    /* Play button */
+    .play-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .play-btn {
+      width: 100%;
+      padding: 14px;
+      border: 2px solid #00ff88;
+      border-radius: 10px;
+      background: transparent;
+      color: #00ff88;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 1.1rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .play-btn:hover {
+      background: rgba(0, 255, 136, 0.1);
+      box-shadow: 0 0 20px rgba(0, 255, 136, 0.15);
+    }
+
+    .play-btn.playing {
+      background: #00ff88;
+      color: #0a0a0f;
+      box-shadow: 0 0 25px rgba(0, 255, 136, 0.3);
+    }
+
+    /* Presets */
+    .presets {
+      margin-bottom: 20px;
+    }
+
+    .presets-label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 10px;
+    }
+
+    .preset-buttons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .preset-btn {
+      padding: 8px 16px;
+      border: 1px solid #1a2a2e;
+      border-radius: 20px;
+      background: #0d1117;
+      color: #aaa;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .preset-btn:hover {
+      border-color: #00ddff;
+      color: #00ddff;
+      box-shadow: 0 0 10px rgba(0, 221, 255, 0.15);
+    }
+
+    .preset-btn .preset-freq {
+      color: #00ddff;
+      font-family: 'Share Tech Mono', monospace;
+      font-weight: 600;
+      margin-left: 4px;
+    }
+
+    /* Info section */
+    .info-section {
+      border: 1px solid #1a1a2e;
+      border-radius: 12px;
+      background: #0d1117;
+      margin-bottom: 20px;
+    }
+
+    .info-section summary {
+      padding: 14px 18px;
+      font-weight: 500;
+      font-size: 0.9rem;
+      color: #888;
+      cursor: pointer;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .info-section summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .info-section summary::after {
+      content: '+';
+      font-size: 1.2rem;
+      font-weight: 400;
+      color: #555;
+    }
+
+    .info-section[open] summary::after {
+      content: '\2212';
+    }
+
+    .info-section[open] summary {
+      border-bottom: 1px solid #1a1a2e;
+    }
+
+    .info-content {
+      padding: 18px;
+      font-size: 0.85rem;
+      color: #999;
+      line-height: 1.7;
+    }
+
+    .info-content h3 {
+      font-size: 0.9rem;
+      color: #ccc;
+      margin-bottom: 8px;
+      margin-top: 16px;
+    }
+
+    .info-content h3:first-child {
+      margin-top: 0;
+    }
+
+    .info-content p {
+      margin-bottom: 10px;
+    }
+
+    .info-content ul {
+      margin-left: 1.25rem;
+      margin-bottom: 10px;
+    }
+
+    .info-content li {
+      margin-bottom: 4px;
+    }
+
+    .info-content strong {
+      color: #bbb;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .container {
+        padding: 0;
+      }
+
+      h1 {
+        font-size: 1.3rem;
+      }
+
+      .freq-value {
+        font-size: 1.8rem;
+      }
+
+      canvas {
+        height: 180px;
+      }
+
+      .control-row {
+        flex-wrap: wrap;
+      }
+
+      .control-label {
+        min-width: 100%;
+        margin-bottom: -6px;
+      }
+
+      .waveform-selector {
+        width: 100%;
+      }
+
+      .preset-buttons {
+        gap: 6px;
+      }
+
+      .preset-btn {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Sound Frequency Explorer</h1>
+    <p class="tagline">Generate pure tones and visualize waveforms in real time</p>
+
+    <!-- Oscilloscope Display -->
+    <div class="scope-container">
+      <canvas id="scope"></canvas>
+      <div class="freq-display">
+        <div>
+          <span class="freq-value" id="freq-display-value">440</span>
+          <span class="freq-unit">Hz</span>
+        </div>
+        <div class="note-display" id="note-display">
+          <span class="note-name">A4</span> <span class="cents-offset">(concert pitch)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+      <div class="control-row">
+        <span class="control-label">Frequency</span>
+        <input type="range" id="freq-slider" min="20" max="20000" value="440" step="1">
+        <input type="number" class="freq-input" id="freq-input" min="20" max="20000" value="440">
+      </div>
+
+      <div class="control-row">
+        <span class="control-label">Volume</span>
+        <input type="range" class="volume-slider" id="volume-slider" min="0" max="100" value="30" step="1">
+        <span class="volume-value" id="volume-value">30%</span>
+      </div>
+
+      <div class="control-row">
+        <span class="control-label">Waveform</span>
+        <div class="waveform-selector" id="waveform-selector">
+          <button class="wave-btn active" data-wave="sine">Sine</button>
+          <button class="wave-btn" data-wave="square">Square</button>
+          <button class="wave-btn" data-wave="triangle">Triangle</button>
+          <button class="wave-btn" data-wave="sawtooth">Sawtooth</button>
+        </div>
+      </div>
+
+      <div class="control-row play-row">
+        <button class="play-btn" id="play-btn" onclick="togglePlay()">PLAY</button>
+      </div>
+    </div>
+
+    <!-- Presets -->
+    <div class="presets">
+      <div class="presets-label">Presets</div>
+      <div class="preset-buttons">
+        <button class="preset-btn" onclick="setPreset(440)">Concert A <span class="preset-freq">440 Hz</span></button>
+        <button class="preset-btn" onclick="setPreset(261.63)">Middle C <span class="preset-freq">261.63 Hz</span></button>
+        <button class="preset-btn" onclick="setPreset(17400)">Mosquito tone <span class="preset-freq">17,400 Hz</span></button>
+        <button class="preset-btn" onclick="setPreset(60)">Bass rumble <span class="preset-freq">60 Hz</span></button>
+      </div>
+    </div>
+
+    <!-- Info Section -->
+    <details class="info-section">
+      <summary>About Sound Frequencies</summary>
+      <div class="info-content">
+        <h3>Frequency</h3>
+        <p>Frequency is the number of vibrations (cycles) per second, measured in Hertz (Hz). Higher frequencies produce higher-pitched sounds. The human ear can typically detect sounds between 20 Hz and 20,000 Hz, though the upper limit decreases with age.</p>
+
+        <h3>Amplitude (Volume)</h3>
+        <p>Amplitude determines how loud a sound is. It represents the strength of the air pressure variations in a sound wave. In this tool, volume controls the gain applied to the generated oscillator signal.</p>
+
+        <h3>Waveform Shapes</h3>
+        <ul>
+          <li><strong>Sine</strong> — The purest tone with no harmonics. Smooth and mellow. This is the fundamental building block of all other waveforms.</li>
+          <li><strong>Square</strong> — Contains odd harmonics, producing a hollow, buzzy sound. Common in early video game music and synthesizers.</li>
+          <li><strong>Triangle</strong> — Contains odd harmonics at reduced amplitudes, sounding softer than a square wave but brighter than a sine wave.</li>
+          <li><strong>Sawtooth</strong> — Contains all harmonics (odd and even), creating a bright, buzzy, rich tone. Often used for string-like synth sounds.</li>
+        </ul>
+
+        <h3>Musical Notes</h3>
+        <p>Musical notes correspond to specific frequencies. The standard reference pitch is A4 = 440 Hz. Each semitone is a frequency ratio of 2<sup>1/12</sup> (approximately 1.0595). An octave doubles the frequency. The "cents" value shown indicates how far the current frequency is from the nearest note — 100 cents equals one semitone.</p>
+      </div>
+    </details>
+  </div>
+
+  <script>
+    // Audio context and nodes
+    let audioCtx = null;
+    let oscillator = null;
+    let gainNode = null;
+    let analyser = null;
+    let isPlaying = false;
+
+    // State
+    let frequency = 440;
+    let volume = 0.3;
+    let waveform = 'sine';
+
+    // Canvas
+    const canvas = document.getElementById('scope');
+    const ctx = canvas.getContext('2d');
+    let animationId = null;
+
+    // Note names
+    const NOTE_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+
+    // Elements
+    const freqSlider = document.getElementById('freq-slider');
+    const freqInput = document.getElementById('freq-input');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeValueEl = document.getElementById('volume-value');
+    const freqDisplayValue = document.getElementById('freq-display-value');
+    const noteDisplayEl = document.getElementById('note-display');
+    const playBtn = document.getElementById('play-btn');
+
+    // Initialize canvas size
+    function resizeCanvas() {
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * window.devicePixelRatio;
+      canvas.height = rect.height * window.devicePixelRatio;
+      ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+
+    // Frequency slider uses logarithmic mapping for better UX
+    function freqToSlider(freq) {
+      const minLog = Math.log(20);
+      const maxLog = Math.log(20000);
+      return ((Math.log(freq) - minLog) / (maxLog - minLog)) * 10000;
+    }
+
+    function sliderToFreq(val) {
+      const minLog = Math.log(20);
+      const maxLog = Math.log(20000);
+      return Math.exp(minLog + (val / 10000) * (maxLog - minLog));
+    }
+
+    // Set up slider as logarithmic
+    freqSlider.min = 0;
+    freqSlider.max = 10000;
+    freqSlider.step = 1;
+    freqSlider.value = freqToSlider(440);
+
+    // Frequency slider handler
+    freqSlider.addEventListener('input', () => {
+      frequency = sliderToFreq(parseFloat(freqSlider.value));
+      frequency = Math.round(frequency * 100) / 100;
+      freqInput.value = frequency;
+      updateFrequency();
+    });
+
+    // Frequency numeric input handler
+    freqInput.addEventListener('input', () => {
+      let val = parseFloat(freqInput.value);
+      if (isNaN(val) || val < 20) val = 20;
+      if (val > 20000) val = 20000;
+      frequency = val;
+      freqSlider.value = freqToSlider(frequency);
+      updateFrequency();
+    });
+
+    // Volume slider handler
+    volumeSlider.addEventListener('input', () => {
+      volume = parseInt(volumeSlider.value) / 100;
+      volumeValueEl.textContent = volumeSlider.value + '%';
+      if (gainNode) {
+        gainNode.gain.setTargetAtTime(volume, audioCtx.currentTime, 0.02);
+      }
+    });
+
+    // Waveform selector
+    document.getElementById('waveform-selector').addEventListener('click', (e) => {
+      const btn = e.target.closest('.wave-btn');
+      if (!btn) return;
+
+      document.querySelectorAll('.wave-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      waveform = btn.dataset.wave;
+
+      if (oscillator) {
+        oscillator.type = waveform;
+      }
+    });
+
+    // Toggle play/stop
+    function togglePlay() {
+      if (isPlaying) {
+        stopSound();
+      } else {
+        startSound();
+      }
+    }
+
+    function startSound() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+
+      // Create nodes
+      oscillator = audioCtx.createOscillator();
+      gainNode = audioCtx.createGain();
+      analyser = audioCtx.createAnalyser();
+
+      analyser.fftSize = 2048;
+
+      oscillator.type = waveform;
+      oscillator.frequency.setValueAtTime(frequency, audioCtx.currentTime);
+      gainNode.gain.setValueAtTime(volume, audioCtx.currentTime);
+
+      oscillator.connect(gainNode);
+      gainNode.connect(analyser);
+      analyser.connect(audioCtx.destination);
+
+      oscillator.start();
+      isPlaying = true;
+
+      playBtn.textContent = 'STOP';
+      playBtn.classList.add('playing');
+
+      drawWaveform();
+    }
+
+    function stopSound() {
+      if (oscillator) {
+        oscillator.stop();
+        oscillator.disconnect();
+        oscillator = null;
+      }
+      if (gainNode) {
+        gainNode.disconnect();
+        gainNode = null;
+      }
+      if (analyser) {
+        analyser.disconnect();
+        analyser = null;
+      }
+
+      isPlaying = false;
+      playBtn.textContent = 'PLAY';
+      playBtn.classList.remove('playing');
+
+      if (animationId) {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+
+      drawFlatLine();
+    }
+
+    function updateFrequency() {
+      // Round for display
+      const displayFreq = frequency >= 1000
+        ? frequency.toFixed(1)
+        : frequency >= 100
+          ? frequency.toFixed(1)
+          : frequency.toFixed(2);
+      freqDisplayValue.textContent = displayFreq;
+
+      // Update oscillator if playing
+      if (oscillator) {
+        oscillator.frequency.setTargetAtTime(frequency, audioCtx.currentTime, 0.02);
+      }
+
+      // Update note display
+      updateNoteDisplay();
+    }
+
+    function updateNoteDisplay() {
+      const noteInfo = frequencyToNote(frequency);
+      let html = `<span class="note-name">${noteInfo.name}${noteInfo.octave}</span>`;
+
+      if (Math.abs(noteInfo.cents) < 1) {
+        if (frequency === 440) {
+          html += ` <span class="cents-offset">(concert pitch)</span>`;
+        } else {
+          html += ` <span class="cents-offset">(exact)</span>`;
+        }
+      } else {
+        const sign = noteInfo.cents > 0 ? '+' : '';
+        html += ` <span class="cents-offset">(${sign}${noteInfo.cents} cents)</span>`;
+      }
+
+      noteDisplayEl.innerHTML = html;
+    }
+
+    function frequencyToNote(freq) {
+      // MIDI note number: 12 * log2(freq / 440) + 69
+      const noteNum = 12 * Math.log2(freq / 440) + 69;
+      const roundedNote = Math.round(noteNum);
+      const cents = Math.round((noteNum - roundedNote) * 100);
+      const noteIndex = ((roundedNote % 12) + 12) % 12;
+      const octave = Math.floor(roundedNote / 12) - 1;
+
+      return {
+        name: NOTE_NAMES[noteIndex],
+        octave: octave,
+        cents: cents
+      };
+    }
+
+    // Preset buttons
+    function setPreset(freq) {
+      frequency = freq;
+      freqSlider.value = freqToSlider(frequency);
+      freqInput.value = frequency;
+      updateFrequency();
+    }
+
+    // Waveform drawing
+    function drawWaveform() {
+      if (!analyser) return;
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      function draw() {
+        if (!isPlaying) return;
+        animationId = requestAnimationFrame(draw);
+
+        analyser.getTimeDomainData(dataArray);
+
+        const w = canvas.getBoundingClientRect().width;
+        const h = canvas.getBoundingClientRect().height;
+
+        ctx.clearRect(0, 0, w, h);
+
+        // Draw grid lines
+        drawGrid(w, h);
+
+        // Draw waveform
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#00ff88';
+        ctx.shadowColor = '#00ff88';
+        ctx.shadowBlur = 6;
+        ctx.beginPath();
+
+        const sliceWidth = w / bufferLength;
+        let x = 0;
+
+        for (let i = 0; i < bufferLength; i++) {
+          const v = dataArray[i] / 128.0;
+          const y = (v * h) / 2;
+
+          if (i === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+
+          x += sliceWidth;
+        }
+
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+
+      draw();
+    }
+
+    function drawGrid(w, h) {
+      ctx.strokeStyle = '#0f1f15';
+      ctx.lineWidth = 1;
+
+      // Horizontal lines
+      const hLines = 6;
+      for (let i = 0; i <= hLines; i++) {
+        const y = (h / hLines) * i;
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(w, y);
+        ctx.stroke();
+      }
+
+      // Vertical lines
+      const vLines = 10;
+      for (let i = 0; i <= vLines; i++) {
+        const x = (w / vLines) * i;
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, h);
+        ctx.stroke();
+      }
+
+      // Center line slightly brighter
+      ctx.strokeStyle = '#1a3325';
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.stroke();
+    }
+
+    function drawFlatLine() {
+      const w = canvas.getBoundingClientRect().width;
+      const h = canvas.getBoundingClientRect().height;
+
+      ctx.clearRect(0, 0, w, h);
+      drawGrid(w, h);
+
+      // Draw flat center line
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = '#00ff88';
+      ctx.shadowColor = '#00ff88';
+      ctx.shadowBlur = 4;
+      ctx.beginPath();
+      ctx.moveTo(0, h / 2);
+      ctx.lineTo(w, h / 2);
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+    }
+
+    // Keyboard shortcut: space to toggle play
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space' && e.target.tagName !== 'INPUT' && e.target.tagName !== 'BUTTON') {
+        e.preventDefault();
+        togglePlay();
+      }
+    });
+
+    // Initial state
+    updateFrequency();
+    drawFlatLine();
+  </script>
+</body>
+</html>
